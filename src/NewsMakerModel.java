@@ -1,26 +1,41 @@
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
- * Project 3, CS 2334, Section 010, March 8, 2017
+ * Project 4, CS 2334, Section 010, May 8, 2017
  * <P>
- * A <code>NewsMaker</code> is the subject of a <code>NewsStory</code>. A
- * <code>NewsMaker</code> may be a person or an organization. A
- * <code>NewsMaker</code> consists of a name and a collection of news
- * stories that feature that <code>NewsMaker</code>. There is a special
- * <code>NewsMaker</code> with the name "None" that is used for news
- * stories that don't have at least two named <code>NewsMakers</code>.
+ * A <code>NewsMakerModel</code> respresents a news maker, who is the subject
+ * of a <code>NewsStory</code>. A news maker may be a person or an organization.
+ * A news maker consists of a name and a collection of news stories that feature
+ * that news maker. There is a special <code>NewsMakerModel</code> with the name
+ * "None" that is used for news stories that don't have at least two named news
+ * makers.
+ * </P>
+ * <P>
+ * This class was originally written by Dr. Hougen (as NewsMaker). It was
+ * modified by Ryan Chimienti (ID 113392576).
  * </P>
  * 
  * @author Dean Hougen
- * @version 2.0
+ * @author Ryan Chimienti
  */
-class NewsMakerModel implements Comparable<NewsMaker>, Serializable {
+class NewsMakerModel implements Comparable<NewsMakerModel>, Serializable 
+{
 	/**
-	 * This is the first serializable version of NewsMaker, so we select a
+	 * This is the first serializable version of NewsMakerModel, so we select a
 	 * serialVersionUID of 1L.
 	 */
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * List to keep track of which objects are registered to listen for events
+	 * from the NewsMakerModel.
+	 */
+	private ArrayList<ActionListener> actionListenerList 
+			= new ArrayList<ActionListener>();
+	
 	/** The name of the news maker. */
 	private String name;
 
@@ -32,8 +47,9 @@ class NewsMakerModel implements Comparable<NewsMaker>, Serializable {
 	 * construct the special news maker "None," the no-arg constructor gives us
 	 * this news maker.
 	 */
-	NewsMakerModel() {
-		this.name = "None";
+	NewsMakerModel() 
+	{
+		name = "None";
 	}
 
 	/**
@@ -44,7 +60,8 @@ class NewsMakerModel implements Comparable<NewsMaker>, Serializable {
 	 * @param name
 	 *            The name of the news maker.
 	 */
-	public NewsMakerModel(String name) {
+	public NewsMakerModel(String name) 
+	{
 		this.name = name;
 	}
 
@@ -57,23 +74,25 @@ class NewsMakerModel implements Comparable<NewsMaker>, Serializable {
 	 * 
 	 * @return The name of the news maker.
 	 */
-	public String getName() {
-		return this.name;
+	public String getName() 
+	{
+		return name;
 	}
 
 	/**
 	 * The accessor for the list of news stories.
 	 * <P>
-	 * Note that <code>NewsStoryList</code> objects are mutable, so this
+	 * Note that <code>NewsStoryListModel</code> objects are mutable, so this
 	 * really should return a copy of the list instead. However, we haven't
 	 * studied that yet, so returning the list itself is acceptable for now.
 	 * </P>
 	 * 
 	 * @return The list of stories featuring the news maker.
 	 */
-	public NewsStoryListModel getNewsStories() {
+	public NewsStoryListModel getNewsStoryListModel()
+	{
 		// TODO Have it return a copy instead (Eventually)
-		return this.newsStories;
+		return newsStories;
 	}
 
 	/**
@@ -82,7 +101,7 @@ class NewsMakerModel implements Comparable<NewsMaker>, Serializable {
 	 * <P>
 	 * Note that since this list should contain only stories in which the news
 	 * maker is featured, we should have this method verify that the
-	 * <code>NewsMaker</code> object is referenced in the
+	 * <code>NewsMakerModel</code> object is referenced in the
 	 * <code>NewsStory</code> object before the story is added to the list.
 	 * However, to keep the project relatively simple, this requirement was not
 	 * made in the project description and this check doesn't need to be made
@@ -92,28 +111,61 @@ class NewsMakerModel implements Comparable<NewsMaker>, Serializable {
 	 * @param newsStory
 	 *            The news story to add.
 	 */
-	public void addNewsStory(NewsStory newsStory) {
+	public void addNewsStory(NewsStory newsStory) 
+	{
 		// TODO Verify that story is about this NewsMaker (Eventually)
-		this.newsStories.add(newsStory);
+		newsStories.add(newsStory);
+	}
+	
+	/**
+	 * Sets this news maker's name to the supplied name.
+	 * 
+	 * @param name The new name for this news maker.
+	 */
+	public void setName(String name)
+	{
+		this.name = name;
+	}
+	
+	/**
+	 * Sets this news maker's news story list to the supplied one.
+	 * 
+	 * @param newsStoryListModel The new news story list for this news maker.
+	 */
+	public void setNewsStoryListModel(NewsStoryListModel newsStoryListModel)
+	{
+		newsStories = newsStoryListModel;
+	}	
+	
+	/**
+	 * Finds the first news story in this news maker's list that is equal to the
+	 * supplied one. Removes that news story from the list.
+	 * 
+	 * @param newsStory The news story to be removed from this news maker's
+	 * list. 
+	 */
+	public void removeNewsStory(NewsStory newsStory)
+	{
+		newsStories.remove(newsStory);
 	}
 	
 	/**
 	 * An overridden <code>equals</code> method.
 	 * <P>
-	 * A <code>NewsMaker</code> should be equal to another object if that object
-	 * is also a <code>NewsMaker</code> object and they have the same name.
-	 * (Since <code>equals</code> is a method in the <code>Object</code> class
-	 * that we are overriding, the parameter needs to be an
-	 * <code>Object</code>.)
+	 * A <code>NewsMakerModel</code> should be equal to another object if that
+	 * object is also a <code>NewsMakerModel</code> object and they have the
+	 * same name.
 	 * </P>
 	 * 
 	 * @param o
 	 *            The Object to which to compare this.
 	 */
 	@Override
-	public boolean equals(Object o) {
-		if (o instanceof NewsMaker) {
-			NewsMaker newsMaker = (NewsMaker) o;
+	public boolean equals(Object o) 
+	{
+		if (o instanceof NewsMakerModel) 
+		{
+			NewsMakerModel newsMaker = (NewsMakerModel) o;
 			return this.name.equals(newsMaker.getName());
 		}
 		return false;
@@ -123,11 +175,55 @@ class NewsMakerModel implements Comparable<NewsMaker>, Serializable {
 	 * The required <code>compareTo</code> method for implementing
 	 * <code>Comparable</code>. Looks at name only.
 	 * 
-	 * @param newsMaker
+	 * @param newsMakerModel
 	 *            The other news maker to which to compare this.
 	 */
 	@Override
-	public int compareTo(NewsMaker newsMaker) {
-		return this.name.compareTo(newsMaker.name);
+	public int compareTo(NewsMakerModel newsMakerModel) 
+	{
+		return this.name.compareTo(newsMakerModel.name);
+	}
+	
+	/**
+	 * TODO
+	 * 
+	 * @return TODO
+	 */
+	@Override
+	public String toString() 
+	{
+		return null;
+		
+		// TODO
+	}
+	
+	/**
+	 * TODO
+	 * 
+	 * @param l
+	 */
+	public synchronized void addActionListener(ActionListener l)
+	{			
+		// TODO
+	}
+	
+	/**
+	 * TODO
+	 * 
+	 * @param l
+	 */
+	public synchronized void removeActionListener(ActionListener l)
+	{			
+		// TODO
+	}
+	
+	/**
+	 * TODO
+	 * 
+	 * @param e TODO
+	 */
+	private void processEvent(ActionEvent e) 
+	{
+		// TODO
 	}
 }

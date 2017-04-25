@@ -13,9 +13,7 @@ import java.util.Comparator;
  * of the group members.
  * </P>
  * 
- * @author Dean Hougen
- * @version 1.0
- * 
+ * @author Dean Hougen 
  */
 public class SourceComparator implements Comparator<NewsStory> {
 	/**

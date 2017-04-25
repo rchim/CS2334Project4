@@ -125,7 +125,7 @@ class NewsStoryListModel implements Serializable
 	}
 	
 	/**
-	 * The mutator for adding a newspaper story to the list.
+	 * The mutator for adding a news story to the list.
 	 * <P>
 	 * By using our own class with its own <code>add</code> method, rather than
 	 * directly using the <code>add</code> method of <code>ArrayList</code>, we
@@ -164,5 +164,32 @@ class NewsStoryListModel implements Serializable
 	public void removeListOfNewsStories(DefaultListModel<NewsStory> newsStories)
 	{
 		// TODO
+	}
+	
+	/**
+	 * TODO
+	 * 
+	 * @param newsStoryListModel TODO 
+	 */
+	public void setNewsStories(NewsStoryListModel newsStoryListModel)
+	{
+		// TODO
+	}
+	
+	/**
+	 * Sets the news stories in this list to match the news stories in the given
+	 * array.
+	 * 
+	 * @param newsStoryModelArray The array of news stories that this list will
+	 * be made to match.
+	 */
+	public void setNewsStoriesFromArray(NewsStory[] newsStoryModelArray)
+	{
+		newsStories.clear();
+		
+		for(NewsStory newsStory : newsStoryModelArray)
+		{
+			newsStories.addElement(newsStory);
+		}
 	}
 }
