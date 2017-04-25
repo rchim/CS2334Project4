@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Project 3, CS 2334, Section 010, March 8, 2017
+ * Project 4, CS 2334, Section 010, May 4, 2017
  * <P>
  * A <code>NewsMakerList</code> is a list of <code>NewsMaker</code> objects.
  * Each <code>NewsMaker</code> in the list must have a unique name.

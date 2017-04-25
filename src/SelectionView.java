@@ -14,7 +14,7 @@ import javax.swing.JSplitPane;
 import javax.swing.ListSelectionModel;
 
 /**
- * Project 4, CS 2334, Section 010, March 27, 2017
+ * Project 4, CS 2334, Section 010, May 4, 2017
  * <P>
  * The selection view is the first view the user will see when the program is
  * loaded. It displays two lists, one for news makers and one for news stories.

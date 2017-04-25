@@ -14,7 +14,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 /**
- * Project 3, CS 2334, Section 010, March 8, 2017
+ * Project 4, CS 2334, Section 010, May 4, 2017
  * <P>
  * This class provides helper methods to interact with the user.
  * </P>

@@ -1,7 +1,7 @@
 import java.util.Comparator;
 
 /**
- * Project 4, CS 2334, Section 010 May 8, 2017
+ * Project 4, CS 2334, Section 010, May 4, 2017
  * <P>
  * The LengthComparator compares the lengths of two news stories. Since
  * different types of news stories may use different units to measure their

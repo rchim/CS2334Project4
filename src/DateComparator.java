@@ -1,7 +1,7 @@
 import java.util.Comparator;
 
 /**
- * Project 4, CS 2334, Section 010, May 8, 2017
+ * Project 4, CS 2334, Section 010, May 4, 2017
  * <P>
  * The DateComparator compares the dates of two news stories. If the dates are
  * equals, it considers time of publication.

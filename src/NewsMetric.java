@@ -1,5 +1,5 @@
 /**
- * Project 4, CS 2334, Section 010, May 8, 2017
+ * Project 4, CS 2334, Section 010, May 4, 2017
  * <P>
  * Supplies constants that refer to different ways to measure a set of news
  * stories. For example, it can be measured by number of stories (COUNT)

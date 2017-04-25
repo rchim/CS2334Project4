@@ -20,7 +20,8 @@ import java.lang.Math;
  * @author Dean Hougen
  * @version 1.0
  */
-public class PieChart {
+public class PieChart 
+{
 	/**
 	 * The list of wedges, each of which specifies its own label and its own
 	 * width (in percent).

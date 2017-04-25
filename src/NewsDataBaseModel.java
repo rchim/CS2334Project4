@@ -1,4 +1,5 @@
 
-public class NewsDataBaseModel {
+public class NewsDataBaseModel 
+{
 
 }

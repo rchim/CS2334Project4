@@ -2,7 +2,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 
 /**
- * Project 4, CS 2334, Section 010, May 8, 2017
+ * Project 4, CS 2334, Section 010, May 4, 2017
  * <P>
  * A <code>NewspaperStory</code> is composed of the date the story was
  * published, the name of the newspaper where the story was published, the

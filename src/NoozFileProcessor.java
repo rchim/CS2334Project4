@@ -7,7 +7,7 @@ import java.time.LocalDate;
 import java.util.Map;
 
 /**
- * Project 3, CS 2334, Section 010, March 8, 2017
+ * Project 4, CS 2334, Section 010, May 4, 2017
  * <P>
  * This class provides helper methods to read a Nooz-style data file and turn it
  * into <code>NewsStory</code> and <code>NewsMaker</code> objects.

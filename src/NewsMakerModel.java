@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
- * Project 4, CS 2334, Section 010, May 8, 2017
+ * Project 4, CS 2334, Section 010, May 4, 2017
  * <P>
  * A <code>NewsMakerModel</code> respresents a news maker, who is the subject
  * of a <code>NewsStory</code>. A news maker may be a person or an organization.
@@ -198,32 +198,36 @@ class NewsMakerModel implements Comparable<NewsMakerModel>, Serializable
 	}
 	
 	/**
-	 * TODO
+	 * Method to register an action event listener.
 	 * 
-	 * @param l
+	 * @param l The action listener to add.
 	 */
 	public synchronized void addActionListener(ActionListener l)
 	{			
-		// TODO
+		actionListenerList.add(l);
 	}
 	
 	/**
-	 * TODO
+	 * Method to remove an action event listener.
 	 * 
 	 * @param l
+	 *            The action listener to remove.
 	 */
 	public synchronized void removeActionListener(ActionListener l)
 	{			
-		// TODO
+		actionListenerList.remove(l);
 	}
 	
 	/**
-	 * TODO
+	 * Informs all registered action listeners of a change to the model data.
 	 * 
-	 * @param e TODO
+	 * @param e The event of which to inform the action listeners.
 	 */
 	private void processEvent(ActionEvent e) 
 	{
-		// TODO
+		for(ActionListener l : actionListenerList)
+		{
+			l.actionPerformed(e);
+		}		
 	}
 }

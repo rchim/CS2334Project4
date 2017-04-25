@@ -1,5 +1,5 @@
 /**
- * Project 4, CS 2334, Section 010, May 8, 2017
+ * Project 4, CS 2334, Section 010, May 4, 2017
  * <P>
  * This enumerated type specifies the part of the day when something happened,
  * with the possibilities being morning, afternoon, evening, or late night.

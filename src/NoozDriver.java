@@ -1,5 +1,5 @@
 /**
- * Project 4, CS 2334, Section 010, May 8, 2017
+ * Project 4, CS 2334, Section 010, May 4, 2017
  * <P>
  * NoozDriver is the driver class for Nooz, a simple newspaper story data
  * system. Its main method links up the controller, selection view, and

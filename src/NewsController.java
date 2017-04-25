@@ -8,7 +8,7 @@ import javax.swing.JMenuItem;
 import java.util.List;
 
 /**
- * Project 4, CS 2334, Section 010, May 8, 2017
+ * Project 4, CS 2334, Section 010, May 4, 2017
  * <P>
  * The controller listens for user interactions with the views. In response, it
  * opens new views and/or updates the model.
