@@ -11,7 +11,9 @@ import java.util.ArrayList;
  * A news maker consists of a name and a collection of news stories that feature
  * that news maker. There is a special <code>NewsMakerModel</code> with the name
  * "None" that is used for news stories that don't have at least two named news
- * makers.
+ * makers. When this model's data is altered by a method call, it informs all
+ * the registered action listeners by calling their
+ * {@link ActionListener#actionPerformed} methods with a relevant event.
  * </P>
  * <P>
  * This class was originally written by Dr. Hougen (as NewsMaker). It was
@@ -47,7 +49,7 @@ class NewsMakerModel implements Comparable<NewsMakerModel>, Serializable
 	 * construct the special news maker "None," the no-arg constructor gives us
 	 * this news maker.
 	 */
-	NewsMakerModel() 
+	public NewsMakerModel() 
 	{
 		name = "None";
 	}
@@ -115,6 +117,9 @@ class NewsMakerModel implements Comparable<NewsMakerModel>, Serializable
 	{
 		// TODO Verify that story is about this NewsMaker (Eventually)
 		newsStories.add(newsStory);
+		
+		processEvent(new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
+				"add news story"));
 	}
 	
 	/**
@@ -125,6 +130,9 @@ class NewsMakerModel implements Comparable<NewsMakerModel>, Serializable
 	public void setName(String name)
 	{
 		this.name = name;
+		
+		processEvent(new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
+				"set name"));
 	}
 	
 	/**
@@ -135,6 +143,9 @@ class NewsMakerModel implements Comparable<NewsMakerModel>, Serializable
 	public void setNewsStoryListModel(NewsStoryListModel newsStoryListModel)
 	{
 		newsStories = newsStoryListModel;
+		
+		processEvent(new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
+				"set news story list"));
 	}	
 	
 	/**
@@ -147,6 +158,9 @@ class NewsMakerModel implements Comparable<NewsMakerModel>, Serializable
 	public void removeNewsStory(NewsStory newsStory)
 	{
 		newsStories.remove(newsStory);
+		
+		processEvent(new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
+				"remove news story"));
 	}
 	
 	/**
@@ -210,8 +224,7 @@ class NewsMakerModel implements Comparable<NewsMakerModel>, Serializable
 	/**
 	 * Method to remove an action event listener.
 	 * 
-	 * @param l
-	 *            The action listener to remove.
+	 * @param l The action listener to remove.
 	 */
 	public synchronized void removeActionListener(ActionListener l)
 	{			

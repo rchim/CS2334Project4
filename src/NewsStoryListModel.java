@@ -180,14 +180,14 @@ class NewsStoryListModel implements Serializable
 	 * Sets the news stories in this list to match the news stories in the given
 	 * array.
 	 * 
-	 * @param newsStoryModelArray The array of news stories that this list will
+	 * @param newsStoryArray The array of news stories that this list will
 	 * be made to match.
 	 */
-	public void setNewsStoriesFromArray(NewsStory[] newsStoryModelArray)
+	public void setNewsStoriesFromArray(NewsStory[] newsStoryArray)
 	{
 		newsStories.clear();
 		
-		for(NewsStory newsStory : newsStoryModelArray)
+		for(NewsStory newsStory : newsStoryArray)
 		{
 			newsStories.addElement(newsStory);
 		}
