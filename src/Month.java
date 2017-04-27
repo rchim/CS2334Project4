@@ -62,7 +62,7 @@ public enum Month
 	 * @param integer An int from 1 to 12.
 	 * @return The month constant that corresponds to the given int.
 	 */
-	public Month fromInt(int integer)
+	public static Month fromInt(int integer)
 	{
 		switch (integer) 
 		{
