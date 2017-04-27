@@ -34,37 +34,37 @@ public class NewsController
 	private SelectionView selectionView;
 	
 	/**
-	 * TODO
+	 * The edit news maker view for the Nooz application.
 	 */
 	private EditNewsMakerView editNewsMakerView;
 	
 	/**
-	 * TODO
+	 * The view dialog for the Nooz application.
 	 */
 	private JDialog viewDialog;
 	
 	/**
-	 * TODO
+	 * The add edit news story view for the Nooz application.
 	 */
 	private AddEditNewsStoryView addEditNewsStoryView;
 	
 	/**
-	 * TODO
+	 * <code>NewsStory</code> object associated with edited story.
 	 */
 	private NewsStory editedNewsStory;
 	
 	/**
-	 * TODO
+	 * Media type selection view for the Nooz application.
 	 */
 	private MediaTypeSelectionView mediaTypeSelectionView;
 	
 	/**
-	 * TODO
+	 * List of <code>NewsMedia</code> that are selected.
 	 */
 	private List<NewsMedia> selectedMediaTypes;
 	
 	/**
-	 * TODO
+	 * Public constructor for the news controller.
 	 */
 	public NewsController()
 	{
@@ -72,13 +72,14 @@ public class NewsController
 	}
 	
 	/**
-	 * TODO
+	 * Setter method for the <code>NewsDataBaseModel</code>
 	 * 
-	 * @param newsDataBaseModel TODO
+	 * @param newsDataBaseModel
+	 *   <code>MewsDataBaseModel</code> to be assocaited with the controller
 	 */
 	public void setNewsDataBaseModel(NewsDataBaseModel newsDataBaseModel)
 	{
-		// TODO
+		this.newsDataBaseModel = newsDataBaseModel;
 	}
 	
 	/**
@@ -120,7 +121,7 @@ public class NewsController
 	}	
 	
 	/**
-	 * TODO
+	 * Save the news data into a file
 	 */
 	private void saveNewsData()
 	{
@@ -128,7 +129,7 @@ public class NewsController
 	}	
 	
 	/**
-	 * TODO
+	 * Import news data from a binary file
 	 */
 	private void importNoozStories()
 	{
@@ -136,7 +137,7 @@ public class NewsController
 	}	
 	
 	/**
-	 * TODO
+	 * Export news data into a binary file
 	 */
 	private void exportNoozStories()
 	{
@@ -144,7 +145,7 @@ public class NewsController
 	}
 	
 	/**
-	 * TODO
+	 * Add a <code>NewsMaker</code> into the list.
 	 */
 	private void addNewsMaker()
 	{
@@ -152,7 +153,7 @@ public class NewsController
 	}
 	
 	/**
-	 * TODO
+	 * Edit several <code>NewsMaker</code>s
 	 */
 	private void editNewsMakers()
 	{
@@ -160,7 +161,7 @@ public class NewsController
 	}
 	
 	/**
-	 * TODO
+	 * Delete <code>NewsMaker</code>s
 	 */
 	private void deleteNewsMakers()
 	{
@@ -168,7 +169,7 @@ public class NewsController
 	}
 	
 	/**
-	 * TODO
+	 * Delete <b><i>all</i></b> <code>NewsMaker</code>s
 	 */
 	private void deleteNewsMakerList()
 	{
@@ -176,7 +177,7 @@ public class NewsController
 	}
 	
 	/**
-	 * TODO
+	 * Add in a new <code>NewsStory</code>
 	 */
 	private void addNewsStory()
 	{
@@ -184,7 +185,7 @@ public class NewsController
 	}
 	
 	/**
-	 * TODO
+	 * Edit a <code>NewsStory</code>
 	 */
 	private void editNewsStory()
 	{
@@ -192,7 +193,7 @@ public class NewsController
 	}
 	
 	/**
-	 * TODO
+	 * Sort the <code>NewsStory</code> based on criterion
 	 */
 	private void sortNewsStories()
 	{
@@ -200,7 +201,7 @@ public class NewsController
 	}
 	
 	/**
-	 * TODO
+	 * Delete several <code>NewsStory</code>s
 	 */
 	private void deleteNewsStories()
 	{
@@ -208,7 +209,7 @@ public class NewsController
 	}
 	
 	/**
-	 * TODO
+	 * Delete <b><i>ALL</i></b> <code>NewsStory</code>s
 	 */
 	private void deleteAllNewsStories()
 	{
@@ -216,7 +217,7 @@ public class NewsController
 	}
 	
 	/**
-	 * TODO
+	 * Display the pie chart objects to the user.
 	 */
 	private void displayPieCharts()
 	{
@@ -224,7 +225,7 @@ public class NewsController
 	}
 	
 	/**
-	 * TODO
+	 * Display all the text views to the user.
 	 */
 	private void displayTextViews()
 	{
