@@ -1,68 +1,75 @@
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+
+import javax.swing.DefaultListModel;
 
 /**
  * Project 4, CS 2334, Section 010, May 4, 2017
  * <P>
- * A <code>NewsMakerList</code> is a list of <code>NewsMaker</code> objects.
- * Each <code>NewsMaker</code> in the list must have a unique name.
+ * A <code>NewsMakerListModel</code> represents a list of news makers.
+ * Each news maker in the list must have a unique name.
  * </P>
  * <P>
- * Note that this class now keeps track of whether its list has been sorted, to
- * ensure that a binary search will work, if used.
+ * This class was written by Dr. Hougen (as NewsMakerList). It was modified by
+ * Ryan Chimienti (ID 113392576).
  * </P>
  * 
  * @author Dean Hougen
- * @version 3.0
- *
+ * @author Ryan Chimienti
  */
-class NewsMakerListModel implements Serializable {
+class NewsMakerListModel implements Serializable 
+{
 	/**
-	 * This is the first serializable version of NewsMakerList, so we select a
-	 * serialVersionUID of 1L.
+	 * This is the first serializable version of NewsMakerListModel, so we
+	 * select a serialVersionUID of 1L.
 	 */
 	private static final long serialVersionUID = 1L;
 
 	/** The list of news makers. */
-	private List<NewsMaker> newsMakers;
-
-	/** A flag to indicate whether the list is sorted. */
-	private boolean sorted;
+	private DefaultListModel<NewsMakerModel> newsMakerDefaultListModel;
 
 	/**
 	 * The no-argument constructor initializes the list to be an empty
-	 * <code>ArrayList</code> of <code>NewsMaker</code> objects.
+	 * <code>DefaultListModel</code> of <code>NewsMakerModel</code> objects.
 	 */
-	NewsMakerListModel() {
-		this.newsMakers = new ArrayList<NewsMaker>();
-		this.sorted = false;
+	public NewsMakerListModel() 
+	{
+		newsMakerDefaultListModel = new DefaultListModel<NewsMakerModel>();
 	}
 
 	/**
-	 * The mutator for adding news makers to the list.
-	 * <P>
-	 * By using our own class with its own <code>add</code> method, rather than
-	 * directly using the <code>add</code> method of <code>ArrayList</code>, we
-	 * can ensure that we don't add multiple <code>NewsMaker</code> objects with
-	 * the same name to our list (thereby keeping the names unique).
-	 * </P>
+	 * Initializes this <code>NewsMakerListModel</code> to be a shallow copy
+	 * of the supplied newsMakerListModel.
 	 * 
-	 * @param newsMaker
-	 *            The news maker to add.
-	 * @throws IllegalArgumentException
-	 *             If the news maker to add is already in the list.
+	 * @param newsMakerListModel The newsMakerListModel to copy.
 	 */
-	public void add(NewsMaker newsMaker) {
-		if (!this.newsMakers.contains(newsMaker)) {
-			this.newsMakers.add(newsMaker);
-			this.sorted = false;
-		} else {
-			throw new IllegalArgumentException("NewsMaker " + newsMaker.getName() + " already in list.");
-		}
+	public NewsMakerListModel(NewsMakerListModel newsMakerListModel) 
+	{
+		newsMakerDefaultListModel = newsMakerListModel.getNewsMakers();
 	}
-
+	
+	/**
+	 * Returns true if the list contains no news makers. Returns false
+	 * otherwise.
+	 * 
+	 * @return True if the list contains no news makers; false otherwise.
+	 */
+	public boolean isEmpty()
+	{
+		return newsMakerDefaultListModel.isEmpty();
+	}
+	
+	/**
+	 * Returns the number of news makers in the list as an int.
+	 * 
+	 * @return The number of news makers in the list.
+	 */
+	public int size()
+	{
+		return newsMakerDefaultListModel.size();
+	}
+	
 	/**
 	 * An accessor method to test whether the list already contains a news
 	 * maker.
@@ -71,91 +78,239 @@ class NewsMakerListModel implements Serializable {
 	 * <code>ArrayList</code>.
 	 * </P>
 	 * 
-	 * @param newsMaker
+	 * @param newsMakerModel
 	 *            The news maker to check for in the list.
-	 * @return The boolean value true if the news maker is in the list, false
+	 * @return The boolean value true if the news maker is in the list; false
 	 *         otherwise.
 	 */
-	public boolean contains(NewsMaker newsMaker) {
-		return this.newsMakers.contains(newsMaker);
+	public boolean contains(NewsMakerModel newsMakerModel) 
+	{
+		return this.newsMakerDefaultListModel.contains(newsMakerModel);
 	}
 
 	/**
 	 * An accessor method to get a news maker from the list.
-	 * <P>
-	 * Note that <code>NewsMaker</code> objects are mutable, so this really
-	 * should return a copy of the news maker instead. However, we haven't
-	 * studied that yet, so returning the news maker itself is acceptable for
-	 * now.
-	 * </P>
 	 * 
-	 * @param newsMaker
+	 * @param newsMakerModel
 	 *            The news maker to get from the list.
 	 * @return The news maker found, if any. Otherwise, null.
 	 */
-	public NewsMaker get(NewsMaker newsMaker) {
-		int index = newsMakers.indexOf(newsMaker);
-		if (index >= 0) {
+	public NewsMakerModel get(NewsMakerModel newsMakerModel) 
+	{
+		int index = newsMakerDefaultListModel.indexOf(newsMakerModel);
+		if(index >= 0) 
+		{
 			// TODO Have it return a copy instead (Eventually)
-			return this.newsMakers.get(index);
-		} else {
+			return this.newsMakerDefaultListModel.get(index);
+		} 
+		else
+		{
 			return null;
 		}
 	}
-
+	
 	/**
-	 * This method should be able to use a binary search to find the news maker
-	 * but relies on the list being sorted first. It therefore checks the
-	 * <code>sorted</code> flag and prints an error to the standard error if it
-	 * was called with an unsorted list. It will conduct a linear search if a
-	 * binary search is not possible.
+	 * This method searches the list and returns the news maker with the 
+	 * specified name.
 	 * 
 	 * @param newsMakerName
 	 *            The exact name for which to search.
 	 * @return The news maker found or null if none found.
 	 */
-	public NewsMaker getExactMatch(String newsMakerName) {
-		if (sorted) {
-			int index = Collections.binarySearch(newsMakers, new NewsMaker(newsMakerName));
-			if (index >= 0) {
-				// TODO Have it return a copy instead (Eventually)
-				return this.newsMakers.get(index);
-			} else {
-				return null;
-			}
-		}
-		System.err.println("Attempted to conduct binary search on unsorted list.");
-		for (NewsMaker newsMaker : newsMakers) {
-			if (newsMaker.getName().equals(newsMakerName)) {
-				return newsMaker;
-			}
+	public NewsMakerModel getExactMatch(String newsMakerName) 
+	{		
+		// TODO Wait for JavaDocs. This will probably need to be a binary
+		// search again.
+		
+		NewsMakerModel currentNewsMaker;		
+		for(int i = 0; i < newsMakerDefaultListModel.size(); i++) 
+		{
+			currentNewsMaker = newsMakerDefaultListModel.get(i);
+			
+			if(currentNewsMaker.getName().equals(newsMakerName))
+				return currentNewsMaker;			
 		}
 		return null;
 	}
-
+	
 	/**
-	 * This method searches for partial matches in the list, and returns the
-	 * first news maker that contains the search string specified.
+	 * This method returns the first news maker in the list whose name contains
+	 * the search string specified.
 	 * 
 	 * @param newsMakerName
-	 *            The string on which to search.
+	 *            The name part for which to search.
 	 * @return The news maker found or null if none found.
 	 */
-	public NewsMaker getPartialMatch(String newsMakerName) {
-		for (NewsMaker newsMaker : newsMakers) {
-			if (newsMaker.getName().contains(newsMakerName)) {
-				return newsMaker;
-			}
-		}
+	public NewsMakerModel getPartialMatch(String newsMakerName) 
+	{
+		NewsMakerModel currentNewsMaker;		
+		for(int i = 0; i < newsMakerDefaultListModel.size(); i++) 
+		{
+			currentNewsMaker = newsMakerDefaultListModel.get(i);
+			
+			if(currentNewsMaker.getName().contains(newsMakerName))
+				return currentNewsMaker;			
+		}		
 		return null;
 	}
-
+	
 	/**
-	 * This method sorts the list using a stable sort. It also sets the
-	 * <code>sorted</code> flag to <code>true</code>.
+	 * Returns the DefaultListModel object that stores the news makers for this
+	 * NewsMakerListModel.
+	 * 
+	 * @return The DefaultListModel containing the news makers.
 	 */
-	public void sort() {
-		Collections.sort(newsMakers);
-		this.sorted = true;
+	public DefaultListModel<NewsMakerModel> getNewsMakers() 
+	{
+		return newsMakerDefaultListModel;		
+	}
+	
+	/**
+	 * Gets the news maker at the specified index in the list.
+	 * 
+	 * @param index
+	 *            The index of the news maker to get from the list.
+	 * @return The news maker found.
+	 */
+	public NewsMakerModel get(int index) 
+	{
+		return this.newsMakerDefaultListModel.get(index);		
+	}
+	
+	/**
+	 * Returns the names of the news makers in the list as an array of
+	 * <code>String</code>s.
+	 * 
+	 * @return The names of the news makers in the list as an array of
+	 * <code>String</code>s.
+	 */
+	public String[] getNewsMakerNames() 
+	{
+		int numberOfNewsMakers = newsMakerDefaultListModel.size();
+		String[] newsMakerNames = new String[numberOfNewsMakers];
+		
+		for(int i = 0; i < numberOfNewsMakers; i++)
+		{
+			newsMakerNames[i] = this.get(i).getName();
+		}
+		
+		return newsMakerNames;
+	}
+	
+	/**
+	 * The mutator for adding news makers to the list.
+	 * <P>
+	 * By using our own class with its own <code>add</code> method, rather than
+	 * directly using the <code>add</code> method of
+	 * <code>DefaultListModel</code>, we can ensure that we don't add multiple
+	 * <code>NewsMaker</code> objects with the same name to our list (thereby
+	 * keeping the names unique).
+	 * </P>
+	 * 
+	 * @param newsMakerModel
+	 *            The news maker to add.
+	 * @throws IllegalArgumentException
+	 *             If the news maker to add is already in the list.
+	 */
+	public void add(NewsMakerModel newsMakerModel) 
+	{
+		if (this.contains(newsMakerModel)) 
+		{
+			throw new IllegalArgumentException("NewsMaker " 
+					+ newsMakerModel.getName() + " already in list."); 
+		}
+		else 
+		{
+			newsMakerDefaultListModel.addElement(newsMakerModel);
+		}
+	}	
+	
+	/**
+	 * Replaces a news maker in the list. The replacement news maker resides at
+	 * the former index of the replaced news maker. If there is no news maker
+	 * with the same name as the supplied news maker (i.e. no news maker to
+	 * replace), the supplied news maker is simply appended to the end of the
+	 * list.
+	 * 
+	 * @param newsMakerModel The replacement news maker.
+	 */
+	public void replace(NewsMakerModel newsMakerModel)
+	{
+		int index = newsMakerDefaultListModel.indexOf(newsMakerModel);
+		
+		// If a news maker was found with the same name as the replacement news
+		// maker, replace him. 
+		if(index != -1) 
+		{
+			newsMakerDefaultListModel.removeElementAt(index);
+			newsMakerDefaultListModel.add(index, newsMakerModel);
+		}
+		// Otherwise, append the replacement news maker to the end of the list. 
+		else
+		{
+			newsMakerDefaultListModel.addElement(newsMakerModel);
+		}
+	}
+	
+	/**
+	 * Removes a news maker from the list.
+	 * 
+	 * @param newsMakerModel The news maker to remove from the list.
+	 */
+	public void remove(NewsMakerModel newsMakerModel)
+	{
+		newsMakerDefaultListModel.removeElement(newsMakerModel);
+	}
+	
+	/**
+	 * TODO
+	 * 
+	 * @param newsMakers TODO
+	 */
+	public void removeListOfNewsMakers(
+			DefaultListModel<NewsMakerModel> newsMakers)
+	{
+		// TODO
+	}
+	
+	/**
+	 * Removes all the news makers from the list.
+	 */
+	public void removeAllNewsMakers()
+	{
+		newsMakerDefaultListModel.clear();
+	}
+	
+	/**
+	 * TODO
+	 * 
+	 * @param newsMakerListModel TODO
+	 */
+	public void setNewsMakersFromNewsMakerList(
+			NewsMakerListModel newsMakerListModel)
+	{
+		// TODO
+	}
+	
+	/**
+	 * Sorts the list of news makers by name using a stable sort.
+	 */
+	public void sort() 
+	{
+		// Copy the news makers into an ArrayList for sorting by
+		// Collections.sort().
+		ArrayList<NewsMakerModel> tempListForSorting 
+				= Collections.list(newsMakerDefaultListModel.elements());
+		
+		Collections.sort(tempListForSorting);
+		
+		// Empty the news maker list and refill it with the news makers from
+		// the properly sorted ArrayList. This results in a sorted list as
+		// desired.
+		newsMakerDefaultListModel.clear();
+		for(int i = 0; i < tempListForSorting.size(); i++)
+		{
+			newsMakerDefaultListModel.addElement(tempListForSorting.get(i));
+		}
 	}
 }
