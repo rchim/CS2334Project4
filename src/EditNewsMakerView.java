@@ -127,10 +127,13 @@ public class EditNewsMakerView extends JPanel implements ActionListener
 		
 		// get news stories
 		DefaultListModel<NewsStory> stories = newsMakerModel.getNewsStoryListModel().getNewsStories();
+		List<NewsMedia> newsMediaList = new ArrayList<NewsMedia>();
+
 		for (int i = 0 ; i < stories.size(); ++i){
 			NewsStory story = stories.get(i);
+			//determine the type of story
+			
 			// pass story object to UserInterface
-			// TODO: figure out usage for newsMediaList in UserInterface
 			List<NewsMedia> newsMediaList = new ArrayList<NewsMedia>();
 			String current = UserInterface.convertToOuputFormat(story, newsMediaList);
 			//add the string into the JList
