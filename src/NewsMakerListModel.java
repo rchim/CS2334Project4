@@ -263,14 +263,20 @@ class NewsMakerListModel implements Serializable
 	}
 	
 	/**
-	 * TODO
+	 * Remove several <code>NewsMakerModel</code>s, all contained
+	 * within the passed list.
 	 * 
-	 * @param newsMakers TODO
+	 * @param newsMakers
+	 *   <code>DefaultListModel</code> containing <code>NewsMakerModel</code>s
+	 *   to be deleted from the base
+	 *   
 	 */
 	public void removeListOfNewsMakers(
 			DefaultListModel<NewsMakerModel> newsMakers)
 	{
-		// TODO
+		for(int i = 0 ; i < newsMakers.size(); ++i){ // iterate through
+			remove(newsMakers.get(i));
+		}
 	}
 	
 	/**
