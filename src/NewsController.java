@@ -150,7 +150,35 @@ public class NewsController
 	 */
 	private void saveNewsData()
 	{
-		// TODO
+		
+//JFileChooser fileChooser = new JFileChooser();
+//		
+//		int fileChooserReturnVal
+//				= fileChooser.showDialog(selectionView, "Load");
+//
+//		if(fileChooserReturnVal == JFileChooser.APPROVE_OPTION)
+//		{
+//			System.out.println("Loading " + fileChooser.getSelectedFile());
+//			
+//			try
+//			{
+//				FileInputStream fis 
+//						= new FileInputStream(fileChooser.getSelectedFile());
+//				ObjectInputStream ois = new ObjectInputStream(fis);
+//				NewsDataBaseModel loadedDataBaseModel 
+//						= (NewsDataBaseModel) (ois.readObject());
+//				selectionView.setNewsDataBaseModel(loadedDataBaseModel);
+//			}
+//			catch (IOException e) 
+//			{
+//				e.printStackTrace();
+//			} 
+//			catch (ClassNotFoundException e) 
+//			{
+//				e.printStackTrace();
+//			}			
+//		}
+//	}	// TODO
 	}	
 	
 	/**
@@ -340,7 +368,15 @@ public class NewsController
 	 */
 	private void editNewsMakers()
 	{
-		// TODO
+		// for the newsMaker to be edited, read the field
+		// and update the name
+		
+		// get the current 
+		
+		// get the new name
+		String newName = editNewsMakerView.jtfName;
+		
+		
 	}
 	
 	/**
@@ -348,7 +384,17 @@ public class NewsController
 	 */
 	private void deleteNewsMakers()
 	{
-		// TODO
+		// create sub-list from selected, and delete only those
+		
+		DefaultListModel<NewsMakerModel> removedNewsMakers = new DefaultListModel<NewsMakerModel>();
+		// fill from selected indices what to remove
+		int[] selected = editNewsMakerView.getSelectedNewsStoryIndices();
+		for(int i = 0 ; i < selected.length; ++i){
+			// loop through the selected, pull out each newsmaker
+			NewsMakerModel news = newsDataBaseModel.getNewsMakerListModel().get(selected[i]);
+			removedNewsMakers.addElement(news);
+		}
+		newsDataBaseModel.getNewsMakerListModel().removeListOfNewsMakers(removedNewsMakers);
 	}
 	
 	/**
@@ -356,7 +402,7 @@ public class NewsController
 	 */
 	private void deleteNewsMakerList()
 	{
-		// TODO
+		newsDataBaseModel.getNewsMakerListModel().removeAllNewsMakers();
 	}
 	
 	/**
@@ -364,7 +410,8 @@ public class NewsController
 	 */
 	private void addNewsStory()
 	{
-		// TODO
+		// code for add news story, from the addEditNewsStoryView
+		
 	}
 	
 	/**
@@ -614,8 +661,12 @@ public class NewsController
 		 */
 		@Override
 		public void actionPerformed(ActionEvent actionEvent) {
-			// TODO Auto-generated method stub
-			
+			// How do we ever get here? There is no button for this!
+			String clickedItemText = ((JButton)(actionEvent.getSource())).getText();
+			if("Edit NewsMaker".equals(clickedItemText)){
+				// change the newsmaker
+				editNewsMakers(); //??? unsure
+			}
 		}
 		
 	}
@@ -641,7 +692,13 @@ public class NewsController
 		public void actionPerformed(ActionEvent actionEvent) {
 			// In relevant stories, set the News Maker to "none" instead
 			
-			// not sure what to do here -- what view is this found in?
+			// check for the proper button name
+			String clickedItemText = ((JButton)(actionEvent.getSource())).getText();
+			// determine correct type
+			if ("Remove From Story".equals(clickedItemText)){
+				// call deleteNewsMaker
+				deleteNewsMakers();
+			}
 		}
 		
 	}

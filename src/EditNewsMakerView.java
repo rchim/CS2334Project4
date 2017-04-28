@@ -26,10 +26,9 @@ public class EditNewsMakerView extends JPanel implements ActionListener
 	 */
 	private static final long serialVersionUID = -1852894847177820330L;
 	
-	/** <code>NewsMakerModel</code> (note: UML says this is package-protected,
-	 * but I disagree. Private it is. 
+	/** <code>NewsMakerModel</code> 
 	 */
-	private NewsMakerModel newsMakerModel;
+	NewsMakerModel newsMakerModel;
 	
 	/** <code>NewsDataBaseModel</code> **/
 	private NewsDataBaseModel newsDataBaseModel;
