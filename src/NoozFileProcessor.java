@@ -10,30 +10,37 @@ import java.util.Map;
  * Project 4, CS 2334, Section 010, May 4, 2017
  * <P>
  * This class provides helper methods to read a Nooz-style data file and turn it
- * into <code>NewsStory</code> and <code>NewsMaker</code> objects.
+ * into a <code>NewsDataBaseModel</code> object. It also provides a method to
+ * write data to a text file.
  * </P>
  * <P>
- * Note that the field <code>newsMakers</code> and all methods in this class are
- * static because we don't need to make several <code>NoozFileProcessor</code>
- * objects and have them maintain their own lists of news makers. Instead, we
- * simply need a collection of useful methods to create a list and return it to
- * the calling method that will keep track of it.
+ * This class was originally written by Dr. Hougen. It was modified by Ryan
+ * Chimienti (ID 113392576).
  * </P>
  * 
  * @author Dean Hougen
- * @version 3.0
- * 
+ * @author Ryan Chimienti 
  */
-class NoozFileProcessor {
+class NoozFileProcessor 
+{
 	/** The list of news makers. */
-	private static NewsMakerList newsMakers = new NewsMakerList();
-
+	private static NewsMakerListModel newsMakers;
+	
+	/** The list of news stories. */
+	private static NewsStoryListModel newsStories;
+	
+	/** 
+	 * An overarching model comprising a list of news makers and a list of news
+	 * stories.
+	 */
+	private static NewsDataBaseModel newsDataBaseModel;
+	
 	/**
 	 * The primary method for reading the Nooz-style data file.
 	 * <P>
 	 * It opens the file, reads through it line by line until it reaches the
 	 * end, and closes the file. Each line is passed to <code>processLine</code>
-	 * to parse and turn into data that is actually added to the list.
+	 * to parse and turn into data that is actually added to the lists.
 	 * </P>
 	 * <P>
 	 * In addition to the name of the Nooz-style file to read, this method takes
@@ -45,28 +52,23 @@ class NoozFileProcessor {
 	 * that while all of these maps use numerals as keys, these are represented
 	 * as <code>String</code> objects rather than <code>Integer</code> objects.
 	 * </P>
-	 * <P>
-	 * Note that this program doesn't attempt to deal with I/O errors. This is
-	 * allowable at this point to keep this project relatively simple and
-	 * because we haven't covered this topic yet. However, this is something to
-	 * be refined in the future.
-	 * </P>
 	 * 
-	 * @param fileName
-	 *            The name of the Nooz style data file to read.
-	 * @param sourceMap
-	 *            The map from source code to source name.
-	 * @param topicMap
-	 *            The map from topic code to topic description.
-	 * @param subjectMap
-	 *            The map from subject code to subject description.
-	 * @return The list of news makers created.
-	 * @throws IOException
-	 *             If there is an I/O problem reading the data file.
+	 * @param fileName The name of the Nooz style data file to read.
+	 * @param sourceMap The map from source code to source name.
+	 * @param topicMap The map from topic code to topic description.
+	 * @param subjectMap The map from subject code to subject description.
+	 * @return A data model based on the supplied news story file and maps.
+	 * @throws IOException If there is an I/O problem reading the data file.
 	 */
-	public static NewsMakerList readNoozFile(String fileName, Map<String, String> sourceMap,
-			Map<String, String> topicMap, Map<String, String> subjectMap) throws IOException {
-		// TODO Handle possible I/O errors (Eventually)
+	public static NewsDataBaseModel readNoozFile(String fileName,
+			Map<String, String> sourceMap, Map<String, String> topicMap,
+			Map<String, String> subjectMap) throws IOException 
+	{
+		// Clear the news maker and news story lists.
+		newsMakers = new NewsMakerListModel();
+		newsStories = new NewsStoryListModel();		
+		
+		// Build the news maker and news story lists.
 		FileReader fr = new FileReader(fileName);
 		BufferedReader br = new BufferedReader(fr);
 		String nextLine = br.readLine(); // First line is header info. Ignore.
@@ -76,23 +78,31 @@ class NoozFileProcessor {
 			nextLine = br.readLine();
 		}
 		br.close();
+		
+		// Build the overarching model.
+		newsDataBaseModel = new NewsDataBaseModel(newsMakers, newsStories);
+		newsDataBaseModel.setNewsSourceMap(sourceMap);
+		newsDataBaseModel.setNewsSourceMap(topicMap);
+		newsDataBaseModel.setNewsSourceMap(subjectMap);
 
-		return newsMakers;
+		return newsDataBaseModel;
 	}
 
 	/**
 	 * The method for writing a list of news stories to a data file as text. The
 	 * entire list is passed in as a single <code>String</code>.
 	 * 
-	 * @param outputFileName
+	 * @param fileName
 	 *            The name of the file to which to write the stories.
 	 * @param listOfStories
 	 *            The stories to write.
 	 * @throws IOException
 	 *             If there is an I/O problem writing the file.
 	 */
-	public static void writeNewsStoriesFile(String outputFileName, String listOfStories) throws IOException {
-		FileWriter outfile = new FileWriter(outputFileName);
+	public static void writeNewsStoriesFile(String fileName,
+			String listOfStories) throws IOException 
+	{
+		FileWriter outfile = new FileWriter(fileName);
 		BufferedWriter bw = new BufferedWriter(outfile);
 		bw.write(listOfStories);
 		bw.newLine();
@@ -109,10 +119,6 @@ class NoozFileProcessor {
 	 * together into a news story of the proper type and two news makers, and
 	 * adds these to lists of news stories and news makers, respectively.
 	 * </P>
-	 * <P>
-	 * Note that some helper methods from Nooz 2.0 have been eliminated because
-	 * the maps do so much of the work for us.
-	 * </P>
 	 * 
 	 * @param line
 	 *            The line to process.
@@ -123,8 +129,9 @@ class NoozFileProcessor {
 	 * @param subjectMap
 	 *            The map from subject code to subject description.
 	 */
-	private static void processLine(String line, Map<String, String> sourceMap, Map<String, String> topicMap,
-			Map<String, String> subjectMap) {
+	private static void processLine(String line, Map<String, String> sourceMap, 
+			Map<String, String> topicMap, Map<String, String> subjectMap) 
+	{
 		/* The parts the line created by splitting the line at each comma. */
 		String[] parts = line.split(",");
 
@@ -135,7 +142,8 @@ class NoozFileProcessor {
 		String sourceCode = parts[1];
 		String source = sourceMap.get(sourceCode);
 		if (source == null) {
-			System.err.println("No matching source map entry for " + sourceCode + ". Skipping line.");
+			System.err.println("No matching source map entry for " + sourceCode
+					+ ". Skipping line.");
 			return;
 		}
 
@@ -145,14 +153,16 @@ class NoozFileProcessor {
 		/* The subject from part three of the line. */
 		String subject = subjectMap.get(parts[3]);
 		if (subject == null) {
-			System.err.println("No matching subject map entry for " + parts[3] + ". Skipping line.");
+			System.err.println("No matching subject map entry for " + parts[3] 
+					+ ". Skipping line.");
 			return;
 		}
 
 		/* The topic from part four of the line. */
 		String topic = topicMap.get(parts[4]);
 		if (topic == null) {
-			System.err.println("No matching topic map entry for " + parts[4] + ". Skipping line.");
+			System.err.println("No matching topic map entry for " + parts[4] 
+					+ ". Skipping line.");
 			return;
 		}
 
@@ -177,7 +187,7 @@ class NoozFileProcessor {
 		 * The first news maker is constructed based on the first news maker
 		 * name read.
 		 */
-		NewsMaker newsMaker1 = new NewsMaker(newsMakerName1);
+		NewsMakerModel newsMaker1 = new NewsMakerModel(newsMakerName1);
 		// If the news maker is on the list, use the copy already on the list
 		if (newsMakers.contains(newsMaker1)) {
 			newsMaker1 = newsMakers.get(newsMaker1);
@@ -191,7 +201,7 @@ class NoozFileProcessor {
 		 * The second news maker is constructed based on the second news maker
 		 * name read.
 		 */
-		NewsMaker newsMaker2 = new NewsMaker(newsMakerName2);
+		NewsMakerModel newsMaker2 = new NewsMakerModel(newsMakerName2);
 		// If the news maker is on the list, use the copy already on the list
 		if (newsMakers.contains(newsMaker2)) {
 			newsMaker2 = newsMakers.get(newsMaker2);
@@ -208,32 +218,39 @@ class NoozFileProcessor {
 		try {
 			sourceNum = Integer.parseInt(sourceCode);
 		} catch (NumberFormatException e) {
-			throw new IllegalArgumentException("Non-integer as source code: " + sourceCode);
+			throw new IllegalArgumentException("Non-integer as source code: "
+					+ sourceCode);
 		}
 
 		NewsStory newsStory = null;
 
 		// Below 200 is newspaper.
 		if (sourceNum < 200) {
-			newsStory = new NewspaperStory(date, source, wordCount, topic, subject, newsMaker1, newsMaker2);
+			newsStory = new NewspaperStory(date, source, wordCount, topic,
+					subject, newsMaker1, newsMaker2);
 		}
 		// Between 200 and 400 is online news.
 		else if (sourceNum < 400) {
 			// The part of day from the last field (only for TV news stories)
 			PartOfDay partOfDay = decodePartOfDay(parts[parts.length - 1]);
-			newsStory = new OnlineNewsStory(date, source, wordCount, topic, subject, partOfDay, newsMaker1, newsMaker2);
+			newsStory = new OnlineNewsStory(date, source, wordCount, topic, 
+					subject, partOfDay, newsMaker1, newsMaker2);
 		}
 		// Between 400 and 600 is TV news
 		else if (sourceNum < 600) {
 			// The part of day from the last field (only for TV news stories)
 			PartOfDay partOfDay = decodePartOfDay(parts[parts.length - 1]);
-			newsStory = new TVNewsStory(date, source, wordCount, topic, subject, partOfDay, newsMaker1, newsMaker2);
+			newsStory = new TVNewsStory(date, source, wordCount, topic, subject,
+					partOfDay, newsMaker1, newsMaker2);
 		}
 		// TODO: Check for invalid source num.
 
 		// The news story is added to each news maker
 		newsMaker1.addNewsStory(newsStory);
 		newsMaker2.addNewsStory(newsStory);
+		
+		// The news story is added to the list of news stories.
+		newsStories.add(newsStory);
 	}
 
 	/**
@@ -265,7 +282,8 @@ class NoozFileProcessor {
 		try {
 			year = Integer.parseInt(yearString);
 		} catch (NumberFormatException e) {
-			System.err.println("Wrong argument provided. Argument (" + year + ") is not an integer.");
+			System.err.println("Wrong argument provided. Argument (" + year 
+					+ ") is not an integer.");
 			return null;
 		}
 
@@ -274,7 +292,8 @@ class NoozFileProcessor {
 		try {
 			month = Integer.parseInt(monthString);
 		} catch (NumberFormatException e) {
-			System.err.println("Wrong argument provided. Argument (" + month + ") is not an integer.");
+			System.err.println("Wrong argument provided. Argument (" + month 
+					+ ") is not an integer.");
 			return null;
 		}
 
@@ -283,7 +302,8 @@ class NoozFileProcessor {
 		try {
 			dayOfMonth = Integer.parseInt(dayOfMonthString);
 		} catch (NumberFormatException e) {
-			System.err.println("Wrong argument provided. Argument (" + dayOfMonth + ") is not an integer.");
+			System.err.println("Wrong argument provided. Argument (" + dayOfMonth 
+					+ ") is not an integer.");
 			return null;
 		}
 
@@ -307,13 +327,15 @@ class NoozFileProcessor {
 	 *            The length as a String.
 	 * @return The length as an int.
 	 */
-	private static int decodeLength(String lengthString) {
+	private static int decodeLength(String lengthString) 
+	{
 		int length = 0;
 
 		try {
 			length = Integer.parseInt(lengthString);
 		} catch (NumberFormatException e) {
-			throw new IllegalArgumentException("Non-integer as length: " + lengthString);
+			throw new IllegalArgumentException("Non-integer as length: " 
+					+ lengthString);
 		}
 
 		return length;
@@ -351,7 +373,8 @@ class NoozFileProcessor {
 	 *            maker name contained a comma.
 	 * @return The decoded news maker name.
 	 */
-	private static String decodeNewsmakerName(String[] parts, int startingIndex) {
+	private static String decodeNewsmakerName(String[] parts, int startingIndex)
+	{
 		String nameString = "";
 
 		// Check for special code 99
@@ -393,7 +416,8 @@ class NoozFileProcessor {
 	 * @return The part of the day as one of the enumerated values of PartOfDay
 	 *         (or null for an invalid code).
 	 */
-	private static PartOfDay decodePartOfDay(String partOfDayCode) {
+	private static PartOfDay decodePartOfDay(String partOfDayCode) 
+	{
 		switch (partOfDayCode) {
 		case "1":
 			return PartOfDay.MORNING;
@@ -404,7 +428,8 @@ class NoozFileProcessor {
 		case "6":
 			return PartOfDay.LATE_NIGHT;
 		default:
-			throw new IllegalArgumentException("Invalid part of day code: " + partOfDayCode);
+			throw new IllegalArgumentException("Invalid part of day code: " 
+					+ partOfDayCode);
 		}
 	}
 }

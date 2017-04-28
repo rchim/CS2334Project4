@@ -199,16 +199,15 @@ class NewsMakerModel implements Comparable<NewsMakerModel>, Serializable
 	}
 	
 	/**
-	 * TODO
+	 * The overridden toString method returns the news maker's name as a
+	 * String.
 	 * 
-	 * @return TODO
+	 * @return The news maker's name as a String;
 	 */
 	@Override
 	public String toString() 
 	{
-		return null;
-		
-		// TODO
+		return name;
 	}
 	
 	/**
