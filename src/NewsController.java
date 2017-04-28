@@ -462,9 +462,27 @@ public class NewsController
 		
 		switch(type){
 		case TV:
-			news = new TVNewsStory();
+			news = new TVNewsStory(date,
+					source, length,
+					topic, subject,
+					pod, newsMaker1, newsMaker2);
+			break;
+		case ONLINE:
+			news = new OnlineNewsStory(date,
+					source, length,
+					topic, subject,
+					pod, newsMaker1, newsMaker2);
+			break;
+		case NEWSPAPER:
+			news = new NewspaperStory(date,
+					source, length,
+					topic, subject,
+					newsMaker1, newsMaker2);
 			break;
 		}
+		
+		// add news story
+		newsDataBaseModel.addNewsStory(news);
 		
 	}
 	
@@ -473,7 +491,73 @@ public class NewsController
 	 */
 	private void editNewsStory()
 	{
-		// TODO
+		// tuck the current story into a DefaultListModel
+		DefaultListModel<NewsStory> edited = new DefaultListModel<NewsStory>();
+		edited.addElement(editedNewsStory);
+		
+		// remove the story from the list
+		newsDataBaseModel.removeNewsStories(edited);
+		
+		// code for add news story, from the addEditNewsStoryView
+		
+		// get all of the fields!
+		String newsMakerName1 = (String) addEditNewsStoryView.jcbNewsStoryNewsMaker1.getSelectedItem();
+		NewsMakerModel newsMaker1 = newsDataBaseModel.getNewsMakerListModel().getExactMatch(newsMakerName1);
+		
+		String newsMakerName2 = (String) addEditNewsStoryView.jcbNewsStoryNewsMaker2.getSelectedItem();
+		NewsMakerModel newsMaker2 = newsDataBaseModel.getNewsMakerListModel().getExactMatch(newsMakerName2);
+		
+		PartOfDay pod = (PartOfDay) addEditNewsStoryView.jcbNewsStoryPartOfDay.getSelectedItem();
+		
+		String source = (String) addEditNewsStoryView.jcbNewsStorySource.getSelectedItem();
+		
+		int length = Integer.parseInt(addEditNewsStoryView.jtftfNewsStoryLength.getText());
+		
+		String topic = (String) addEditNewsStoryView.jcbNewsStoryTopic.getSelectedItem();
+		
+		String subject = (String) addEditNewsStoryView.jcbNewsStorySubject.getSelectedItem();
+		
+		// Date information
+		int day = (int) addEditNewsStoryView.jcbNewsStoryDay.getSelectedItem();
+		
+		Month month = (Month) addEditNewsStoryView.jcbNewsStoryMonth.getSelectedItem();
+		
+		int year = (int) addEditNewsStoryView.jcbNewsStoryYear.getSelectedItem();
+		
+		// Construct LocalDate object
+		LocalDate date = new LocalDate(year, month.toInt(), day);
+		
+		// determine the type of the story
+		
+		NewsMedia type = (NewsMedia) addEditNewsStoryView.jcbNewsStoryType.getSelectedItem();
+		
+		NewsStory news;
+		
+		switch(type){
+		case TV:
+			news = new TVNewsStory(date,
+					source, length,
+					topic, subject,
+					pod, newsMaker1, newsMaker2);
+			break;
+		case ONLINE:
+			news = new OnlineNewsStory(date,
+					source, length,
+					topic, subject,
+					pod, newsMaker1, newsMaker2);
+			break;
+		case NEWSPAPER:
+			news = new NewspaperStory(date,
+					source, length,
+					topic, subject,
+					newsMaker1, newsMaker2);
+			break;
+		}
+		
+		// add news story
+		newsDataBaseModel.addNewsStory(news);
+		
+		
 	}
 	
 	/**
@@ -481,7 +565,7 @@ public class NewsController
 	 */
 	private void sortNewsStories()
 	{
-		// TODO
+		// grab from the TextView the sortCriteria
 	}
 	
 	/**
@@ -489,7 +573,10 @@ public class NewsController
 	 */
 	private void deleteNewsStories()
 	{
-		// TODO
+		// delete the selected news stories
+		// start by determining which ones were selected in the view
+		
+		
 	}
 	
 	/**
@@ -497,7 +584,7 @@ public class NewsController
 	 */
 	private void deleteAllNewsStories()
 	{
-		// TODO
+		newsDataBaseModel.removeAllNewsStories();
 	}
 	
 	/**
