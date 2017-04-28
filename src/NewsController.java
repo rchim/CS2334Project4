@@ -12,6 +12,8 @@ import java.time.LocalDate;
 
 import javax.swing.*;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -152,35 +154,7 @@ public class NewsController
 	 */
 	private void saveNewsData()
 	{
-		
-//JFileChooser fileChooser = new JFileChooser();
-//		
-//		int fileChooserReturnVal
-//				= fileChooser.showDialog(selectionView, "Load");
-//
-//		if(fileChooserReturnVal == JFileChooser.APPROVE_OPTION)
-//		{
-//			System.out.println("Loading " + fileChooser.getSelectedFile());
-//			
-//			try
-//			{
-//				FileInputStream fis 
-//						= new FileInputStream(fileChooser.getSelectedFile());
-//				ObjectInputStream ois = new ObjectInputStream(fis);
-//				NewsDataBaseModel loadedDataBaseModel 
-//						= (NewsDataBaseModel) (ois.readObject());
-//				selectionView.setNewsDataBaseModel(loadedDataBaseModel);
-//			}
-//			catch (IOException e) 
-//			{
-//				e.printStackTrace();
-//			} 
-//			catch (ClassNotFoundException e) 
-//			{
-//				e.printStackTrace();
-//			}			
-//		}
-//	}	// TODO
+		// TODO
 	}	
 	
 	/**
@@ -565,7 +539,60 @@ public class NewsController
 	 */
 	private void sortNewsStories()
 	{
-		// grab from the TextView the sortCriteria
+		//Prompt the user for the type of sort criteria
+		JFrame frame = new JFrame();
+		Object[] possibilities = {SortCriterion.SOURCE,
+				SortCriterion.TOPIC,
+				SortCriterion.SUBJECT,
+				SortCriterion.LENGTH,
+				SortCriterion.DATE_TIME};
+		
+		SortCriterion criterion = (SortCriterion)JOptionPane.showInputDialog(
+				frame,
+				"Enter in the sort criterion:",
+				"Sort Criterion Entry",
+				JOptionPane.PLAIN_MESSAGE,
+				null,
+				possibilities,
+				null
+				);
+		
+		// get all the news sotries
+		DefaultListModel<NewsStory> news = new DefaultListModel<NewsStory>();
+		news = newsDataBaseModel.getNewsStories();
+		ArrayList<NewsStory> newsStories = new ArrayList<NewsStory>();
+		for (int i = 0 ; i < news.size(); ++i){
+			newsStories.add(news.get(i));
+		}
+		// empty news
+		news.clear();
+		
+		// remove all the stories
+		deleteAllNewsStories();
+		
+		switch(criterion){
+		case SOURCE:
+			Collections.sort(newsStories, SourceComparator.SOURCE_COMPARATOR);
+			break;
+		case TOPIC:
+			Collections.sort(newsStories);
+			break;
+		case SUBJECT:
+			Collections.sort(newsStories, SubjectComparator.SUBJECT_COMPARATOR);
+			break;
+		case LENGTH:
+			Collections.sort(newsStories, LengthComparator.LENGTH_COMPARATOR);
+			break;
+		case DATE_TIME:
+			Collections.sort(newsStories, DateComparator.DATE_COMPARATOR);
+			break;
+		}
+		
+		// re-cast into DefaultListModel
+		for(NewsStory n : newsStories){
+			newsDataBaseModel.addNewsStory(n);	
+		}
+			
 	}
 	
 	/**
@@ -575,7 +602,15 @@ public class NewsController
 	{
 		// delete the selected news stories
 		// start by determining which ones were selected in the view
+		int[] selected = selectionView.getSelectedNewsStories();
+		DefaultListModel<NewsStory> news = new DefaultListModel<NewsStory>();
+		// for each of the selected, get the story and add to the list
+		for (int i = 0 ; i < selected.length; ++i){
+			news.addElement(newsDataBaseModel.getNewsStories().get(selected[i]));
+		}
 		
+		// call the removing method
+		newsDataBaseModel.removeNewsStories(news);
 		
 	}
 	
