@@ -1,5 +1,6 @@
 import java.time.LocalDate;
 import java.time.format.TextStyle;
+import java.util.List;
 import java.util.Locale;
 
 
@@ -55,7 +56,7 @@ class UserInterface {
 	 *            List of types of news media present (I suppose one for each <code>NewsStory</code> object
 	 * @return The story in the display format.
 	 */
-	private static String convertToOutputFormat(NewsStory newsStory, List<NewsMedia> newsMedia) {
+	public static String convertToOutputFormat(NewsStory newsStory, List<NewsMedia> newsMedia) {
 
 		// TODO: Append each line with subject and (for TV and online) part of
 		// day.

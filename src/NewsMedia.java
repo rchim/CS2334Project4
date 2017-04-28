@@ -44,7 +44,7 @@ public enum NewsMedia
 	 * 
 	 * @return TODO
 	 */
-	public List<NewsMedia> valuesAsList()
+	public static List<NewsMedia> valuesAsList()
 	{
 		// TODO
 		

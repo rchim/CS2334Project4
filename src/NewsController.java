@@ -1,6 +1,7 @@
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
@@ -410,4 +411,144 @@ public class NewsController
 			}
 		}
 	}
+	
+	/**
+	 * <P> Listens for the items on the edit news maker name view
+	 * and responds as needed.
+	 * </P>
+	 * @author Malachi Phillips
+	 *
+	 */
+	public class EditNewsMakerNameListener implements ActionListener
+	{
+
+		/**
+		 * Overriden method used for <code>ActionListener</code>
+		 * 
+		 * Performs the action specified
+		 * 
+		 * @param actionEvent
+		 *   <code>ActionEvent</code> needing to occur
+		 */
+		@Override
+		public void actionPerformed(ActionEvent actionEvent) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+	}
+	
+	/**
+	 * <P>Listens for any events that happen in the remove
+	 * news maker from news stories</P>
+	 * 
+	 * @author Malachi Phillips
+	 */
+	public class RemoveNewsMakerFromNewsStoriesListener implements ActionListener
+	{
+
+		/**
+		 * Overriden method used for <code>ActionListener</code>
+		 * 
+		 * Performs the action specified
+		 * 
+		 * @param actionEvent
+		 *   <code>ActionEvent</code> needing to occur
+		 */
+		@Override
+		public void actionPerformed(ActionEvent actionEvent) {
+			// In relevant stories, set the News Maker to "none" instead
+			
+			// not sure what to do here -- what view is this found in?
+		}
+		
+	}
+	
+	/**
+	 * <P>Listens for the add edit news story view</P>
+	 * 
+	 * @author Malachi Phillips
+	 */
+	public class AddEditNewsStoryListener implements ActionListener
+	{
+
+		/**
+		 * Overriden method used for <code>ActionListener</code>
+		 * 
+		 * Performs the action specified
+		 * 
+		 * @param actionEvent
+		 *   <code>ActionEvent</code> needing to occur
+		 */
+		@Override
+		public void actionPerformed(ActionEvent actionEvent) {
+			// Determine what button has been pressed
+			String clickedItemText = ((JButton)(actionEvent.getSource())).getText();
+			if("Add News Story".equals(clickedItemText)){
+				// add news story
+				addNewsStory();
+			} else if ("Edit News Story".equals(clickedItemText)){
+				// edit the news story
+				editNewsStory();
+			} else {
+				// close the window (JFrame)
+				addEditNewsStoryView.setVisible(false);
+			}
+		}
+		
+	}
+	
+	/**
+	 * <P>Listens for media type selection view</P>
+	 * 
+	 * @author Malachi Phillips
+	 */
+	public class MediaTypeSelectionListener implements ActionListener
+	{
+
+		/**
+		 * Overriden method used for <code>ActionListener</code>
+		 * 
+		 * Performs the action specified
+		 * 
+		 * @param actionEvent
+		 *   <code>ActionListener</code> needing to occur
+		 */
+		@Override
+		public void actionPerformed(ActionEvent actionEvent) {
+			
+			String clickedItemText = ((JButton)(actionEvent.getSource())).getText();
+			
+			if("Cancel".equals(clickedItemText)){
+				// close the window
+				mediaTypeSelectionView.setVisible(false);
+			}
+			if("OK".equals(clickedItemText)){
+				// clear selected media types -- start fresh
+				selectedMediaTypes.clear();
+				// determine which of the checkboxes are checked
+				if(mediaTypeSelectionView.jcbNewspaper.isSelected()){
+					// add into the list
+					selectedMediaTypes.add(NewsMedia.NEWSPAPER);
+				} // unsure what needs to be done here
+				
+				if(mediaTypeSelectionView.jcbTVNews.isSelected()){
+					// add into the list
+					selectedMediaTypes.add(NewsMedia.TV);
+				}
+				
+				if(mediaTypeSelectionView.jcbOnline.isSelected()){
+					// add into the list
+					selectedMediaTypes.add(NewsMedia.ONLINE);
+				}
+				
+				// make invisible
+				mediaTypeSelectionView.setVisible(false);
+			}
+			
+		}
+		
+	}
+	
+	
 }

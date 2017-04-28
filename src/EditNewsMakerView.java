@@ -3,6 +3,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.swing.*;
 
@@ -127,15 +129,11 @@ public class EditNewsMakerView extends JPanel implements ActionListener
 		
 		// get news stories
 		DefaultListModel<NewsStory> stories = newsMakerModel.getNewsStoryListModel().getNewsStories();
-		List<NewsMedia> newsMediaList = new ArrayList<NewsMedia>();
 
 		for (int i = 0 ; i < stories.size(); ++i){
 			NewsStory story = stories.get(i);
-			//determine the type of story
-			
 			// pass story object to UserInterface
-			List<NewsMedia> newsMediaList = new ArrayList<NewsMedia>();
-			String current = UserInterface.convertToOuputFormat(story, newsMediaList);
+			String current = UserInterface.convertToOuputFormat(story, NewsMedia.valuesAsList());
 			//add the string into the JList
 			newsStoryStringList.addElement(current);
 		}
