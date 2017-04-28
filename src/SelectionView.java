@@ -1,6 +1,7 @@
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.TreeMap;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -38,7 +39,8 @@ public class SelectionView extends JFrame implements ActionListener
 	private static final long serialVersionUID = 3828705860609989238L;
 	
 	/**
-	 * The model to which this view is linked.
+	 * The model to which this view is linked. By default, we use an empty
+	 * model.
 	 */
 	private NewsDataBaseModel newsDataBaseModel;
 	
@@ -188,6 +190,11 @@ public class SelectionView extends JFrame implements ActionListener
 	{
 		this.setTitle("Nooz");
 		
+		// Assign the view an empty model by default. This guarantees that the 
+		// proper menu items are disabled to reflect the fact that the view
+		// doesn't yet have data.
+		this.setNewsDataBaseModel(new NewsDataBaseModel());		
+		
 		// Add the menu items to their corresponding menus.
 		jmFile.add(jmiLoad);
 		jmFile.add(jmiSave);
@@ -212,34 +219,7 @@ public class SelectionView extends JFrame implements ActionListener
 		jmb.add(jmDisplay);
 		
 		// Add the menu bar to the frame.
-		this.setJMenuBar(jmb);
-		
-		// Disable all the menu items that will only become relevant once data
-		// is added to the application.
-		jmiSave.setEnabled(false);
-		jmiExport.setEnabled(false);
-		jmiEditNewsMaker.setEnabled(false);
-		jmiDeleteNewsMaker.setEnabled(false);
-		jmiDeleteNewsMakerList.setEnabled(false);
-		jmiEditNewsStory.setEnabled(false);
-		jmiSortNewsStories.setEnabled(false);
-		jmiDeleteNewsStory.setEnabled(false);
-		jmiDeleteAllNewsStories.setEnabled(false);
-		jmiPieChart.setEnabled(false);
-		jmiText.setEnabled(false);
-		
-		// Give the disabled items tool tips to explain why they are disabled.
-		jmiSave.setToolTipText("No data to save.");
-		jmiExport.setToolTipText("No data to export.");
-		jmiEditNewsMaker.setToolTipText("No newsmakers to edit.");
-		jmiDeleteNewsMaker.setToolTipText("No newsmakers to delete.");
-		jmiDeleteNewsMakerList.setToolTipText("No newsmakers to delete.");
-		jmiEditNewsStory.setToolTipText("No news stories to edit.");
-		jmiSortNewsStories.setToolTipText("No news stories to sort.");
-		jmiDeleteNewsStory.setToolTipText("No news stories to delete.");
-		jmiDeleteAllNewsStories.setToolTipText("No news stories to delete.");
-		jmiPieChart.setToolTipText("No data to display.");
-		jmiText.setToolTipText("No data to display.");
+		this.setJMenuBar(jmb);		
 		
 		// Assign the JLists to their scroll panes.
 		jspNewsMakerList.setViewportView(jlNewsMakerList);
@@ -320,22 +300,111 @@ public class SelectionView extends JFrame implements ActionListener
 	}
 	
 	/**
-	 * Sets the main data model for this view.
+	 * Sets the overarching model for this view.
 	 * 
-	 * @param newsDataBaseModel The model whose data this view should reflect.
+	 * @param newsDataBaseModel The overarching model whose data this view
+	 * should reflect.
 	 */
 	public void setNewsDataBaseModel(NewsDataBaseModel newsDataBaseModel)
 	{
 		this.newsDataBaseModel = newsDataBaseModel;
+		this.newsDataBaseModel.addActionListener(this);
+		this.jlNewsMakerList.setModel(this.newsDataBaseModel.getNewsMakers());		
+		this.jlNewsStoryList.setModel(this.newsDataBaseModel.getNewsStories());
+		
+		this.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
+				"set new model"));
 	}
 	
+	/**
+	 * Responds to a change in the model data. The response consists of
+	 * determining which menu items should be enabled and disabled and setting
+	 * them accordingly.
+	 * 
+	 * @param e The event being responded to.
+	 */
 	@Override
 	public void actionPerformed(ActionEvent e) 
 	{
-		/* 
-		 * TODO Update data in lists and change disabled/enabled status of
-		 * menu items and tool tips accordingly.		
-		 */
+		// Enable all the menu items by default. We will later disable those
+		// that are unusable.
+		jmiSave.setEnabled(true);
+		jmiExport.setEnabled(true);
+		jmiEditNewsMaker.setEnabled(true);
+		jmiDeleteNewsMaker.setEnabled(true);
+		jmiDeleteNewsMakerList.setEnabled(true);
+		jmiEditNewsStory.setEnabled(true);
+		jmiSortNewsStories.setEnabled(true);
+		jmiDeleteNewsStory.setEnabled(true);
+		jmiDeleteAllNewsStories.setEnabled(true);
+		jmiPieChart.setEnabled(true);
+		jmiText.setEnabled(true);
+		
+		// Remove all the tool tips by default. We will add them to any menu
+		// items we disable to explain why those items are unusable.
+		jmiSave.setToolTipText(null);
+		jmiExport.setToolTipText(null);
+		jmiEditNewsMaker.setToolTipText(null);
+		jmiDeleteNewsMaker.setToolTipText(null);
+		jmiDeleteNewsMakerList.setToolTipText(null);
+		jmiEditNewsStory.setToolTipText(null);
+		jmiSortNewsStories.setToolTipText(null);
+		jmiDeleteNewsStory.setToolTipText(null);
+		jmiDeleteAllNewsStories.setToolTipText(null);
+		jmiPieChart.setToolTipText(null);
+		jmiText.setToolTipText(null);
+		
+		// Determine whether news makers or news stories or both are absent from
+		// the database.
+		boolean newsMakersAbsent = jlNewsMakerList.getModel().getSize() == 0;
+		boolean newsStoriesAbsent = jlNewsStoryList.getModel().getSize() == 0;
+		
+		// If news makers are absent from the database, disable all the menu
+		// items that need news makers to be usable.
+		if(newsMakersAbsent)
+		{
+			jmiEditNewsMaker.setEnabled(false);
+			jmiDeleteNewsMaker.setEnabled(false);
+			jmiDeleteNewsMakerList.setEnabled(false);	
+			jmiPieChart.setEnabled(false);
+			jmiText.setEnabled(false);
+						
+			jmiEditNewsMaker.setToolTipText("No newsmakers to edit.");
+			jmiDeleteNewsMaker.setToolTipText("No newsmakers to delete.");
+			jmiDeleteNewsMakerList.setToolTipText("No newsmakers to delete.");	
+			jmiPieChart.setToolTipText("No news makers to display data for.");
+			jmiText.setToolTipText("No news makers to display data for.");
+		}
+		
+		// If news stories are absent from the database, Disable all the menu
+		// items that need news stories to be usable.
+		if(newsStoriesAbsent)
+		{
+			jmiEditNewsStory.setEnabled(false);
+			jmiSortNewsStories.setEnabled(false);
+			jmiDeleteNewsStory.setEnabled(false);
+			jmiDeleteAllNewsStories.setEnabled(false);
+			jmiPieChart.setEnabled(false);
+			jmiText.setEnabled(false);
+			
+			jmiEditNewsStory.setToolTipText("No news stories to edit.");
+			jmiSortNewsStories.setToolTipText("No news stories to sort.");
+			jmiDeleteNewsStory.setToolTipText("No news stories to delete.");
+			jmiDeleteAllNewsStories.setToolTipText("No news stories to delete.");
+			jmiPieChart.setToolTipText("No news stories to display.");
+			jmiText.setToolTipText("No news stories to display.");
+		}
+		
+		// If both news makers and news stories are absent from the database,
+		// there is no data to save or export, so disable those items.
+		if(newsMakersAbsent && newsStoriesAbsent)
+		{
+			jmiSave.setEnabled(false);
+			jmiExport.setEnabled(false);
+			
+			jmiSave.setToolTipText("No data to save.");
+			jmiExport.setToolTipText("No data to export.");
+		}		
 	}
 	
 	/**

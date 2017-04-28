@@ -44,6 +44,12 @@ public class NewsDataBaseModel
 	/** A map from topic codes to decoded topic Strings. */
 	private Map<String, String> newsSubjectMap;
 	
+	/** 
+	 * The special news maker who is only assigned to stories without any lead
+	 * news makers.
+	 */
+	NewsMakerModel none = new NewsMakerModel();
+	
 	/** A list of news makers. */
 	private NewsMakerListModel newsMakerListModel;
 	

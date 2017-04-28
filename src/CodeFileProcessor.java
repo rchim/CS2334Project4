@@ -22,7 +22,8 @@ import java.util.TreeMap;
  * @version 1.0
  * 
  */
-public class CodeFileProcessor {
+public class CodeFileProcessor 
+{
 	private static Map<String, String> codeMap = new TreeMap<String, String>();
 
 	/**
@@ -60,7 +61,7 @@ public class CodeFileProcessor {
 	 */
 	public static Map<String, String> readCodeFile(String fileName) throws IOException {
 		// Need to clear map of old data before reading new.
-		codeMap.clear();
+		codeMap = new TreeMap<String, String>();
 		// TODO Handle possible I/O errors (Eventually)
 		FileReader fr = new FileReader(fileName);
 		BufferedReader br = new BufferedReader(fr);
