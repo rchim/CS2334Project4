@@ -140,25 +140,27 @@ public class NewsController
 
 		if(fileChooserReturnVal == JFileChooser.APPROVE_OPTION)
 		{
+			NewsDataBaseModel loadedDataBaseModel = null;
 			try
 			{
 				FileInputStream fis 
 						= new FileInputStream(fileChooser.getSelectedFile());
 				ObjectInputStream ois = new ObjectInputStream(fis);
-				NewsDataBaseModel loadedDataBaseModel 
-						= (NewsDataBaseModel) (ois.readObject());
-				ois.close();
 				
-				selectionView.setNewsDataBaseModel(loadedDataBaseModel);
+				loadedDataBaseModel	= (NewsDataBaseModel) (ois.readObject());
+				ois.close();					
 			}
-			catch (IOException e) 
+			catch (Exception e) 
 			{
 				e.printStackTrace();
-			} 
-			catch (ClassNotFoundException e) 
-			{
-				e.printStackTrace();
-			}		
+				JOptionPane.showMessageDialog(selectionView, 
+						"Error encountered when loading file.", 
+						"Oops!", JOptionPane.ERROR_MESSAGE);				
+				return;
+			}
+			
+			this.newsDataBaseModel = loadedDataBaseModel;
+			selectionView.setNewsDataBaseModel(this.newsDataBaseModel);
 		}
 	}	
 	
@@ -301,9 +303,9 @@ public class NewsController
 				catch(IOException e)
 				{
 					e.printStackTrace();
-					JOptionPane.showMessageDialog(selectionView, "Oops!", 
-							"IO error encountered when importing file.",
-							JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(selectionView, 
+							"IO error encountered when importing file.", 
+							"Oops!", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 				
@@ -328,8 +330,9 @@ public class NewsController
 		catch(IOException e)
 		{
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(selectionView, "Oops!", 
-					"IO error encountered when processing news story file.",
+			JOptionPane.showMessageDialog(selectionView, 
+					"IO error encountered when processing news story file.", 
+					"Oops!",
 					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
