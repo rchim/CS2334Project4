@@ -1,8 +1,12 @@
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.TreeMap;
 
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -12,6 +16,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 
 /**
@@ -193,7 +198,7 @@ public class SelectionView extends JFrame implements ActionListener
 		// Assign the view an empty model by default. This guarantees that the 
 		// proper menu items are disabled to reflect the fact that the view
 		// doesn't yet have data.
-		this.setNewsDataBaseModel(new NewsDataBaseModel());		
+		this.setNewsDataBaseModel(new NewsDataBaseModel());	
 		
 		// Add the menu items to their corresponding menus.
 		jmFile.add(jmiLoad);
@@ -326,6 +331,53 @@ public class SelectionView extends JFrame implements ActionListener
 	@Override
 	public void actionPerformed(ActionEvent e) 
 	{
+		// Rather than letting the news story JList call the stories' toString
+		// methods to write their label text, we use a custom cell renderer
+		// that generates labels in a verbose, human-readable output format.
+		this.jlNewsStoryList.setCellRenderer(new DefaultListCellRenderer() 
+		{
+			private static final long serialVersionUID = 1L;
+			
+			public Component getListCellRendererComponent(JList<?> list,
+					Object value, int index, boolean isSelected,
+					boolean cellHasFocus)
+			{
+				JLabel label = (JLabel) super.getListCellRendererComponent(list,
+						value, index, isSelected, cellHasFocus);
+				
+				ArrayList<NewsMedia> storyTypes = new ArrayList<NewsMedia>();
+				
+				ListModel<NewsStory> newsStories 
+						= SelectionView.this.jlNewsStoryList.getModel();
+				
+				// Iterate through the stories, collecting all the unique story
+				// types. 
+				for(int i = 0; i < newsStories.getSize(); i++)
+				{
+					if(newsStories.getElementAt(i) instanceof NewspaperStory)
+					{
+						if(!storyTypes.contains(NewsMedia.NEWSPAPER))
+							storyTypes.add(NewsMedia.NEWSPAPER);
+					}
+					else if(newsStories.getElementAt(i) instanceof TVNewsStory)
+					{
+						if(!storyTypes.contains(NewsMedia.TV))
+							storyTypes.add(NewsMedia.TV);
+					}
+					else
+					{
+						if(!storyTypes.contains(NewsMedia.ONLINE))
+							storyTypes.add(NewsMedia.ONLINE);
+					}	
+				}
+				
+				label.setText(UserInterface.convertToOutputFormat(
+						(NewsStory) value, storyTypes));
+				
+				return label;
+			}		
+		});
+				
 		// Enable all the menu items by default. We will later disable those
 		// that are unusable.
 		jmiSave.setEnabled(true);

@@ -119,8 +119,7 @@ class NewsMakerListModel implements Serializable
 	 */
 	public NewsMakerModel getExactMatch(String newsMakerName) 
 	{		
-		// TODO Wait for JavaDocs. This will probably need to be a binary
-		// search again.
+		// TODO KEEP THE LIST PERMANENTLY SORTED AND MAKE THIS A BINARY SEARCH.
 		
 		NewsMakerModel currentNewsMaker;		
 		for(int i = 0; i < newsMakerDefaultListModel.size(); i++) 
@@ -288,14 +287,16 @@ class NewsMakerListModel implements Serializable
 	}
 	
 	/**
-	 * TODO
+	 * Sets the news makers in this list to be the same as the news makers in
+	 * the passed list.
 	 * 
-	 * @param newsMakerListModel TODO
+	 * @param newsMakerListModel The list of news makers that this list will be
+	 * made to match.
 	 */
 	public void setNewsMakersFromNewsMakerList(
 			NewsMakerListModel newsMakerListModel)
 	{
-		// TODO
+		this.newsMakerDefaultListModel = newsMakerListModel.getNewsMakers();
 	}
 	
 	/**

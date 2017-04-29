@@ -15,6 +15,10 @@ import java.util.Locale;
  * data. Instead, we simply need a collection of useful methods to create
  * windows that pop up one at a time, are used, and then are discarded.
  * </P>
+ * <P>
+ * This class was originally written by Dr. Hougen. It was modified slightly by
+ * both group members.
+ * </P>
  * 
  * @author Dean Hougen
  * @author Malachi Phillips
@@ -50,21 +54,28 @@ class UserInterface {
 	 * <i>topic</i>; <i>subject</i></dd>
 	 * </dl>
 	 * 
-	 * @param newsStory
-	 *            The story to convert to the display format.
-	 * @param newsMedia
-	 *            List of types of news media present (I suppose one for each <code>NewsStory</code> object
+	 * @param newsStory The story to convert to the display format.
+	 * @param newsMedia List of types of news media present among the news
+	 * stories.
 	 * @return The story in the display format.
 	 */
-	public static String convertToOutputFormat(NewsStory newsStory, List<NewsMedia> newsMedia) {
-
-		// TODO: Append each line with subject and (for TV and online) part of
-		// day.
-		String storyString = "";
+	public static String convertToOutputFormat(NewsStory newsStory,
+			List<NewsMedia> newsMedia) 
+	{
+		String storyString;
+		
+		// The first item in the story string is the media type.
+		if(newsStory instanceof NewspaperStory)
+			storyString = "Newspaper Story; ";
+		else if(newsStory instanceof TVNewsStory)
+			storyString = "TV News Story; ";
+		else
+			storyString = "Online News Story; ";	
+		
 		LocalDate date = newsStory.getDate();
 
 		// If the type doesn't include TV, use words
-		if (!mediaType.contains("t")) {
+		if (!newsMedia.contains(NewsMedia.TV)) {
 			if (newsStory instanceof NewspaperStory) {
 				storyString += date.getMonth().getDisplayName(TextStyle.FULL, Locale.US) + " " + date.getDayOfMonth()
 						+ ", " + date.getYear() + "; " + newsStory.getSource() + "; " + newsStory.getLength()
@@ -76,8 +87,8 @@ class UserInterface {
 						+ ((OnlineNewsStory) newsStory).getPartOfDay().toString();
 			}
 		}
-		// If the type is TV news, use seconds (from length)
-		else if (mediaType.equals("t")) {
+		// If the type is only TV news, use seconds (from length)
+		else if (newsMedia.size() == 1) {
 			storyString += date.getMonth().getDisplayName(TextStyle.FULL, Locale.US) + " " + date.getDayOfMonth() + ", "
 					+ date.getYear() + "; " + newsStory.getSource() + "; " + newsStory.getLength() + " seconds; "
 					+ newsStory.getTopic() + "; " + newsStory.getSubject() + "; "
