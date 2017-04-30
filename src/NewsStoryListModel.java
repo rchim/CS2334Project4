@@ -41,7 +41,7 @@ class NewsStoryListModel implements Serializable
 	 * Creates a new NewsStoryListModel that is a shallow copy of the supplied
 	 * one.
 	 * 
-	 * @param newsStoryListModel 
+	 * @param newsStoryListModel The news story list model to copy.
 	 */
 	public NewsStoryListModel(NewsStoryListModel newsStoryListModel)
 	{
@@ -98,8 +98,7 @@ class NewsStoryListModel implements Serializable
 	 * An accessor for getting a story from the list based on its position
 	 * (index) in the list.
 	 * 
-	 * @param index
-	 *            The location from which to get the story.
+	 * @param index The location from which to get the story.
 	 * @return The newspaper story at the index, if the index is valid.
 	 * @throws IllegalArgumentException
 	 *             if the index is not valid.
@@ -147,8 +146,6 @@ class NewsStoryListModel implements Serializable
 	 * Finds the first occurrence in the list of a news story equal to the
 	 * supplied news story. Removes that news story from the list.
 	 * 
-	 * TODO: When Dr. H fixes the UML, verify return type.
-	 * 
 	 * @param newsStory The news story to be removed from the list. 
 	 */
 	public void remove(NewsStory newsStory)
@@ -157,23 +154,27 @@ class NewsStoryListModel implements Serializable
 	}
 
 	/**
-	 * TODO
+	 * Removes every news story in the passed list from this list.
 	 * 
-	 * @param newsStories TODO 
+	 * @param newsStories A list of the news stories to be removed.
 	 */
 	public void removeListOfNewsStories(DefaultListModel<NewsStory> newsStories)
 	{
-		// TODO
+		for(int i = 0 ; i < newsStories.size(); i++)
+		{
+			remove(newsStories.get(i));
+		}
 	}
 	
 	/**
-	 * TODO
+	 * Sets this list's news stories to be the same as the passed list's news
+	 * stories.
 	 * 
-	 * @param newsStoryListModel TODO 
+	 * @param newsStoryListModel The news story list for this list to reflect. 
 	 */
 	public void setNewsStories(NewsStoryListModel newsStoryListModel)
 	{
-		// TODO
+		this.newsStories = newsStoryListModel.getNewsStories();		
 	}
 	
 	/**

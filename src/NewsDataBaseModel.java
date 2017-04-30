@@ -1,5 +1,6 @@
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -20,7 +21,7 @@ import javax.swing.DefaultListModel;
  * 
  * @author Ryan Chimienti
  */
-public class NewsDataBaseModel 
+public class NewsDataBaseModel implements Serializable
 {
 	/**
 	 * This is the first serializable version of NewsDataBaseModel, so we
@@ -287,13 +288,16 @@ public class NewsDataBaseModel
 	}
 	
 	/**
-	 * TODO
+	 * Removes every news maker in the given list from the database.
 	 * 
-	 * @param newsMakers
+	 * @param newsMakers A list of the news makers to be removed.
 	 */
 	public void removeNewsMakers(DefaultListModel<NewsMakerModel> newsMakers)
 	{
-		// TODO
+		newsMakerListModel.removeListOfNewsMakers(newsMakers);
+		
+		processEvent(new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
+				"remove news makers"));
 	}
 	
 	/**
@@ -407,21 +411,27 @@ public class NewsDataBaseModel
 	}
 	
 	/**
-	 * TODO
+	 * Removes every news story in the given list from the database.
 	 * 
-	 * @param newsStories TODO
+	 * @param newsStories A list of the news stories to be removed.
 	 */
 	public void removeNewsStories(DefaultListModel<NewsStory> newsStories)
 	{
-		// TODO
+		newsStoryListModel.removeListOfNewsStories(newsStories);
+		
+		processEvent(new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
+				"remove news stories"));
 	}
 	
 	/**
-	 * TODO
+	 * Removes all news stories from the database.
 	 */
 	public void removeAllNewsStories()
 	{
-		// TODO
+		newsStoryListModel.setNewsStories(new NewsStoryListModel());
+		
+		processEvent(new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
+				"remove all news stories"));
 	}
 	
 	/**

@@ -1,13 +1,12 @@
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.time.LocalDate;
 
 import javax.swing.*;
@@ -122,35 +121,53 @@ public class NewsController
 	{
 		JFileChooser fileChooser = new JFileChooser();
 		
+		// We attempt to let the user pick files from their working directory
+		// for convenience.
+		try
+		{
+			File workingDirectory = new File(System.getProperty("user.dir"));
+			fileChooser.setCurrentDirectory(workingDirectory);
+		}
+		catch(Exception e)
+		{
+			// If this process fails (e.g. because the code is being run by
+			// Mimir), it won't seriously affect the user experience. We ignore
+			// the exception.
+		}
+		
 		int fileChooserReturnVal
 				= fileChooser.showDialog(selectionView, "Load");
 
 		if(fileChooserReturnVal == JFileChooser.APPROVE_OPTION)
 		{
-			System.out.println("Loading " + fileChooser.getSelectedFile());
-			
+			NewsDataBaseModel loadedDataBaseModel = null;
 			try
 			{
 				FileInputStream fis 
 						= new FileInputStream(fileChooser.getSelectedFile());
 				ObjectInputStream ois = new ObjectInputStream(fis);
-				NewsDataBaseModel loadedDataBaseModel 
-						= (NewsDataBaseModel) (ois.readObject());
-				selectionView.setNewsDataBaseModel(loadedDataBaseModel);
+				
+				loadedDataBaseModel	= (NewsDataBaseModel) (ois.readObject());
+				ois.close();					
 			}
-			catch (IOException e) 
+			catch (Exception e) 
 			{
 				e.printStackTrace();
-			} 
-			catch (ClassNotFoundException e) 
-			{
-				e.printStackTrace();
-			}			
+				JOptionPane.showMessageDialog(selectionView, 
+						"Error encountered when loading file.", 
+						"Oops!", JOptionPane.ERROR_MESSAGE);				
+				return;
+			}
+			
+			this.newsDataBaseModel = loadedDataBaseModel;
+			selectionView.setNewsDataBaseModel(this.newsDataBaseModel);
 		}
 	}	
 	
 	/**
 	 * Save the news data into a file
+	 * 
+	 * TODO After Javadoc: make sure we aren't confusing save and export.
 	 */
 	private void saveNewsData()
 	{
@@ -286,9 +303,9 @@ public class NewsController
 				catch(IOException e)
 				{
 					e.printStackTrace();
-					JOptionPane.showMessageDialog(selectionView, "Oops!", 
-							"IO error encountered when importing file.",
-							JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(selectionView, 
+							"IO error encountered when importing file.", 
+							"Oops!", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 				
@@ -304,23 +321,23 @@ public class NewsController
 			}
 		}
 		
-		// We've got all the data we need to construct the model.
-		NewsDataBaseModel importedModel = null;		
+		// We've got all the data we need to construct the new model.
 		try
 		{
-			importedModel = NoozFileProcessor.readNoozFile(
+			this.newsDataBaseModel = NoozFileProcessor.readNoozFile(
 					newsStoryFilePath, sourceMap, topicMap, subjectMap);
 		}
 		catch(IOException e)
 		{
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(selectionView, "Oops!", 
-					"IO error encountered when processing news story file.",
+			JOptionPane.showMessageDialog(selectionView, 
+					"IO error encountered when processing news story file.", 
+					"Oops!",
 					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		
-		selectionView.setNewsDataBaseModel(importedModel);
+		selectionView.setNewsDataBaseModel(this.newsDataBaseModel);
 	}	
 	
 	/**
@@ -328,7 +345,64 @@ public class NewsController
 	 */
 	private void exportNoozStories()
 	{
-		// TODO
+		JFileChooser fileChooser = new JFileChooser();
+		
+		// We attempt to let the user pick files from their working directory
+		// for convenience.
+		try
+		{
+			File workingDirectory = new File(System.getProperty("user.dir"));
+			fileChooser.setCurrentDirectory(workingDirectory);
+		}
+		catch(Exception e)
+		{
+			// If this process fails (e.g. because the code is being run by
+			// Mimir), it won't seriously affect the user experience. We ignore
+			// the exception.
+		}
+		
+		int fileChooserReturnVal 
+				= fileChooser.showDialog(selectionView, "Export");
+		
+		// If the user selected a file for export, we write to it.
+		if(fileChooserReturnVal == JFileChooser.APPROVE_OPTION)
+		{
+			// We will export a near-copy of the database model instead of the
+			// actual model. If we try to export the actual model, the program
+			// tries to serialize all its variables, including its action
+			// listener list. Unfortunately, among the action listeners is an
+			// unserializable SelectionView object. The "copy" does not have any
+			// registered action listeners and so escapes this issue.
+			NewsDataBaseModel dataBaseModelCopy = new NewsDataBaseModel(
+					newsDataBaseModel.getNewsMakerListModel(),
+					newsDataBaseModel.getNewsStoryListModel());
+			
+			String filePath = fileChooser.getSelectedFile().getPath();
+			
+			try
+			{
+				FileOutputStream fileOutputStream 
+						= new FileOutputStream(filePath);
+				ObjectOutputStream objectOutputStream 
+						= new ObjectOutputStream(fileOutputStream);
+				objectOutputStream.writeObject(dataBaseModelCopy);
+				objectOutputStream.close();
+			}
+			catch(IOException e)
+			{
+				e.printStackTrace();
+				JOptionPane.showMessageDialog(selectionView, 
+						"IO error encountered when exporting data.", 
+						"Oops!",
+						JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			
+			JOptionPane.showMessageDialog(selectionView, 
+					"Exported data to " + filePath + ".", 
+					"Success",
+					JOptionPane.PLAIN_MESSAGE);
+		}
 	}
 	
 	/**
@@ -348,7 +422,7 @@ public class NewsController
 				null
 				);
 		// Construct the new NewsMakerModel object, add
-		newsDataBaseModel.getNewsMakerListModel().add(new NewsMakerModel(newsMakerName));
+		newsDataBaseModel.addNewsMakerModel(new NewsMakerModel(newsMakerName));
 		
 	}
 	
@@ -383,7 +457,7 @@ public class NewsController
 			NewsMakerModel news = newsDataBaseModel.getNewsMakerListModel().get(selected[i]);
 			removedNewsMakers.addElement(news);
 		}
-		newsDataBaseModel.getNewsMakerListModel().removeListOfNewsMakers(removedNewsMakers);
+		newsDataBaseModel.removeNewsMakers(removedNewsMakers);
 	}
 	
 	/**
@@ -391,7 +465,7 @@ public class NewsController
 	 */
 	private void deleteNewsMakerList()
 	{
-		newsDataBaseModel.getNewsMakerListModel().removeAllNewsMakers();
+		newsDataBaseModel.removeAllNewsMakers();
 	}
 	
 	/**
@@ -426,13 +500,13 @@ public class NewsController
 		int year = (int) addEditNewsStoryView.jcbNewsStoryYear.getSelectedItem();
 		
 		// Construct LocalDate object
-		LocalDate date = new LocalDate(year, month.toInt(), day);
+		LocalDate date = LocalDate.of(year, month.toInt(), day);
 		
 		// determine the type of the story
 		
 		NewsMedia type = (NewsMedia) addEditNewsStoryView.jcbNewsStoryType.getSelectedItem();
 		
-		NewsStory news;
+		NewsStory news = null;
 		
 		switch(type){
 		case TV:
@@ -499,13 +573,13 @@ public class NewsController
 		int year = (int) addEditNewsStoryView.jcbNewsStoryYear.getSelectedItem();
 		
 		// Construct LocalDate object
-		LocalDate date = new LocalDate(year, month.toInt(), day);
+		LocalDate date = LocalDate.of(year, month.toInt(), day);
 		
 		// determine the type of the story
 		
 		NewsMedia type = (NewsMedia) addEditNewsStoryView.jcbNewsStoryType.getSelectedItem();
 		
-		NewsStory news;
+		NewsStory news = null;
 		
 		switch(type){
 		case TV:
