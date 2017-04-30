@@ -288,14 +288,16 @@ class NewsMakerListModel implements Serializable
 	}
 	
 	/**
-	 * TODO
+	 * Set the information in <code>this</code>
 	 * 
-	 * @param newsMakerListModel TODO
+	 * Calls the constructor to change out the type
+	 * 
+	 * @param newsMakerListModel <code>NewsMakerListModel</code> to be used 
 	 */
 	public void setNewsMakersFromNewsMakerList(
 			NewsMakerListModel newsMakerListModel)
 	{
-		// TODO
+		//TODO
 	}
 	
 	/**

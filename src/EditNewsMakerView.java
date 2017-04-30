@@ -132,7 +132,7 @@ public class EditNewsMakerView extends JPanel implements ActionListener
 		for (int i = 0 ; i < stories.size(); ++i){
 			NewsStory story = stories.get(i);
 			// pass story object to UserInterface
-			String current = UserInterface.convertToOuputFormat(story, NewsMedia.valuesAsList());
+			String current = UserInterface.convertToOutputFormat(story, NewsMedia.valuesAsList());
 			//add the string into the JList
 			newsStoryStringList.addElement(current);
 		}
