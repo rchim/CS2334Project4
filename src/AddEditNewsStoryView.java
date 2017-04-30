@@ -166,11 +166,15 @@ public class AddEditNewsStoryView extends JPanel
 		// perform a check on the integer, ie. namely a positive number
 		
 		// initialize JComboBox objects with possible values from NewsDataBaseModel
-		jcbNewsStorySource = new JComboBox<String>(newsDataBaseModel.getNewsSources());
-		jcbNewsStoryTopic = new JComboBox<String>(newsDataBaseModel.getNewsTopics());
-		jcbNewsStorySubject = new JComboBox<String>(newsDataBaseModel.getNewsSubjects());
-		jcbNewsStoryNewsMaker1 = new JComboBox<String>(newsDataBaseModel.getNewsMakerNames());
-		jcbNewsStoryNewsMaker2 = new JComboBox<String>(newsDataBaseModel.getNewsMakerNames());
+		String[] newsSources = newsDataBaseModel.getNewsSources();
+		jcbNewsStorySource = new JComboBox<String>(newsSources);
+		String[] newsTopics = newsDataBaseModel.getNewsTopics();
+		jcbNewsStoryTopic = new JComboBox<String>(newsTopics);
+		String[] newsSubjects = newsDataBaseModel.getNewsSubjects();
+		jcbNewsStorySubject = new JComboBox<String>(newsSubjects);
+		String[] newsMakerNames = newsDataBaseModel.getNewsMakerNames();
+		jcbNewsStoryNewsMaker1 = new JComboBox<String>(newsMakerNames);
+		jcbNewsStoryNewsMaker2 = new JComboBox<String>(newsMakerNames);
 		
 		// I hate this -- why aren't we using a date selector?
 		years = new Integer[100];
@@ -193,8 +197,8 @@ public class AddEditNewsStoryView extends JPanel
 		
 		// determine the type of the newsStory
 		String instance = newsStory.getClass().getName();
-		NewsMedia type;
-		PartOfDay part;
+		NewsMedia type = null;
+		PartOfDay part = null;
 		switch(instance){
 		case "NewspaperStory":
 			type = NewsMedia.NEWSPAPER;
