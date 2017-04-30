@@ -4,6 +4,7 @@
  * wedge and the text to associate with that wedge.
  * 
  * @author Dean Hougen
+ * @author Malachi Phillips
  * @version 1.0
  */
 public class Wedge {
@@ -22,9 +23,10 @@ public class Wedge {
 	 *            The text for the constructed wedge.
 	 */
 	public Wedge(double percent, String text) {
-		// TODO: Ensure a value between 0 and 100.
+
 		this.setPercent(percent);
 		this.setText(text);
+
 	}
 
 	/**
@@ -41,10 +43,16 @@ public class Wedge {
 	 * 
 	 * @param percent
 	 *            The value to set in the percent field.
+	 * @throws IllegalArgumentException 
+	 *            Throws illegal argument exception for whenever the
+	 *            entered in percentage is outside of [0,100]
 	 */
-	public void setPercent(double percent) {
-		// TODO: Ensure a value between 0 and 100.
-		this.percent = percent;
+	public void setPercent(double percent) throws IllegalArgumentException {
+		if (percent > 100 || percent < 0){
+			throw new IllegalArgumentException();
+		} else {
+			this.percent = percent;
+		}
 	}
 
 	/**

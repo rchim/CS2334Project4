@@ -64,8 +64,9 @@ public class PieChart
 	 *            The list of wedges that will comprise the pie.
 	 */
 	public PieChart(String title, List<Wedge> wedges) {
-		this.title = title;
-		this.wedges = wedges;
+		
+		setTitle(title);
+		setWedges(wedges);
 
 		// Create a general heavy-weight container.
 		JFrame frame = new JFrame(this.title);
@@ -81,6 +82,26 @@ public class PieChart
 
 		// Make the GUI visible on the screen.
 		frame.setVisible(true);
+	}
+	
+	/**
+	 * Mutator method for setting the title
+	 * 
+	 * @param title
+	 *     The title to be set onto the pie chart display
+	 */
+	public void setTitle(String title){
+		this.title = title;
+	}
+	
+	/**
+	 * Mutator method for setting the wedges
+	 * 
+	 * @param wedges
+	 *     <code>List</code> for the wedge objects to be set
+	 */
+	public void setWedges(List<Wedge> wedges){
+		this.wedges = wedges;
 	}
 
 	/**
