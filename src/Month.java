@@ -4,10 +4,12 @@
  * Supplies constants that refer to months (e.g. JANUARY).
  * </P>
  * <P>
- * This class was written by Ryan Chimienti (ID 113392576).
+ * This class was written by Ryan Chimienti (ID 113392576)
+ *                        and Malachi Phillips (ID 112933834)
  * </P>
  *
  * @author Ryan Chimienti
+ * @author Malachi Phillips
  */
 public enum Month 
 {	
@@ -17,7 +19,7 @@ public enum Month
 	/**
 	 * The overridden <code>toString</code> method gives the month in
 	 * "Title Case."
-	 * 
+	 * @author Ryan Chimienti
 	 * @return The calling month constant in title case.
 	 */
 	@Override
@@ -56,7 +58,7 @@ public enum Month
 	
 	/** 
 	 * Returns an int from 1-12 from the month
-	 * 
+	 * @author Malachi Phillips
 	 * @return the int corresponding to the current month
 	 */
 	public int toInt(){
@@ -93,7 +95,7 @@ public enum Month
 	/**
 	 * Takes an int from 1-12 and returns the corresponding month
 	 * constant.
-	 * 
+	 * @author Ryan Chimienti
 	 * @param integer An int from 1 to 12.
 	 * @return The month constant that corresponds to the given int.
 	 */

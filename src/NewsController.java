@@ -82,7 +82,7 @@ public class NewsController
 	
 	/**
 	 * Setter method for the <code>NewsDataBaseModel</code>
-	 * 
+	 * @author Ryan Chimienti
 	 * @param newsDataBaseModel
 	 *   <code>MewsDataBaseModel</code> to be assocaited with the controller
 	 */
@@ -94,7 +94,7 @@ public class NewsController
 	/**
 	 * Registers listeners for the given selection view and stores it in an
 	 * instance field so it can be recalled later.
-	 * 
+	 * @author Ryan Chimienti
 	 * @param selectionView The selection view to which this controller will be
 	 * listening for user interaction events.
 	 */
@@ -116,6 +116,7 @@ public class NewsController
 	 * Asks the user to choose a binary data file (which should contain a
 	 * serialized NewsDataBaseModel object) and sets the model to reflect that
 	 * data.
+	 * @author Ryan Chimienti
 	 */
 	private void loadNewsData()
 	{
@@ -182,6 +183,7 @@ public class NewsController
 	 * <P>
 	 * After all the files are chosen, adds the imported data to the model.
 	 * </P>
+	 * @author Ryan Chimienti
 	 */
 	private void importNoozStories()
 	{
@@ -342,6 +344,7 @@ public class NewsController
 	
 	/**
 	 * Export news data into a binary file
+	 * @author Ryan Chimienti
 	 */
 	private void exportNoozStories()
 	{
@@ -407,6 +410,7 @@ public class NewsController
 	
 	/**
 	 * Add a <code>NewsMaker</code> into the list.
+	 * @author Malachi Phillips
 	 */
 	private void addNewsMaker()
 	{
@@ -428,6 +432,7 @@ public class NewsController
 	
 	/**
 	 * Edit several <code>NewsMaker</code>s
+	 * @author Malachi Phillips
 	 */
 	private void editNewsMakers()
 	{
@@ -444,6 +449,7 @@ public class NewsController
 	
 	/**
 	 * Delete <code>NewsMaker</code>s
+	 * @author Malachi Phillips
 	 */
 	private void deleteNewsMakers()
 	{
@@ -461,6 +467,7 @@ public class NewsController
 	}
 	
 	/**
+	 * @author Malachi Phillips
 	 * Delete <b><i>all</i></b> <code>NewsMaker</code>s
 	 */
 	private void deleteNewsMakerList()
@@ -469,6 +476,7 @@ public class NewsController
 	}
 	
 	/**
+	 * @author Malachi Phillips
 	 * Add in a new <code>NewsStory</code>
 	 */
 	private void addNewsStory()
@@ -535,6 +543,7 @@ public class NewsController
 	}
 	
 	/**
+	 * @author Malachi Phillips
 	 * Edit a <code>NewsStory</code>
 	 */
 	private void editNewsStory()
@@ -609,6 +618,7 @@ public class NewsController
 	}
 	
 	/**
+	 * @author Malachi Phillips
 	 * Sort the <code>NewsStory</code> based on criterion
 	 */
 	private void sortNewsStories()
@@ -670,6 +680,7 @@ public class NewsController
 	}
 	
 	/**
+	 * @author Malachi Phillips
 	 * Delete several <code>NewsStory</code>s
 	 */
 	private void deleteNewsStories()
