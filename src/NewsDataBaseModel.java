@@ -112,9 +112,6 @@ public class NewsDataBaseModel implements Serializable
 			Map<String, String> newsSourceMap)
 	{
 		this.newsSourceMap = newsSourceMap;
-		
-		processEvent(new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
-				"set source map"));
 	}
 	
 	/**
@@ -146,9 +143,6 @@ public class NewsDataBaseModel implements Serializable
 			Map<String, String> newsTopicMap)
 	{
 		this.newsTopicMap = newsTopicMap;
-		
-		processEvent(new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
-				"set topic map"));
 	}
 	
 	/**
@@ -180,9 +174,6 @@ public class NewsDataBaseModel implements Serializable
 			Map<String, String> newsSubjectMap)
 	{
 		this.newsSubjectMap = newsSubjectMap;
-		
-		processEvent(new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
-				"set subject map"));
 	}
 	
 	/**
@@ -254,7 +245,7 @@ public class NewsDataBaseModel implements Serializable
 		this.newsMakerListModel = newsMakerListModel;
 		
 		processEvent(new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
-				"set news maker list"));
+				"Modified News Maker List"));
 	}
 	
 	/**
@@ -267,7 +258,7 @@ public class NewsDataBaseModel implements Serializable
 		this.newsMakerListModel.add(newsMakerModel);
 		
 		processEvent(new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
-				"add news maker"));
+				"Modified News Maker List"));
 	}
 	
 	/**
@@ -284,7 +275,7 @@ public class NewsDataBaseModel implements Serializable
 		this.newsMakerListModel.replace(newsMakerModel);
 		
 		processEvent(new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
-				"replace news maker"));
+				"Modified News Maker List"));
 	}
 	
 	/**
@@ -297,7 +288,7 @@ public class NewsDataBaseModel implements Serializable
 		newsMakerListModel.removeListOfNewsMakers(newsMakers);
 		
 		processEvent(new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
-				"remove news makers"));
+				"Modified News Maker List"));
 	}
 	
 	/**
@@ -308,7 +299,7 @@ public class NewsDataBaseModel implements Serializable
 		newsMakerListModel.removeAllNewsMakers();
 		
 		processEvent(new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
-				"remove all news makers"));
+				"Modified News Maker List"));
 	}
 	
 	/**
@@ -319,7 +310,7 @@ public class NewsDataBaseModel implements Serializable
 		newsMakerListModel.sort();
 		
 		processEvent(new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
-				"sort news maker list"));
+				"Modified News Maker List"));
 	}
 	
 	/**
@@ -379,7 +370,7 @@ public class NewsDataBaseModel implements Serializable
 		this.newsStoryListModel = newsStoryListModel;
 		
 		processEvent(new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
-				"set news story list"));
+				"Modified News Story List"));
 	}
 	
 	/**
@@ -394,7 +385,7 @@ public class NewsDataBaseModel implements Serializable
 		newsStoryListModel.setNewsStoriesFromArray(newsStoryArray);
 		
 		processEvent(new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
-				"set news story list"));
+				"Modified News Story List"));
 	}
 	
 	/**
@@ -407,7 +398,7 @@ public class NewsDataBaseModel implements Serializable
 		this.newsStoryListModel.add(newsStory);
 		
 		processEvent(new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
-				"add news story"));
+				"Modified News Story List"));
 	}
 	
 	/**
@@ -420,7 +411,7 @@ public class NewsDataBaseModel implements Serializable
 		newsStoryListModel.removeListOfNewsStories(newsStories);
 		
 		processEvent(new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
-				"remove news stories"));
+				"Modified News Story List"));
 	}
 	
 	/**
@@ -431,7 +422,7 @@ public class NewsDataBaseModel implements Serializable
 		newsStoryListModel.setNewsStories(new NewsStoryListModel());
 		
 		processEvent(new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
-				"remove all news stories"));
+				"Modified News Story List"));
 	}
 	
 	/**
@@ -459,7 +450,7 @@ public class NewsDataBaseModel implements Serializable
 	 * 
 	 * @param e The event of which to inform the action listeners.
 	 */
-	private void processEvent(ActionEvent e) 
+	private synchronized void processEvent(ActionEvent e) 
 	{
 		for(ActionListener l : actionListenerList)
 		{

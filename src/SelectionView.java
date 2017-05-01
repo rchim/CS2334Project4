@@ -314,11 +314,9 @@ public class SelectionView extends JFrame implements ActionListener
 	{
 		this.newsDataBaseModel = newsDataBaseModel;
 		this.newsDataBaseModel.addActionListener(this);
-		this.jlNewsMakerList.setModel(this.newsDataBaseModel.getNewsMakers());		
-		this.jlNewsStoryList.setModel(this.newsDataBaseModel.getNewsStories());
-		
+				
 		this.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
-				"set new model"));
+				"Set new model."));
 	}
 	
 	/**
@@ -331,6 +329,13 @@ public class SelectionView extends JFrame implements ActionListener
 	@Override
 	public void actionPerformed(ActionEvent e) 
 	{
+		// In case the default list models within the database have been
+		// replaced with new ones (or in case we are dealing with an entirely
+		// new model), we make sure the JLists point to the most current list
+		// models.
+		this.jlNewsMakerList.setModel(this.newsDataBaseModel.getNewsMakers());		
+		this.jlNewsStoryList.setModel(this.newsDataBaseModel.getNewsStories());
+		
 		// Rather than letting the news story JList call the stories' toString
 		// methods to write their label text, we use a custom cell renderer
 		// that generates labels in a verbose, human-readable output format.

@@ -235,7 +235,7 @@ class NewsMakerModel implements Comparable<NewsMakerModel>, Serializable
 	 * 
 	 * @param e The event of which to inform the action listeners.
 	 */
-	private void processEvent(ActionEvent e) 
+	private synchronized void processEvent(ActionEvent e) 
 	{
 		for(ActionListener l : actionListenerList)
 		{

@@ -82,9 +82,11 @@ public class NewsController
 	
 	/**
 	 * Setter method for the <code>NewsDataBaseModel</code>
-	 * @author Ryan Chimienti
+	 * 
 	 * @param newsDataBaseModel
-	 *   <code>MewsDataBaseModel</code> to be assocaited with the controller
+	 *   <code>MewsDataBaseModel</code> to be associated with the controller
+	 *   
+	 *   @author Ryan Chimienti
 	 */
 	public void setNewsDataBaseModel(NewsDataBaseModel newsDataBaseModel)
 	{
@@ -94,9 +96,11 @@ public class NewsController
 	/**
 	 * Registers listeners for the given selection view and stores it in an
 	 * instance field so it can be recalled later.
-	 * @author Ryan Chimienti
+	 * 
 	 * @param selectionView The selection view to which this controller will be
 	 * listening for user interaction events.
+	 * 
+	 * @author Ryan Chimienti
 	 */
 	public void setSelectionView(SelectionView selectionView)
 	{
@@ -116,6 +120,9 @@ public class NewsController
 	 * Asks the user to choose a binary data file (which should contain a
 	 * serialized NewsDataBaseModel object) and sets the model to reflect that
 	 * data.
+	 * 
+	 * TODO Adjust to meet Javadoc requirements.
+	 * 
 	 * @author Ryan Chimienti
 	 */
 	private void loadNewsData()
@@ -166,13 +173,72 @@ public class NewsController
 	}	
 	
 	/**
-	 * Save the news data into a file
+	 * Method that saves binary data to a file from the news database model.
 	 * 
-	 * TODO After Javadoc: make sure we aren't confusing save and export.
+	 * TODO Adjust to meet Javadoc requirements.
+	 * 
+	 * @author Ryan Chimienti
 	 */
 	private void saveNewsData()
 	{
-		// TODO
+		JFileChooser fileChooser = new JFileChooser();
+		
+		// We attempt to let the user pick files from their working directory
+		// for convenience.
+		try
+		{
+			File workingDirectory = new File(System.getProperty("user.dir"));
+			fileChooser.setCurrentDirectory(workingDirectory);
+		}
+		catch(Exception e)
+		{
+			// If this process fails (e.g. because the code is being run by
+			// Mimir), it won't seriously affect the user experience. We ignore
+			// the exception.
+		}
+		
+		int fileChooserReturnVal 
+				= fileChooser.showDialog(selectionView, "Save");
+		
+		// If the user selected a file for saving, we write to it.
+		if(fileChooserReturnVal == JFileChooser.APPROVE_OPTION)
+		{
+			// We will export a near-copy of the database model instead of the
+			// actual model. If we try to export the actual model, the program
+			// tries to serialize all its variables, including its action
+			// listener list. Unfortunately, among the action listeners is an
+			// unserializable SelectionView object. The "copy" does not have any
+			// registered action listeners and so escapes this issue.
+			NewsDataBaseModel dataBaseModelCopy = new NewsDataBaseModel(
+					newsDataBaseModel.getNewsMakerListModel(),
+					newsDataBaseModel.getNewsStoryListModel());
+			
+			String filePath = fileChooser.getSelectedFile().getPath();
+			
+			try
+			{
+				FileOutputStream fileOutputStream 
+						= new FileOutputStream(filePath);
+				ObjectOutputStream objectOutputStream 
+						= new ObjectOutputStream(fileOutputStream);
+				objectOutputStream.writeObject(dataBaseModelCopy);
+				objectOutputStream.close();
+			}
+			catch(IOException e)
+			{
+				e.printStackTrace();
+				JOptionPane.showMessageDialog(selectionView, 
+						"IO error encountered when saving data.", 
+						"Oops!",
+						JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			
+			JOptionPane.showMessageDialog(selectionView, 
+					"Saved data to " + filePath + ".", 
+					"Success",
+					JOptionPane.PLAIN_MESSAGE);
+		}
 	}	
 	
 	/**
@@ -183,6 +249,9 @@ public class NewsController
 	 * <P>
 	 * After all the files are chosen, adds the imported data to the model.
 	 * </P>
+	 * 
+	 * TODO Adjust to meet Javadoc requirements
+	 * 
 	 * @author Ryan Chimienti
 	 */
 	private void importNoozStories()
@@ -343,69 +412,13 @@ public class NewsController
 	}	
 	
 	/**
-	 * Export news data into a binary file
+	 * Writes text data to a file based on the news database model.
+	 * 
 	 * @author Ryan Chimienti
 	 */
-	private void exportNoozStories()
+	private void exportNewsStories()
 	{
-		JFileChooser fileChooser = new JFileChooser();
 		
-		// We attempt to let the user pick files from their working directory
-		// for convenience.
-		try
-		{
-			File workingDirectory = new File(System.getProperty("user.dir"));
-			fileChooser.setCurrentDirectory(workingDirectory);
-		}
-		catch(Exception e)
-		{
-			// If this process fails (e.g. because the code is being run by
-			// Mimir), it won't seriously affect the user experience. We ignore
-			// the exception.
-		}
-		
-		int fileChooserReturnVal 
-				= fileChooser.showDialog(selectionView, "Export");
-		
-		// If the user selected a file for export, we write to it.
-		if(fileChooserReturnVal == JFileChooser.APPROVE_OPTION)
-		{
-			// We will export a near-copy of the database model instead of the
-			// actual model. If we try to export the actual model, the program
-			// tries to serialize all its variables, including its action
-			// listener list. Unfortunately, among the action listeners is an
-			// unserializable SelectionView object. The "copy" does not have any
-			// registered action listeners and so escapes this issue.
-			NewsDataBaseModel dataBaseModelCopy = new NewsDataBaseModel(
-					newsDataBaseModel.getNewsMakerListModel(),
-					newsDataBaseModel.getNewsStoryListModel());
-			
-			String filePath = fileChooser.getSelectedFile().getPath();
-			
-			try
-			{
-				FileOutputStream fileOutputStream 
-						= new FileOutputStream(filePath);
-				ObjectOutputStream objectOutputStream 
-						= new ObjectOutputStream(fileOutputStream);
-				objectOutputStream.writeObject(dataBaseModelCopy);
-				objectOutputStream.close();
-			}
-			catch(IOException e)
-			{
-				e.printStackTrace();
-				JOptionPane.showMessageDialog(selectionView, 
-						"IO error encountered when exporting data.", 
-						"Oops!",
-						JOptionPane.ERROR_MESSAGE);
-				return;
-			}
-			
-			JOptionPane.showMessageDialog(selectionView, 
-					"Exported data to " + filePath + ".", 
-					"Success",
-					JOptionPane.PLAIN_MESSAGE);
-		}
 	}
 	
 	/**
@@ -641,7 +654,7 @@ public class NewsController
 				null
 				);
 		
-		// get all the news sotries
+		// get all the news stories
 		DefaultListModel<NewsStory> news = new DefaultListModel<NewsStory>();
 		news = newsDataBaseModel.getNewsStories();
 		ArrayList<NewsStory> newsStories = new ArrayList<NewsStory>();
@@ -676,7 +689,6 @@ public class NewsController
 		for(NewsStory n : newsStories){
 			newsDataBaseModel.addNewsStory(n);	
 		}
-			
 	}
 	
 	/**
@@ -763,7 +775,7 @@ public class NewsController
 			}
 			else if("Export".equals(clickedItemText))
 			{
-				exportNoozStories();
+				exportNewsStories();
 			}
 		}
 	}
@@ -849,10 +861,7 @@ public class NewsController
 			}
 			else if("Sort News Stories".equals(clickedItemText))
 			{
-				// TODO NOTE: THIS IS AT ODDS WITH THE PROJECT DESC, WHICH
-				// SUGGESTS THE SORT NEWS STORIES ELEMENT IS NOT A CLICKABLE
-				// MENU ITEM IN ITSELF, BUT A MENU THAT SPAWNS A SUBMENU.
-				// HOWEVER, THE UML LISTS IT AS A MENU ITEM. WILL NEED CLARITY.
+				sortNewsStories();
 			}
 			else if("Delete News Story".equals(clickedItemText))
 			{

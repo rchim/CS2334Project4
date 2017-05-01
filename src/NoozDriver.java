@@ -1,11 +1,11 @@
 /**
  * Group Members:
  * Ryan Chimienti (ID 113392576)
- * Malachi Phillips (ID TODO)
+ * Malachi Phillips (ID 112933834)
  * 
  * Project 4, CS 2334, Section 010, May 4, 2017
  * <P>
- * NoozDriver is the driver class for Nooz, a simple newspaper story data
+ * NoozDriver is the driver class for Nooz, a simple news story data
  * system. Its main method links up the controller, selection view, and
  * overarching model. Then, it gets out of the way and lets them do the work.
  * </P>
