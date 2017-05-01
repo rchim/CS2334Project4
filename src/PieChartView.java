@@ -29,14 +29,14 @@ public class PieChartView implements ActionListener
 	/** <code>NewsMakerModel</code> associated with the drawing **/
 	private NewsMakerModel newsMakerModel;
 	
-	/** String holding the media information **/
-	private String media;
+	/** List of allowable media types **/
+	private List<NewsMedia> media;
 	
-	/** String holding the content information **/
-	private String content;
+	/** NewsContent **/
+	private NewsContent content;
 	
-	/** String holding the measure information **/
-	private String measure;
+	/** NewsMetric **/
+	private NewsMetric measure;
 	
 	/**
 	 * Public constructor for a <code>PieChartView</code>
@@ -45,18 +45,18 @@ public class PieChartView implements ActionListener
 	 * 
 	 * @param newsMakerModel
 	 *   <code>NewsMakerModel</code> to be associated with the <code>PieChart</code>
-	 * @param media
+	 * @param selectedMediaTypes
 	 *   String holding the media information
-	 * @param content
+	 * @param selectedNewsContent
 	 *   String holding the content information
-	 * @param measure
+	 * @param selectedNewsMetric
 	 *   String holding the measure information
 	 */
-	public PieChartView(NewsMakerModel newsMakerModel, String media, String content, String measure){
+	public PieChartView(NewsMakerModel newsMakerModel, List<NewsMedia> selectedMediaTypes, NewsContent selectedNewsContent, NewsMetric selectedNewsMetric){
 		this.newsMakerModel = newsMakerModel;
-		this.media = media;
-		this.content = content;
-		this.measure = measure;
+		this.media = selectedMediaTypes;
+		this.content = selectedNewsContent;
+		this.measure = selectedNewsMetric;
 		
 		// construct the title
 		String title = constructTitle();
@@ -99,26 +99,19 @@ public class PieChartView implements ActionListener
 		
 		// cast the media into a specific instance of NewsMedia
 		
-		
+		// TODO:: fix this method!!!
 		for(int i = 0 ; i < newsList.size(); ++i){
 			// get the current story
 			NewsStory current = newsList.getElementAt(i);
 			
-			// determine if this is the right type of media
-			switch(media){
-			case "TV":
-				// only get if instance of TVNewsStory
-				if (current instanceof TVNewsStory) stories.add(current);
-				break;
-			case "Online":
-				// only get if instance of OnlineNewsStory
-				if (current instanceof OnlineNewsStory) stories.add(current);
-				break;
-			case "Newspaper":
-				// only get if instance of NewspaperStory
-				if (current instanceof NewspaperStory) stories.add(current);
-				break;
+			// determine whether to keep the story based on type
+			String storyType = stories.getClass().getName();
+			switch(storyType){
+			case "TVNewsStory":
+				if ()
 			}
+
+			stories.add(current);
 		} // at this point, the list of stories is all the stories we care about
 		// iterate through this list
 		
@@ -185,6 +178,7 @@ public class PieChartView implements ActionListener
 			} // now onto Subject case
 			if("Subject".equals(content)){
 				String contentName = n.getSubject();
+				System.out.println(contentName);
 				uniqueContents.add(contentName);
 				if ("Length".equals(measure)){
 					// determine if the map value has already been initialized
@@ -232,6 +226,7 @@ public class PieChartView implements ActionListener
 		}
 		
 		// return the wedges
+		System.out.println(wedges.size());
 		return wedges;
 	}
 	
@@ -246,7 +241,6 @@ public class PieChartView implements ActionListener
 	public void actionPerformed(ActionEvent actionEvent){
 		// reconstruct if there is ever a change in the newsMakerModel
 		pieChart.setTitle(constructTitle());
-		
 		pieChart.setWedges(constructWedges());
 		
 	}

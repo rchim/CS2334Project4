@@ -13,8 +13,11 @@ import javax.swing.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Project 4, CS 2334, Section 010, May 4, 2017
@@ -65,7 +68,7 @@ public class NewsController
 	/**
 	 * Media type selection view for the Nooz application.
 	 */
-	private MediaTypeSelectionView mediaTypeSelectionView;
+	private MediaTypeSelectionView mediaTypeSelectionView = new MediaTypeSelectionView();
 	
 	/**
 	 * List of <code>NewsMedia</code> that are selected.
@@ -794,6 +797,7 @@ public class NewsController
 	}
 	
 	/**
+	 * @author Malachi Phillips
 	 * Delete <b><i>ALL</i></b> <code>NewsStory</code>s
 	 */
 	private void deleteAllNewsStories()
@@ -802,19 +806,171 @@ public class NewsController
 	}
 	
 	/**
+	 * @author Malachi Phillips
 	 * Display the pie chart objects to the user.
 	 */
 	private void displayPieCharts()
 	{
-		// TODO
+		// for each newsmaker selected
+		// display a pie chart
+		
+		// selected newsmakers
+		int[] selected = selectionView.getSelectedNewsMakers();
+		
+		// If there are no selected news makers, alert the user and return.
+		if (0 == selected.length){
+			JOptionPane.showMessageDialog(selectionView,
+					"No newsmaker selected.",
+					"Invalid Selection",
+					JOptionPane.WARNING_MESSAGE);
+		} else{
+			// If there are selected news makers, go through the process for each.
+			NewsMakerListModel newsMakerListModel = this.newsDataBaseModel.getNewsMakerListModel();
+			for (int index : selected){
+				NewsMakerModel newsMakerModel = newsMakerListModel.get(index);
+				String newsMakerName = newsMakerModel.getName();
+				
+				// Get media types using the MediaTypeSelectionView
+				this.selectedMediaTypes = null;
+				this.mediaTypeSelectionView = new MediaTypeSelectionView();
+				MediaTypeSelectionListener mediaTypeSelectionListener =
+						new MediaTypeSelectionListener();
+				this.mediaTypeSelectionView.jbOkay.addActionListener(mediaTypeSelectionListener);
+				this.mediaTypeSelectionView.jbCancel.addActionListener(mediaTypeSelectionListener);
+				this.viewDialog = new JDialog(selectionView, newsMakerName, true);
+				this.viewDialog.add(mediaTypeSelectionView);
+				this.viewDialog.setResizable(false);
+				this.viewDialog.pack();
+				this.viewDialog.setVisible(true);
+				
+				// If no media types were selected, go on to next news maker.
+				if (null == this.selectedMediaTypes){
+					continue;
+				}
+				
+				// Get content type using JOptionPane.
+				NewsContent selectedNewsContent = null;
+				
+				selectedNewsContent = (NewsContent) JOptionPane.showInputDialog(
+						selectionView,
+						"Graph news stories based on which content?",
+						newsMakerName,
+						JOptionPane.PLAIN_MESSAGE,
+						null,
+						NewsContent.values(),
+						NewsContent.TOPIC);
+				if (null == selectedNewsContent){
+					continue;
+				}
+				
+				// Get the metric type using JOptionPane
+				NewsMetric selectedNewsMetric = null;
+				selectedNewsMetric = (NewsMetric) JOptionPane.showInputDialog(
+						selectionView,
+						"Graph news stories based on which metric?",
+						newsMakerName,
+						JOptionPane.PLAIN_MESSAGE,
+						null,
+						NewsMetric.values(), NewsMetric.LENGTH);
+				if (null == selectedNewsMetric){
+					continue;
+				}
+				
+				// Create the pie chart.
+				PieChartView pieChartView = new PieChartView(newsMakerModel,
+						selectedMediaTypes,
+						selectedNewsContent,
+						selectedNewsMetric);
+				
+				// Make sure the pie chart listens for model changes so that it 
+				// can update itself
+				newsMakerModel.addActionListener(pieChartView);
+			}
+		}
 	}
 	
 	/**
+	 * @author Malachi Phillips
 	 * Display all the text views to the user.
 	 */
 	private void displayTextViews()
 	{
-		// TODO
+		// for each newsmaker selected
+		// display a text view
+		// selected newsmakers
+		int[] selected = selectionView.getSelectedNewsMakers();
+		DefaultListModel<NewsMakerModel> news = newsDataBaseModel.getNewsMakers();
+		ArrayList<NewsMakerModel> selectedNewsMakers = new ArrayList<NewsMakerModel>();
+		for (int i = 0 ; i < selected.length; ++i){
+			selectedNewsMakers.add(news.get(selected[i]));
+		}
+		
+		// imbed inside for-loop over the selected newsmakers
+		for (NewsMakerModel nm : selectedNewsMakers){
+			
+			// loop over possible sorting choices
+			Set<SortCriterion> possibleSorting = new TreeSet<SortCriterion>();
+			List<SortCriterion> chosenSorting = new ArrayList<SortCriterion>();
+			possibleSorting.add(SortCriterion.DATE_TIME);
+			possibleSorting.add(SortCriterion.LENGTH);
+			possibleSorting.add(SortCriterion.SOURCE);
+			possibleSorting.add(SortCriterion.TOPIC);
+			int choiceNumber = 1;
+			while(possibleSorting.size() > 1){
+				String choiceString = null;
+				JFrame frame = new JFrame();
+				switch(choiceNumber){
+				case 1:
+					choiceString = "primary";
+					break;
+				case 2:
+					choiceString = "secondary";
+					break;
+				case 3:
+					choiceString = "tertiery";
+					break;
+				default:
+					// Should never reach here
+				}
+				
+				Object[] options = new Object[possibleSorting.size()];
+				//  make the options list
+				int count = 0;
+				for (SortCriterion s : possibleSorting){
+					options[count] = s;
+					count++; //increment by one
+				}
+				SortCriterion sortCriterion = (SortCriterion)JOptionPane.showInputDialog(
+						frame,
+						"Choose the " + choiceString + "",
+						"TextView Media Type Options",
+						JOptionPane.PLAIN_MESSAGE,
+						null,
+						options,
+						null
+						);
+				// tack onto list
+				chosenSorting.add(sortCriterion);
+				
+				// remove from set, so no longer possible
+				possibleSorting.remove(sortCriterion);
+				choiceNumber++;
+			} // at end, should have the list of sorting options
+			
+			
+			// set the mediaTypes here
+			//mediaTypeSelectionView = new MediaTypeSelectionView();
+			//mediaTypeSelectionView.setVisible(true);
+			
+			viewDialog = new JDialog(selectionView, "Foo", true );
+			viewDialog.getContentPane().add(mediaTypeSelectionView);
+			viewDialog.pack();
+			viewDialog.setVisible(true);
+			
+			// create text view(s)
+			new TextView(nm, selectedMediaTypes, chosenSorting);		
+		}		
+		
 	}
 	
 	/**
@@ -1107,16 +1263,11 @@ public class NewsController
 		 */
 		@Override
 		public void actionPerformed(ActionEvent actionEvent) {
-			
-			String clickedItemText = ((JButton)(actionEvent.getSource())).getText();
-			
-			if("Cancel".equals(clickedItemText)){
-				// close the window
-				mediaTypeSelectionView.setVisible(false);
-			}
-			if("OK".equals(clickedItemText)){
+			selectedMediaTypes = new LinkedList<NewsMedia>();
+
+			if("OK".equals(actionEvent.getActionCommand())){
 				// clear selected media types -- start fresh
-				selectedMediaTypes.clear();
+				
 				// determine which of the checkboxes are checked
 				if(mediaTypeSelectionView.jcbNewspaper.isSelected()){
 					// add into the list
@@ -1132,11 +1283,14 @@ public class NewsController
 					// add into the list
 					selectedMediaTypes.add(NewsMedia.ONLINE);
 				}
-				
-				// make invisible
-				mediaTypeSelectionView.setVisible(false);
+				if(null == selectedMediaTypes){
+					JOptionPane.showMessageDialog(selectionView,
+							"No media type selected.",
+							"Invalid Selection",
+							JOptionPane.WARNING_MESSAGE);
+				}
 			}
-			
+		viewDialog.dispose();	
 		}
 		
 	}

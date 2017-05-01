@@ -66,6 +66,7 @@ public class TextView implements ActionListener
 			        List<SortCriterion> sortCriteria){
 		
 		// set the newsMedia, sortCriteria
+		this.newsMakerModel = newsMakerModel;
 		this.newsMedia = newsMedia;
 		this.sortCriteria = sortCriteria;
 		
