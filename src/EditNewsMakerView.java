@@ -80,7 +80,7 @@ public class EditNewsMakerView extends JPanel implements ActionListener
 		// fill the story string list
 	    populateNewsStoryJList();
 		
-		// don't have th e needed image -- 
+		// don't have the needed image -- 
 		
 		// start by pre-filling in the fields with the current information
 		jtfName = new JTextField(newsMakerModel.getName());
@@ -173,7 +173,20 @@ public class EditNewsMakerView extends JPanel implements ActionListener
 	 */
 	@Override
 	public void actionPerformed(ActionEvent event) {
-		// TODO Auto-generated method stub
+		// what sort of changes in the model do we need to listen for?
+		// - any changes inside the newsMakerListModel
+		// - any changes inside the newsMakerModel
+		
+		if(event.getActionCommand().equals("Modified News Story List")){
+			// recall populateNewsStoryJList
+			populateNewsStoryJList();
+		}
+		if(event.getActionCommand().equals("Modified News Maker List")){
+			// re-set the newsMakerModel
+			this.newsMakerModel = newsDataBaseModel.getNewsMakerListModel().get(newsMakerModel);
+			// re-call the populateNewsStoryJList
+			populateNewsStoryJList();
+		}
 		
 	}
 
