@@ -119,7 +119,7 @@ class NewsMakerModel implements Comparable<NewsMakerModel>, Serializable
 		newsStories.add(newsStory);
 		
 		processEvent(new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
-				"add news story"));
+				"Modifided News Maker"));
 	}
 	
 	/**
@@ -132,7 +132,7 @@ class NewsMakerModel implements Comparable<NewsMakerModel>, Serializable
 		this.name = name;
 		
 		processEvent(new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
-				"set name"));
+				"Modifided News Maker"));
 	}
 	
 	/**
@@ -145,7 +145,7 @@ class NewsMakerModel implements Comparable<NewsMakerModel>, Serializable
 		newsStories = newsStoryListModel;
 		
 		processEvent(new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
-				"set news story list"));
+				"Modifided News Maker"));
 	}	
 	
 	/**
@@ -160,7 +160,7 @@ class NewsMakerModel implements Comparable<NewsMakerModel>, Serializable
 		newsStories.remove(newsStory);
 		
 		processEvent(new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
-				"remove news story"));
+				"Modifided News Maker"));
 	}
 	
 	/**
