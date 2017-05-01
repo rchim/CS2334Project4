@@ -1,3 +1,7 @@
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -91,6 +95,10 @@ class NewsMakerListModel implements Serializable
 	/**
 	 * An accessor method to get a news maker from the list.
 	 * 
+	 * @author Malachi Phillips
+	 *   -- added in the Deep Copy
+	 *   -- credit to: <a href="http://alvinalexander.com/java/java-deep-clone-example-source-code">Java Deep Copy</a>
+	 * 
 	 * @param newsMakerModel
 	 *            The news maker to get from the list.
 	 * @return The news maker found, if any. Otherwise, null.
@@ -100,13 +108,21 @@ class NewsMakerListModel implements Serializable
 		int index = newsMakerDefaultListModel.indexOf(newsMakerModel);
 		if(index >= 0) 
 		{
-			// TODO Have it return a copy instead (Eventually)
-			return this.newsMakerDefaultListModel.get(index);
-		} 
-		else
-		{
-			return null;
+			try {
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				ObjectOutputStream oos = new ObjectOutputStream(baos);
+				oos.writeObject(this.newsMakerDefaultListModel.get(index));
+				ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+				ObjectInputStream ois = new ObjectInputStream(bais);
+				return (NewsMakerModel) ois.readObject();
+			} catch (Exception e){
+				e.printStackTrace();
+				return null; // this means that it could not be found
+			}
+		} else {
+			return null; // can't do a negative
 		}
+		
 	}
 	
 	/**
