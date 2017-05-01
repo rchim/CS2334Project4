@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Project 4, CS 2334, Section 010, May 4, 2017
@@ -794,6 +796,7 @@ public class NewsController
 	}
 	
 	/**
+	 * @author Malachi Phillips
 	 * Delete <b><i>ALL</i></b> <code>NewsStory</code>s
 	 */
 	private void deleteAllNewsStories()
@@ -802,19 +805,140 @@ public class NewsController
 	}
 	
 	/**
+	 * @author Malachi Phillips
 	 * Display the pie chart objects to the user.
 	 */
 	private void displayPieCharts()
 	{
-		// TODO
+		// for each newsmaker selected
+		// display a pie chart
+		
+		// selected newsmakers
+		int[] selected = selectionView.getSelectedNewsMakers();
+		DefaultListModel<NewsMakerModel> news = newsDataBaseModel.getNewsMakers();
+		ArrayList<NewsMakerModel> selectedNewsMakers = new ArrayList<NewsMakerModel>();
+		for (int i = 0 ; i < selected.length; ++i){
+			selectedNewsMakers.add(news.get(selected[i]));
+		}
+		
+		// imbed inside for-loop over the selected newsmakers
+		for (NewsMakerModel nm : selectedNewsMakers){
+			// prompt the user for a name to enter
+			NewsMetric[] Options = {NewsMetric.COUNT, NewsMetric.LENGTH};
+			JFrame frame = new JFrame();
+			NewsMetric newsMetric = (NewsMetric)JOptionPane.showInputDialog(
+				frame,
+				"Choose either to compute statistics based on seconds/word length or count:",
+				"PieChartView Metric Options",
+				JOptionPane.PLAIN_MESSAGE,
+				null,
+				Options,
+				null
+				);
+		
+			// cast the newsMetric back into string
+			String measure = newsMetric.toString();
+		
+			// prompt the user for the information to display
+			String[] contentOptions = {"Subject","Topic","Source"};
+			String content = (String)JOptionPane.showInputDialog(
+				frame,
+				"Choose either to draw on subjects, topics, or sources:",
+				"PieChartView Content Options",
+				JOptionPane.PLAIN_MESSAGE,
+				null,
+				contentOptions,
+				null
+				);
+			
+			String[] mediaOptions = {"TV","Newspaper","Online"};
+			String media = (String)JOptionPane.showInputDialog(
+				frame,
+				"Choose the media type:",
+				"PieChartView Media Type Options",
+				JOptionPane.PLAIN_MESSAGE,
+				null,
+				mediaOptions,
+				null
+				);
+		
+			// create a pie chart view
+			new PieChartView(nm, media, content, measure);
+		
+		}
 	}
 	
 	/**
+	 * @author Malachi Phillips
 	 * Display all the text views to the user.
 	 */
 	private void displayTextViews()
 	{
-		// TODO
+		// for each newsmaker selected
+		// display a text view
+		// selected newsmakers
+		int[] selected = selectionView.getSelectedNewsMakers();
+		DefaultListModel<NewsMakerModel> news = newsDataBaseModel.getNewsMakers();
+		ArrayList<NewsMakerModel> selectedNewsMakers = new ArrayList<NewsMakerModel>();
+		for (int i = 0 ; i < selected.length; ++i){
+			selectedNewsMakers.add(news.get(selected[i]));
+		}
+		
+		// imbed inside for-loop over the selected newsmakers
+		for (NewsMakerModel nm : selectedNewsMakers){
+			
+			// loop over possible sorting choices
+			Set<SortCriterion> possibleSorting = new TreeSet<SortCriterion>();
+			List<SortCriterion> chosenSorting = new ArrayList<SortCriterion>();
+			possibleSorting.add(SortCriterion.DATE_TIME);
+			possibleSorting.add(SortCriterion.LENGTH);
+			possibleSorting.add(SortCriterion.SOURCE);
+			possibleSorting.add(SortCriterion.TOPIC);
+			int choiceNumber = 1;
+			while(possibleSorting.size() > 1){
+				String choiceString = null;
+				JFrame frame = new JFrame();
+				switch(choiceNumber){
+				case 1:
+					choiceString = "primary";
+					break;
+				case 2:
+					choiceString = "secondary";
+					break;
+				case 3:
+					choiceString = "tertiery";
+					break;
+				default:
+					// Should never reach here
+				}
+				
+				Object[] options = new Object[possibleSorting.size()-1];
+				//  make the options list
+				int count = 0;
+				for (SortCriterion s : possibleSorting){
+					options[count] = s;
+					count++; //increment by one
+				}
+				SortCriterion sortCriterion = (SortCriterion)JOptionPane.showInputDialog(
+						frame,
+						"Choose the " + choiceString + "",
+						"PieChartView Media Type Options",
+						JOptionPane.PLAIN_MESSAGE,
+						null,
+						options,
+						null
+						);
+				// tack onto list
+				chosenSorting.add(sortCriterion);
+				
+				// remove from set, so no longer possible
+				possibleSorting.remove(sortCriterion);
+			} // at end, should have the list of sorting options
+			
+			// create text view(s)
+			new TextView(nm, selectedMediaTypes, chosenSorting);		
+		}		
+		
 	}
 	
 	/**
