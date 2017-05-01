@@ -54,7 +54,7 @@ public class MediaTypeSelectionView extends JPanel
 	 * Public constructor. Draws the GUI components.
 	 */
 	public MediaTypeSelectionView(){
-		jbBlank.setVisible(false);;
+		jbBlank.setVisible(false);
 		jbOkay.setActionCommand("OK");
 		jbOkay.setSelected(true);
 		jbCancel.setActionCommand("Cancel");
