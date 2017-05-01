@@ -212,99 +212,99 @@ class NewsMakerListModel implements Serializable
 		return newsMakerNames;
 	}
 	
-	/**
-	 * The mutator for adding news makers to the list. Finds where to insert the
-	 * news maker to keep the list sorted by name.
-	 * <P>
-	 * By using our own class with its own <code>add</code> method, rather than
-	 * directly using the <code>add</code> method of
-	 * <code>DefaultListModel</code>, we can ensure that we don't add multiple
-	 * <code>NewsMaker</code> objects with the same name to our list (thereby
-	 * keeping the names unique).
-	 * </P>
-	 * 
-	 * @param newsMakerModel
-	 *            The news maker to add.
-	 * @throws IllegalArgumentException
-	 *             If the news maker to add is already in the list.
-	 */
-	public void add(NewsMakerModel newsMakerModel) 
-	{
-		// If the news maker is already in the list, don't let it get added
-		// again.
-		if (this.contains(newsMakerModel)) 
+		/**
+		 * The mutator for adding news makers to the list. Finds where to insert the
+		 * news maker to keep the list sorted by name.
+		 * <P>
+		 * By using our own class with its own <code>add</code> method, rather than
+		 * directly using the <code>add</code> method of
+		 * <code>DefaultListModel</code>, we can ensure that we don't add multiple
+		 * <code>NewsMaker</code> objects with the same name to our list (thereby
+		 * keeping the names unique).
+		 * </P>
+		 * 
+		 * @param newsMakerModel
+		 *            The news maker to add.
+		 * @throws IllegalArgumentException
+		 *             If the news maker to add is already in the list.
+		 */
+		public void add(NewsMakerModel newsMakerModel) 
 		{
-			throw new IllegalArgumentException("NewsMaker " 
-					+ newsMakerModel.getName() + " already in list."); 
-		}
-		// Otherwise, add the supplied news maker in the right position to keep
-		// the list sorted.
-		else 
-		{
-			// If there are no news makers in the list, or if the supplied news
-			// maker should follow the last one in the list, simply add the
-			// supplied news maker to the end of the list.
-			if(this.isEmpty() 
-					|| newsMakerModel.compareTo(this.get(this.size()-1)) > 0)
+			// If the news maker is already in the list, don't let it get added
+			// again.
+			if (this.contains(newsMakerModel)) 
 			{
-				newsMakerDefaultListModel.addElement(newsMakerModel);
+				throw new IllegalArgumentException("NewsMaker " 
+						+ newsMakerModel.getName() + " already in list."); 
 			}
-			// If the supplied news maker should precede the first one in the
-			// list, simply add it to the beginning of the list.
-			else if(newsMakerModel.compareTo(this.get(0)) < 0)
+			// Otherwise, add the supplied news maker in the right position to keep
+			// the list sorted.
+			else 
 			{
-				newsMakerDefaultListModel.insertElementAt(newsMakerModel, 0);
-			}
-			// Otherwise, use a binary search to find where it should be
-			// inserted to keep the list sorted.
-			else
-			{
-				int insertionIndex;
-				boolean foundCorrectInsertionIndex = false;
-				
-				// We will close in on the insertion index by trapping it 
-				// between an upper and a lower bound.
-				int insertionIndexUpperBound = this.size() - 1;
-				int insertionIndexLowerBound = 1;				
-				
-				do 
+				// If there are no news makers in the list, or if the supplied news
+				// maker should follow the last one in the list, simply add the
+				// supplied news maker to the end of the list.
+				if(this.isEmpty() 
+						|| newsMakerModel.compareTo(this.get(this.size()-1)) > 0)
 				{
-					// We try an insertion index right in the middle of the
-					// upper and lower bound.
-					insertionIndex = 
-							(insertionIndexUpperBound 
-							+ insertionIndexLowerBound) / 2;
-					
-					// If the supplied news maker should come after the news
-					// maker currently at the insertion index, then the
-					// insertion index is too small, so we raise the lower
-					// bound.
-					if(newsMakerModel.compareTo(this.get(insertionIndex)) > 0)
-					{
-						insertionIndexLowerBound = insertionIndex + 1;
-					}
-					// If the news maker should precede the news maker that
-					// comes before the insertion index, then the insertion
-					// index is too great, so we reduce the upper bound.
-					else if(newsMakerModel.compareTo(
-							this.get(insertionIndex-1)) < 0)
-					{
-						insertionIndexUpperBound = insertionIndex - 1;
-					}
-					// Otherwise, the insertion index must be right where it
-					// belongs.
-					else
-					{
-						foundCorrectInsertionIndex = true;
-					}					
+					newsMakerDefaultListModel.addElement(newsMakerModel);
 				}
-				while(!foundCorrectInsertionIndex);
-				
-				newsMakerDefaultListModel.insertElementAt(
-						newsMakerModel, insertionIndex);
-			}			
-		}
-	}	
+				// If the supplied news maker should precede the first one in the
+				// list, simply add it to the beginning of the list.
+				else if(newsMakerModel.compareTo(this.get(0)) < 0)
+				{
+					newsMakerDefaultListModel.insertElementAt(newsMakerModel, 0);
+				}
+				// Otherwise, use a binary search to find where it should be
+				// inserted to keep the list sorted.
+				else
+				{
+					int insertionIndex;
+					boolean foundCorrectInsertionIndex = false;
+					
+					// We will close in on the insertion index by trapping it 
+					// between an upper and a lower bound.
+					int insertionIndexUpperBound = this.size() - 1;
+					int insertionIndexLowerBound = 1;				
+					
+					do 
+					{
+						// We try an insertion index right in the middle of the
+						// upper and lower bound.
+						insertionIndex = 
+								(insertionIndexUpperBound 
+								+ insertionIndexLowerBound) / 2;
+						
+						// If the supplied news maker should come after the news
+						// maker currently at the insertion index, then the
+						// insertion index is too small, so we raise the lower
+						// bound.
+						if(newsMakerModel.compareTo(this.get(insertionIndex)) > 0)
+						{
+							insertionIndexLowerBound = insertionIndex + 1;
+						}
+						// If the news maker should precede the news maker that
+						// comes before the insertion index, then the insertion
+						// index is too great, so we reduce the upper bound.
+						else if(newsMakerModel.compareTo(
+								this.get(insertionIndex-1)) < 0)
+						{
+							insertionIndexUpperBound = insertionIndex - 1;
+						}
+						// Otherwise, the insertion index must be right where it
+						// belongs.
+						else
+						{
+							foundCorrectInsertionIndex = true;
+						}					
+					}
+					while(!foundCorrectInsertionIndex);
+					
+					newsMakerDefaultListModel.insertElementAt(
+							newsMakerModel, insertionIndex);
+				}			
+			}
+		}	
 	
 	/**
 	 * Replaces a news maker in the list. The replacement news maker resides at
