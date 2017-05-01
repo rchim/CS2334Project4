@@ -239,6 +239,9 @@ public class TextView implements ActionListener
 	 */
 	@Override
 	public void actionPerformed(ActionEvent actionEvent){
-		//TODO:: Perform the action!
+		if(actionEvent.getActionCommand().equals("Modified News Maker List")){
+			// update the info
+			constructNewsStoriesAndSummary();
+		}
 	}
 }
