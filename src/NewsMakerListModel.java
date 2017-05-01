@@ -131,22 +131,43 @@ class NewsMakerListModel implements Serializable
 	 * This method searches the list and returns the news maker with the 
 	 * specified name.
 	 * 
-	 * @param newsMakerName
-	 *            The exact name for which to search.
+	 * @param newsMakerName The exact name for which to search.
 	 * @return The news maker found or null if none found.
 	 */
 	public NewsMakerModel getExactMatch(String newsMakerName) 
 	{		
-		// TODO MAKE THIS A BINARY SEARCH.
+		int lowerIndex = 0;
+		int upperIndex = newsMakerDefaultListModel.getSize() - 1;
+		int currentIndex;
+		NewsMakerModel currentNewsMaker;
+		String currentNewsMakerName;
 		
-		NewsMakerModel currentNewsMaker;		
-		for(int i = 0; i < newsMakerDefaultListModel.size(); i++) 
+		while(lowerIndex <= upperIndex)
 		{
-			currentNewsMaker = newsMakerDefaultListModel.get(i);
+			currentIndex = (lowerIndex + upperIndex) / 2;
+			currentNewsMaker = newsMakerDefaultListModel.get(currentIndex);
+			currentNewsMakerName = currentNewsMaker.getName();
 			
-			if(currentNewsMaker.getName().equals(newsMakerName))
-				return currentNewsMaker;			
+			// If the passed name comes after the current name, then the current
+			// index is too small. We have to raise the lower bound.
+			if(newsMakerName.compareTo(currentNewsMakerName) > 0)
+			{
+				lowerIndex = currentIndex + 1;
+			}
+			// If the passed name comes before the current name, then the
+			// current index is too great. We have to reduce the upper bound.
+			else if(newsMakerName.compareTo(currentNewsMakerName) < 0)
+			{
+				upperIndex = currentIndex - 1;
+			}
+			// Otherwise, the passed name must be the same as the current name,
+			// and we've found our match.
+			else
+			{
+				return currentNewsMaker;
+			}	
 		}
+		
 		return null;
 	}
 	
