@@ -16,11 +16,13 @@ import javax.swing.DefaultListModel;
  * </P>
  * <P>
  * This class was written by Dr. Hougen (as NewsMakerList). It was modified by
- * Ryan Chimienti (ID 113392576).
+ * Ryan Chimienti (ID 113392576). A deep copy was implemented by Malachi 
+ * Phillips where indicated.
  * </P>
  * 
  * @author Dean Hougen
  * @author Ryan Chimienti
+ * @author Malachi Phillips
  */
 class NewsMakerListModel implements Serializable 
 {
@@ -135,7 +137,7 @@ class NewsMakerListModel implements Serializable
 	 */
 	public NewsMakerModel getExactMatch(String newsMakerName) 
 	{		
-		// TODO KEEP THE LIST PERMANENTLY SORTED AND MAKE THIS A BINARY SEARCH.
+		// TODO MAKE THIS A BINARY SEARCH.
 		
 		NewsMakerModel currentNewsMaker;		
 		for(int i = 0; i < newsMakerDefaultListModel.size(); i++) 
@@ -349,8 +351,7 @@ class NewsMakerListModel implements Serializable
 	 * 
 	 * @param newsMakers
 	 *   <code>DefaultListModel</code> containing <code>NewsMakerModel</code>s
-	 *   to be deleted from the base
-	 *   
+	 *   to be deleted from the base   
 	 */
 	public void removeListOfNewsMakers(
 			DefaultListModel<NewsMakerModel> newsMakers)

@@ -150,6 +150,10 @@ class NewsStoryListModel implements Serializable
 	 */
 	public void remove(NewsStory newsStory)
 	{
+		// TODO figure out why the program freezes on this step when
+		// the 'Delete News Story' menu item is clicked, but only when the
+		// custom cell renderer is active.
+		
 		newsStories.removeElement(newsStory);
 	}
 
@@ -162,7 +166,7 @@ class NewsStoryListModel implements Serializable
 	{
 		for(int i = 0 ; i < newsStories.size(); i++)
 		{
-			remove(newsStories.get(i));
+			this.remove(newsStories.get(i));
 		}
 	}
 	

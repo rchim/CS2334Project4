@@ -97,7 +97,7 @@ class NoozFileProcessor
 	 * @param listOfStories
 	 *            The stories to write.
 	 * @throws IOException
-	 *             If there is an I/O problem writing the file.
+	 *             If there is an I/O problem writing to the file.
 	 */
 	public static void writeNewsStoriesFile(String fileName,
 			String listOfStories) throws IOException 

@@ -226,6 +226,60 @@ public class SelectionView extends JFrame implements ActionListener
 		// Add the menu bar to the frame.
 		this.setJMenuBar(jmb);		
 		
+		// Rather than letting the news story JList call the stories' toString
+		// methods to write their label text, we use a custom cell renderer
+		// that generates labels in a verbose, human-readable output format.
+		this.jlNewsStoryList.setCellRenderer(new DefaultListCellRenderer() 
+		{
+			private static final long serialVersionUID = 1L;
+			
+			public Component getListCellRendererComponent(JList<?> list,
+					Object value, int index, boolean isSelected,
+					boolean cellHasFocus)
+			{
+				JLabel label = (JLabel) super.getListCellRendererComponent(list,
+						value, index, isSelected, cellHasFocus);
+				
+				ListModel<NewsStory> newsStories 
+						= SelectionView.this.jlNewsStoryList.getModel();
+				
+				ArrayList<NewsMedia> storyTypes = new ArrayList<NewsMedia>();
+				
+				// We iterate through the stories, collecting all the
+				// distinct story types. 								
+				for(int i = 0; i < newsStories.getSize(); i++)
+				{
+					if(newsStories.getElementAt(i) 
+							instanceof NewspaperStory)
+					{
+						if(!storyTypes.contains(NewsMedia.NEWSPAPER))
+							storyTypes.add(NewsMedia.NEWSPAPER);
+					}
+					else if(newsStories.getElementAt(i) 
+							instanceof TVNewsStory)
+					{
+						if(!storyTypes.contains(NewsMedia.TV))
+							storyTypes.add(NewsMedia.TV);
+					}
+					else
+					{
+						if(!storyTypes.contains(NewsMedia.ONLINE))
+							storyTypes.add(NewsMedia.ONLINE);
+					}	
+					
+					// If we've found all the media types, there is no
+					// point in searching on for more.
+					if(storyTypes.size() == 3)
+						break;						
+				}							
+				
+				label.setText(UserInterface.convertToOutputFormat(
+						(NewsStory) value, storyTypes));
+				
+				return label;
+			}		
+		});
+		
 		// Assign the JLists to their scroll panes.
 		jspNewsMakerList.setViewportView(jlNewsMakerList);
 		jspNewsStoryList.setViewportView(jlNewsStoryList);
@@ -322,7 +376,8 @@ public class SelectionView extends JFrame implements ActionListener
 	/**
 	 * Responds to a change in the model data. The response consists of
 	 * determining which menu items should be enabled and disabled and setting
-	 * them accordingly.
+	 * them accordingly. Also, it is ensured that the JLists are displaying the
+	 * most current list models.
 	 * 
 	 * @param e The event being responded to.
 	 */
@@ -336,53 +391,6 @@ public class SelectionView extends JFrame implements ActionListener
 		this.jlNewsMakerList.setModel(this.newsDataBaseModel.getNewsMakers());		
 		this.jlNewsStoryList.setModel(this.newsDataBaseModel.getNewsStories());
 		
-		// Rather than letting the news story JList call the stories' toString
-		// methods to write their label text, we use a custom cell renderer
-		// that generates labels in a verbose, human-readable output format.
-		this.jlNewsStoryList.setCellRenderer(new DefaultListCellRenderer() 
-		{
-			private static final long serialVersionUID = 1L;
-			
-			public Component getListCellRendererComponent(JList<?> list,
-					Object value, int index, boolean isSelected,
-					boolean cellHasFocus)
-			{
-				JLabel label = (JLabel) super.getListCellRendererComponent(list,
-						value, index, isSelected, cellHasFocus);
-				
-				ArrayList<NewsMedia> storyTypes = new ArrayList<NewsMedia>();
-				
-				ListModel<NewsStory> newsStories 
-						= SelectionView.this.jlNewsStoryList.getModel();
-				
-				// Iterate through the stories, collecting all the unique story
-				// types. 
-				for(int i = 0; i < newsStories.getSize(); i++)
-				{
-					if(newsStories.getElementAt(i) instanceof NewspaperStory)
-					{
-						if(!storyTypes.contains(NewsMedia.NEWSPAPER))
-							storyTypes.add(NewsMedia.NEWSPAPER);
-					}
-					else if(newsStories.getElementAt(i) instanceof TVNewsStory)
-					{
-						if(!storyTypes.contains(NewsMedia.TV))
-							storyTypes.add(NewsMedia.TV);
-					}
-					else
-					{
-						if(!storyTypes.contains(NewsMedia.ONLINE))
-							storyTypes.add(NewsMedia.ONLINE);
-					}	
-				}
-				
-				label.setText(UserInterface.convertToOutputFormat(
-						(NewsStory) value, storyTypes));
-				
-				return label;
-			}		
-		});
-				
 		// Enable all the menu items by default. We will later disable those
 		// that are unusable.
 		jmiSave.setEnabled(true);
@@ -443,6 +451,7 @@ public class SelectionView extends JFrame implements ActionListener
 			jmiDeleteAllNewsStories.setEnabled(false);
 			jmiPieChart.setEnabled(false);
 			jmiText.setEnabled(false);
+			jmiExport.setEnabled(false);
 			
 			jmiEditNewsStory.setToolTipText("No news stories to edit.");
 			jmiSortNewsStories.setToolTipText("No news stories to sort.");
@@ -450,17 +459,16 @@ public class SelectionView extends JFrame implements ActionListener
 			jmiDeleteAllNewsStories.setToolTipText("No news stories to delete.");
 			jmiPieChart.setToolTipText("No news stories to display.");
 			jmiText.setToolTipText("No news stories to display.");
+			jmiExport.setToolTipText("No news stories to export.");
 		}
 		
 		// If both news makers and news stories are absent from the database,
-		// there is no data to save or export, so disable those items.
+		// there is no data to save, so disable that item.
 		if(newsMakersAbsent && newsStoriesAbsent)
 		{
-			jmiSave.setEnabled(false);
-			jmiExport.setEnabled(false);
+			jmiSave.setEnabled(false);			
 			
 			jmiSave.setToolTipText("No data to save.");
-			jmiExport.setToolTipText("No data to export.");
 		}		
 	}
 	

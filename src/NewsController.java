@@ -412,13 +412,96 @@ public class NewsController
 	}	
 	
 	/**
-	 * Writes text data to a file based on the news database model.
+	 * Writes text data to a file based on the news news stories in the model.
 	 * 
 	 * @author Ryan Chimienti
 	 */
 	private void exportNewsStories()
 	{
+		JFileChooser fileChooser = new JFileChooser();
 		
+		// We attempt to let the user pick files from their working directory
+		// for convenience.
+		try
+		{
+			File workingDirectory = new File(System.getProperty("user.dir"));
+			fileChooser.setCurrentDirectory(workingDirectory);
+		}
+		catch(Exception e)
+		{
+			// If this process fails (e.g. because the code is being run by
+			// Mimir), it won't seriously affect the user experience. We ignore
+			// the exception.
+		}
+		
+		int fileChooserReturnVal 
+				= fileChooser.showDialog(selectionView, "Export");
+		
+		// If the user selected a file for saving, we'll write to it.
+		if(fileChooserReturnVal == JFileChooser.APPROVE_OPTION)
+		{
+			ListModel<NewsStory> newsStories =
+					newsDataBaseModel.getNewsStories();
+			
+			ArrayList<NewsMedia> storyTypes = new ArrayList<NewsMedia>();
+			
+			// Iterate through the stories, collecting all the distinct story
+			// types. 
+			for(int i = 0; i < newsStories.getSize(); i++)
+			{
+				if(newsStories.getElementAt(i) instanceof NewspaperStory)
+				{
+					if(!storyTypes.contains(NewsMedia.NEWSPAPER))
+						storyTypes.add(NewsMedia.NEWSPAPER);
+				}
+				else if(newsStories.getElementAt(i) instanceof TVNewsStory)
+				{
+					if(!storyTypes.contains(NewsMedia.TV))
+						storyTypes.add(NewsMedia.TV);
+				}
+				else
+				{
+					if(!storyTypes.contains(NewsMedia.ONLINE))
+						storyTypes.add(NewsMedia.ONLINE);
+				}	
+				
+				// If we've found all the media types, there is no point in
+				// searching on for more.
+				if(storyTypes.size() == 3)
+					break;					
+			}
+			
+			// Assemble the list of stories to write.
+			String listOfStories = UserInterface.convertToOutputFormat(
+					newsStories.getElementAt(0), storyTypes);
+			for(int i = 1; i < newsStories.getSize(); i++)
+			{
+				listOfStories += "\n";						
+				listOfStories += UserInterface.convertToOutputFormat(
+						newsStories.getElementAt(i), storyTypes);				
+			}			
+			
+			// Now we can write the list of stories to the specified file.			
+			String filePath = fileChooser.getSelectedFile().getPath();			
+			try
+			{
+				NoozFileProcessor.writeNewsStoriesFile(filePath, listOfStories);
+			}
+			catch(IOException e)
+			{
+				e.printStackTrace();
+				JOptionPane.showMessageDialog(selectionView, 
+						"IO error encountered when saving data.", 
+						"Oops!",
+						JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			
+			JOptionPane.showMessageDialog(selectionView, 
+					"Exported data to " + filePath + ".", 
+					"Success",
+					JOptionPane.PLAIN_MESSAGE);			
+		}
 	}
 	
 	/**
@@ -470,7 +553,7 @@ public class NewsController
 		
 		DefaultListModel<NewsMakerModel> removedNewsMakers = new DefaultListModel<NewsMakerModel>();
 		// fill from selected indices what to remove
-		int[] selected = editNewsMakerView.getSelectedNewsStoryIndices();
+		int[] selected = selectionView.getSelectedNewsMakers();
 		for(int i = 0 ; i < selected.length; ++i){
 			// loop through the selected, pull out each newsmaker
 			NewsMakerModel news = newsDataBaseModel.getNewsMakerListModel().get(selected[i]);
@@ -707,8 +790,7 @@ public class NewsController
 		}
 		
 		// call the removing method
-		newsDataBaseModel.removeNewsStories(news);
-		
+		newsDataBaseModel.removeNewsStories(news);		
 	}
 	
 	/**
