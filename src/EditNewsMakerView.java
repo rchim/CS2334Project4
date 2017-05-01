@@ -129,10 +129,35 @@ public class EditNewsMakerView extends JPanel implements ActionListener
 		// get news stories
 		DefaultListModel<NewsStory> stories = newsMakerModel.getNewsStoryListModel().getNewsStories();
 
+		// set for unique types of stories
+		Set<String> uniqueMediaTypes = new TreeSet<String>();
+		
+		// List of story types encountered
+		List<NewsMedia> newsMediaTypes = new ArrayList<NewsMedia>();
+		
+		for (int i = 0 ; i < stories.size(); ++i){
+			uniqueMediaTypes.add(stories.getElementAt(i).getClass().getName());
+		} // loop over the stories to find the unique types that occur
+		
+		// Loop over everything inside the set
+		// put everything from here into the correct media type
+		for (String str : uniqueMediaTypes){
+			switch(str){
+			case "TVNewsStory":
+				newsMediaTypes.add(NewsMedia.TV);
+				break;
+			case "OnlineNewsStory":
+				newsMediaTypes.add(NewsMedia.ONLINE);
+				break;
+			case "NewspaperStory":
+				newsMediaTypes.add(NewsMedia.NEWSPAPER);
+				break;
+			}
+		}
 		for (int i = 0 ; i < stories.size(); ++i){
 			NewsStory story = stories.get(i);
 			// pass story object to UserInterface
-			String current = UserInterface.convertToOutputFormat(story, NewsMedia.valuesAsList());
+			String current = UserInterface.convertToOutputFormat(story, newsMediaTypes);
 			//add the string into the JList
 			newsStoryStringList.addElement(current);
 		}
