@@ -252,8 +252,6 @@ public class NewsController
 	 * After all the files are chosen, adds the imported data to the model.
 	 * </P>
 	 * 
-	 * TODO Adjust to meet Javadoc requirements
-	 * 
 	 * @author Ryan Chimienti
 	 */
 	private void importNoozStories()
@@ -815,6 +813,16 @@ public class NewsController
 		
 		// selected newsmakers
 		int[] selected = selectionView.getSelectedNewsMakers();
+		
+		if(selected.length < 1)
+		{
+			JOptionPane.showMessageDialog(selectionView, 
+					"Please select a news maker first.", 
+					"No news maker selected.",
+					JOptionPane.ERROR_MESSAGE);
+			return;
+		}		
+		
 		DefaultListModel<NewsMakerModel> news = newsDataBaseModel.getNewsMakers();
 		ArrayList<NewsMakerModel> selectedNewsMakers = new ArrayList<NewsMakerModel>();
 		for (int i = 0 ; i < selected.length; ++i){
@@ -835,6 +843,10 @@ public class NewsController
 				Options,
 				null
 				);
+			// If the JOptionPane returned null, the user cancelled the input.
+			// In that case, we stop executing.
+			if(newsMetric == null)
+				return;
 		
 			// cast the newsMetric back into string
 			String measure = newsMetric.toString();
@@ -850,6 +862,10 @@ public class NewsController
 				contentOptions,
 				null
 				);
+			// If the JOptionPane returned null, the user cancelled the input.
+			// In that case, we stop executing.
+			if(content == null)
+				return;
 			
 			String[] mediaOptions = {"TV","Newspaper","Online"};
 			String media = (String)JOptionPane.showInputDialog(
@@ -861,6 +877,10 @@ public class NewsController
 				mediaOptions,
 				null
 				);
+			// If the JOptionPane returned null, the user cancelled the input.
+			// In that case, we stop executing.
+			if(media == null)
+				return;
 		
 			// create a pie chart view
 			new PieChartView(nm, media, content, measure);
@@ -878,6 +898,16 @@ public class NewsController
 		// display a text view
 		// selected newsmakers
 		int[] selected = selectionView.getSelectedNewsMakers();
+		
+		if(selected.length < 1)
+		{
+			JOptionPane.showMessageDialog(selectionView, 
+					"Please select a news maker first.", 
+					"No news maker selected.",
+					JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
 		DefaultListModel<NewsMakerModel> news = newsDataBaseModel.getNewsMakers();
 		ArrayList<NewsMakerModel> selectedNewsMakers = new ArrayList<NewsMakerModel>();
 		for (int i = 0 ; i < selected.length; ++i){

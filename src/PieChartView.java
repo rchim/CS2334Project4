@@ -226,7 +226,8 @@ public class PieChartView implements ActionListener
 		for (String key : uniqueContents){
 			// make current value a %
 			double currVal = statisticMap.get(key);
-			currVal /= sum; // should be a % now
+			currVal *= 100;
+			currVal /= sum; // should be a % now			
 			// create a wedge
 			wedges.add(new Wedge(currVal, key));			
 		}
