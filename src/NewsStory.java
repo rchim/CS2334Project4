@@ -1,5 +1,6 @@
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.ArrayList;
 
 /**
  * Project 4, CS 2334, Section 010 May 4, 2017
@@ -340,5 +341,27 @@ abstract class NewsStory implements Comparable<NewsStory>, Serializable
 	public int compareTo(NewsStory newsStory) 
 	{
 		return this.topic.compareTo(newsStory.topic);
+	}
+	
+	/**
+	 * The overridden toString method puts the news story into output format,
+	 * specifying length in word equivalents so as to be suitable for any
+	 * combination of media types.
+	 * 
+	 * @return The story in output format with length in word equivalents.
+	 */
+	@Override
+	public String toString() 
+	{
+		ArrayList<NewsMedia> mediaTypes = new ArrayList<NewsMedia>();
+		
+		// At the request of Dr. Hougen, we act as though all media types are
+		// present. This ensures length will be given in word equivalents,
+		// which is a safe measure of length for all story types.
+		mediaTypes.add(NewsMedia.TV);
+		mediaTypes.add(NewsMedia.NEWSPAPER);
+		mediaTypes.add(NewsMedia.ONLINE);
+		
+		return UserInterface.convertToOutputFormat(this, mediaTypes);
 	}
 }

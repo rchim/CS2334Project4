@@ -2,6 +2,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.DefaultListModel;
@@ -42,7 +43,7 @@ public class NewsDataBaseModel implements Serializable
 	/** A map from topic codes to decoded topic Strings. */
 	private Map<String, String> newsTopicMap;
 	
-	/** A map from topic codes to decoded topic Strings. */
+	/** A map from subject codes to decoded subject Strings. */
 	private Map<String, String> newsSubjectMap;
 	
 	/** 
