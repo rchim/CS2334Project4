@@ -253,8 +253,6 @@ public class NewsController
 	 * After all the files are chosen, adds the imported data to the model.
 	 * </P>
 	 * 
-	 * TODO Adjust to meet Javadoc requirements
-	 * 
 	 * @author Ryan Chimienti
 	 */
 	private void importNoozStories()
@@ -899,6 +897,16 @@ public class NewsController
 		// display a text view
 		// selected newsmakers
 		int[] selected = selectionView.getSelectedNewsMakers();
+		
+		if(selected.length < 1)
+		{
+			JOptionPane.showMessageDialog(selectionView, 
+					"Please select a news maker first.", 
+					"No news maker selected.",
+					JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+
 		DefaultListModel<NewsMakerModel> news = newsDataBaseModel.getNewsMakers();
 		ArrayList<NewsMakerModel> selectedNewsMakers = new ArrayList<NewsMakerModel>();
 		for (int i = 0 ; i < selected.length; ++i){
@@ -933,7 +941,9 @@ public class NewsController
 					// Should never reach here
 				}
 				
+
 				Object[] options = new Object[possibleSorting.size()];
+
 				//  make the options list
 				int count = 0;
 				for (SortCriterion s : possibleSorting){
