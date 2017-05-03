@@ -1,7 +1,3 @@
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -108,23 +104,11 @@ class NewsMakerListModel implements Serializable
 	public NewsMakerModel get(NewsMakerModel newsMakerModel) 
 	{
 		int index = newsMakerDefaultListModel.indexOf(newsMakerModel);
-		if(index >= 0) 
-		{
-			try {
-				ByteArrayOutputStream baos = new ByteArrayOutputStream();
-				ObjectOutputStream oos = new ObjectOutputStream(baos);
-				oos.writeObject(this.newsMakerDefaultListModel.get(index));
-				ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-				ObjectInputStream ois = new ObjectInputStream(bais);
-				return (NewsMakerModel) ois.readObject();
-			} catch (Exception e){
-				e.printStackTrace();
-				return null; // this means that it could not be found
-			}
-		} else {
-			return null; // can't do a negative
-		}
 		
+		if(index == -1)
+			return null;
+		
+		return newsMakerDefaultListModel.get(index);		
 	}
 	
 	/**

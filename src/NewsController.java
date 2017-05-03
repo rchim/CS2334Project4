@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.time.LocalDate;
@@ -182,7 +183,7 @@ public class NewsController
 			
 			JOptionPane.showMessageDialog(selectionView, 
 					"Data was successfully loaded.", 
-					"Success", JOptionPane.ERROR_MESSAGE);	
+					"Success", JOptionPane.PLAIN_MESSAGE);	
 		}
 	}	
 	
@@ -217,6 +218,15 @@ public class NewsController
 		{
 			String filePath = fileChooser.getSelectedFile().getPath();
 			
+			if((new File(filePath)).exists())
+			{
+				JOptionPane.showMessageDialog(selectionView, 
+						"That file already exists. Please save to a new file.", 
+						"Oops!",
+						JOptionPane.WARNING_MESSAGE);
+				return;
+			}
+			
 			try
 			{
 				FileOutputStream fileOutputStream 
@@ -224,8 +234,31 @@ public class NewsController
 				ObjectOutputStream objectOutputStream 
 						= new ObjectOutputStream(fileOutputStream);
 				objectOutputStream.writeObject(newsDataBaseModel.none);
-				objectOutputStream.writeObject(
-						newsDataBaseModel.getNewsMakerListModel());
+						
+				try
+				{
+					objectOutputStream.writeObject(
+							newsDataBaseModel.getNewsMakerListModel());		
+				}
+				// If a part of the news maker list model is unserializable, it
+				// must be that there is an unserializable action listener on
+				// one of the news maker models. In Nooz 4.0, this means a pie
+				// chart.
+				catch(NotSerializableException e)
+				{
+					JOptionPane.showMessageDialog(selectionView, 
+							"Unable to save. Close all pie chart display windows"
+							+ " and try again.", 
+							"Oops!", JOptionPane.WARNING_MESSAGE);
+					objectOutputStream.close();					
+					
+					// Since writing to the file failed, we delete the 
+					// half-finished file that got created.
+					(new File(filePath)).delete();
+					
+					return;
+				}
+				
 				objectOutputStream.writeObject(
 						newsDataBaseModel.getNewsStoryListModel());
 				objectOutputStream.writeObject(
@@ -243,6 +276,11 @@ public class NewsController
 						"IO error encountered when saving data.", 
 						"Oops!",
 						JOptionPane.ERROR_MESSAGE);
+				
+				// Since writing to the file failed, we delete the 
+				// half-finished file that got created.
+				(new File(filePath)).delete();
+				
 				return;
 			}
 			
@@ -790,7 +828,7 @@ public class NewsController
 		
 		JOptionPane.showMessageDialog(selectionView, 
 				"News Stories were successfully sorted by " + criterion + ".",
-				"Success", JOptionPane.ERROR_MESSAGE);	
+				"Success", JOptionPane.PLAIN_MESSAGE);	
 	}
 	
 	/**
@@ -922,7 +960,7 @@ public class NewsController
 			JOptionPane.showMessageDialog(selectionView, 
 					"Please select a news maker first.", 
 					"No news maker selected.",
-					JOptionPane.ERROR_MESSAGE);
+					JOptionPane.WARNING_MESSAGE);
 			return;
 		}
 
