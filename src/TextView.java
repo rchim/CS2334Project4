@@ -24,7 +24,7 @@ public class TextView implements ActionListener
 {
 
 	/** <code>JFrame</code> to hold the text information **/
-	private JFrame jfText;
+	private JFrame jfText = new JFrame();
 	
 	/** <code>NewsMakerModel</code> to be shown in the view **/
 	private NewsMakerModel newsMakerModel;
@@ -81,9 +81,11 @@ public class TextView implements ActionListener
 	    jtaSummaryLine = new JTextArea(summaryLine);
 	    jtaNewsStoryList = new JTextArea(listOfStories);
 	    jspNewsStoryList = new JScrollPane(jtaNewsStoryList);
+	    
 	    jfText.setTitle(title);
 	    jfText.setLayout(new GridLayout(1,2));
 	    jfText.add(jtaSummaryLine);
+	    
 	    jfText.add(jspNewsStoryList);
 	    
 	}

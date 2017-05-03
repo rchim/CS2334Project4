@@ -182,7 +182,7 @@ public class NewsController
 			
 			JOptionPane.showMessageDialog(selectionView, 
 					"Data was successfully loaded.", 
-					"Success", JOptionPane.ERROR_MESSAGE);	
+					"Success", JOptionPane.PLAIN_MESSAGE);	
 		}
 	}	
 	
@@ -405,6 +405,7 @@ public class NewsController
 		// We've got all the data we need to construct the new model.
 		try
 		{
+			this.newsDataBaseModel = new NewsDataBaseModel();
 			this.newsDataBaseModel = NoozFileProcessor.readNoozFile(
 					newsStoryFilePath, sourceMap, topicMap, subjectMap);
 		}
@@ -986,15 +987,23 @@ public class NewsController
 				choiceNumber++;
 			} // at end, should have the list of sorting options
 			
+			// Get media types using the MediaTypeSelectionView
+			this.selectedMediaTypes = null;
+			this.mediaTypeSelectionView = new MediaTypeSelectionView();
+			MediaTypeSelectionListener mediaTypeSelectionListener =
+					new MediaTypeSelectionListener();
+			this.mediaTypeSelectionView.jbOkay.addActionListener(mediaTypeSelectionListener);
+			this.mediaTypeSelectionView.jbCancel.addActionListener(mediaTypeSelectionListener);
+			this.viewDialog = new JDialog(selectionView, nm.getName(), true);
+			this.viewDialog.add(mediaTypeSelectionView);
+			this.viewDialog.setResizable(false);
+			this.viewDialog.pack();
+			this.viewDialog.setVisible(true);
 			
-			// set the mediaTypes here
-			//mediaTypeSelectionView = new MediaTypeSelectionView();
-			//mediaTypeSelectionView.setVisible(true);
-			
-			viewDialog = new JDialog(selectionView, "Foo", true );
-			viewDialog.getContentPane().add(mediaTypeSelectionView);
-			viewDialog.pack();
-			viewDialog.setVisible(true);
+			// If no media types were selected, go on to next news maker.
+			if (null == this.selectedMediaTypes){
+				continue;
+			}
 			
 			// create text view(s)
 			new TextView(nm, selectedMediaTypes, chosenSorting);		
