@@ -115,7 +115,6 @@ public class PieChartView implements ActionListener
 		// go through the newsMakerList model associated with the story
 		
 		DefaultListModel<NewsStory> newsList = newsMakerModel.getNewsStoryListModel().getNewsStories();
-		System.out.println(newsList.size());
 		List<NewsStory> stories = new ArrayList<NewsStory>();
 		List<Wedge> wedges = new ArrayList<Wedge>();
 		
@@ -125,7 +124,6 @@ public class PieChartView implements ActionListener
 			
 			// determine whether to keep the story based on type
 			String storyType = current.getClass().getName();
-			System.out.println(storyType);
 			switch(storyType){
 			case "TVNewsStory":
 				if (media.contains(NewsMedia.TV)) stories.add(current);
@@ -201,7 +199,6 @@ public class PieChartView implements ActionListener
 			} // now onto Subject case
 			if(NewsContent.SUBJECT.equals(content)){
 				String contentName = n.getSubject();
-				System.out.println(contentName);
 				uniqueContents.add(contentName);
 				if (NewsMetric.LENGTH.equals(measure)){
 					// determine if the map value has already been initialized

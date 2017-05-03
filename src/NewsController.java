@@ -560,9 +560,8 @@ public class NewsController
 	private void addNewsMaker()
 	{
 		// prompt the user for a name to enter
-		JFrame frame = new JFrame();
 		String newsMakerName = (String)JOptionPane.showInputDialog(
-				frame,
+				viewDialog,
 				"Enter in the NewsMaker name:",
 				"NewsMaker Name Entry",
 				JOptionPane.PLAIN_MESSAGE,
@@ -1045,7 +1044,8 @@ public class NewsController
 			}
 			
 			// create text view(s)
-			new TextView(nm, selectedMediaTypes, chosenSorting);		
+			TextView text = new TextView(nm, selectedMediaTypes, chosenSorting);		
+			nm.addActionListener(text);
 		}		
 		
 	}
@@ -1131,10 +1131,24 @@ public class NewsController
 			}
 			else if("Delete Newsmaker".equals(clickedItemText))
 			{
+				// prompt the user if they *REALLY* want to do this
+				int choice = JOptionPane.showConfirmDialog(
+						viewDialog,
+						"Delete the newsmaker?",
+						"Do you wish to delete the newsmaker?",
+						JOptionPane.YES_NO_OPTION);
+				if (choice != JOptionPane.YES_OPTION) return;
 				deleteNewsMakers();
 			}
 			else if("Delete Newsmaker List".equals(clickedItemText))
 			{
+				// prompt the user if they *REALLY* want to do this
+				int choice = JOptionPane.showConfirmDialog(
+						viewDialog,
+						"Delete all the newsmakers?",
+						"Do you wish to delete all newsmakers?",
+						JOptionPane.YES_NO_OPTION);
+				if (choice != JOptionPane.YES_OPTION) return;
 				deleteNewsMakerList();
 			}
 		}
@@ -1180,10 +1194,24 @@ public class NewsController
 			}
 			else if("Delete News Story".equals(clickedItemText))
 			{
+				// prompt the user if they *REALLY* want to do this
+				int choice = JOptionPane.showConfirmDialog(
+						viewDialog,
+						"Delete the news story?",
+						"Do you wish to delete the news story?",
+						JOptionPane.YES_NO_OPTION);
+				if (choice != JOptionPane.YES_OPTION) return;
 				deleteNewsStories();
 			}
 			else if("Delete All News Stories".equals(clickedItemText))
 			{
+				// prompt the user if they *REALLY* want to do this
+				int choice = JOptionPane.showConfirmDialog(
+						viewDialog,
+						"Delete all news stories?",
+						"Do you wish to delete all news stories?",
+						JOptionPane.YES_NO_OPTION);
+				if (choice != JOptionPane.YES_OPTION) return;
 				deleteAllNewsStories();
 			}
 		}

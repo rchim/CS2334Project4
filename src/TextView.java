@@ -36,10 +36,10 @@ public class TextView implements ActionListener
 	private List<SortCriterion> sortCriteria  = new ArrayList<SortCriterion>();
 	
 	/** <code>String</code> to hold the list of stories **/
-	private String listOfStories;
+	private String listOfStories = "";
 	
 	/** <code>String</code> to hold the summary line **/
-	private String summaryLine;
+	private String summaryLine = "";
 	
 	/** <code>JTextArea</code> to hold the textual information about the news stories **/
 	private JTextArea jtaNewsStoryList;
@@ -83,11 +83,11 @@ public class TextView implements ActionListener
 	    jspNewsStoryList = new JScrollPane(jtaNewsStoryList);
 	    
 	    jfText.setTitle(title);
-	    jfText.setLayout(new GridLayout(1,2));
+	    jfText.setLayout(new GridLayout(2,1));
 	    jfText.add(jtaSummaryLine);
 	    
 	    jfText.add(jspNewsStoryList);
-	    jfText.pack();
+	    jfText.setSize(1000, 1000);
 	    jfText.setVisible(true);
 	    
 	    jfText.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -194,7 +194,10 @@ public class TextView implements ActionListener
 			secondLength += n.getLength();
 			
 			// add onto the listOfStory this current story
-			listOfStories += UserInterface.convertToOutputFormat(n, newsMedia);
+			listOfStories += UserInterface.convertToOutputFormat(n, newsMedia) + "\n";
+			
+			//TODO: Verify if newline character should be here or in the method call
+			
 		} // statistics collected
 		
 		// now, make the summary line
@@ -235,7 +238,7 @@ public class TextView implements ActionListener
 			title += newsMedia.get(i).toString();
 			title += ", ";
 		}
-		title += newsMedia.get(sortCriteria.size()-1);
+		title += newsMedia.get(newsMedia.size()-1);
 		title += ".";
 		
 		return title;
