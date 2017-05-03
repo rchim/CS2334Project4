@@ -1050,9 +1050,10 @@ public class NewsController
 			{
 				// prompt the user if they *REALLY* want to do this
 				int choice = JOptionPane.showConfirmDialog(
-						viewDialog,
-						"Delete the newsmaker?",
-						"Do you wish to delete the newsmaker?",
+						selectionView,
+						"Do you wish to delete the selected newsmaker(s)?",
+						"Confirm Deletion",
+						
 						JOptionPane.YES_NO_OPTION);
 				if (choice != JOptionPane.YES_OPTION) return;
 				deleteNewsMakers();
@@ -1061,9 +1062,9 @@ public class NewsController
 			{
 				// prompt the user if they *REALLY* want to do this
 				int choice = JOptionPane.showConfirmDialog(
-						viewDialog,
-						"Delete all the newsmakers?",
-						"Do you wish to delete all newsmakers?",
+						selectionView,
+						"Do you wish to delete all the newsmakers?",
+						"Confirm Deletion",						
 						JOptionPane.YES_NO_OPTION);
 				if (choice != JOptionPane.YES_OPTION) return;
 				deleteNewsMakerList();
@@ -1113,9 +1114,9 @@ public class NewsController
 			{
 				// prompt the user if they *REALLY* want to do this
 				int choice = JOptionPane.showConfirmDialog(
-						viewDialog,
-						"Delete the news story?",
-						"Do you wish to delete the news story?",
+						selectionView,
+						"Do you wish to delete the selected news stories?",
+						"Confirm Deletion",						
 						JOptionPane.YES_NO_OPTION);
 				if (choice != JOptionPane.YES_OPTION) return;
 				deleteNewsStories();
@@ -1124,9 +1125,9 @@ public class NewsController
 			{
 				// prompt the user if they *REALLY* want to do this
 				int choice = JOptionPane.showConfirmDialog(
-						viewDialog,
-						"Delete all news stories?",
-						"Do you wish to delete all news stories?",
+						selectionView,
+						"Do you wish to delete all the news stories?",
+						"Confirm Deletion",						
 						JOptionPane.YES_NO_OPTION);
 				if (choice != JOptionPane.YES_OPTION) return;
 				deleteAllNewsStories();
