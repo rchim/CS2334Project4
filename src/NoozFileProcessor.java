@@ -82,8 +82,8 @@ class NoozFileProcessor
 		// Build the overarching model.
 		newsDataBaseModel = new NewsDataBaseModel(newsMakers, newsStories);
 		newsDataBaseModel.setNewsSourceMap(sourceMap);
-		newsDataBaseModel.setNewsSourceMap(topicMap);
-		newsDataBaseModel.setNewsSourceMap(subjectMap);
+		newsDataBaseModel.setNewsTopicMap(topicMap);
+		newsDataBaseModel.setNewsSubjectMap(subjectMap);
 
 		return newsDataBaseModel;
 	}

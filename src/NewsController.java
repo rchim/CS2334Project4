@@ -18,6 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 /**
@@ -360,6 +361,9 @@ public class NewsController
 				
 		// Variables to be determined by the user's file chooser and dialog
 		// responses.
+		
+		// TODO:: Verify correctness
+		
 		Map<String, String> sourceMap = null;
 		Map<String, String> topicMap = null;
 		Map<String, String> subjectMap = null;
@@ -625,64 +629,17 @@ public class NewsController
 	 */
 	private void addNewsStory()
 	{
-		// code for add news story, from the addEditNewsStoryView
-		
-		// get all of the fields!
-		String newsMakerName1 = (String) addEditNewsStoryView.jcbNewsStoryNewsMaker1.getSelectedItem();
-		NewsMakerModel newsMaker1 = newsDataBaseModel.getNewsMakerListModel().getExactMatch(newsMakerName1);
-		
-		String newsMakerName2 = (String) addEditNewsStoryView.jcbNewsStoryNewsMaker2.getSelectedItem();
-		NewsMakerModel newsMaker2 = newsDataBaseModel.getNewsMakerListModel().getExactMatch(newsMakerName2);
-		
-		PartOfDay pod = (PartOfDay) addEditNewsStoryView.jcbNewsStoryPartOfDay.getSelectedItem();
-		
-		String source = (String) addEditNewsStoryView.jcbNewsStorySource.getSelectedItem();
-		
-		int length = Integer.parseInt(addEditNewsStoryView.jtftfNewsStoryLength.getText());
-		
-		String topic = (String) addEditNewsStoryView.jcbNewsStoryTopic.getSelectedItem();
-		
-		String subject = (String) addEditNewsStoryView.jcbNewsStorySubject.getSelectedItem();
-		
-		// Date information
-		int day = (int) addEditNewsStoryView.jcbNewsStoryDay.getSelectedItem();
-		
-		Month month = (Month) addEditNewsStoryView.jcbNewsStoryMonth.getSelectedItem();
-		
-		int year = (int) addEditNewsStoryView.jcbNewsStoryYear.getSelectedItem();
-		
-		// Construct LocalDate object
-		LocalDate date = LocalDate.of(year, month.toInt(), day);
-		
-		// determine the type of the story
-		
-		NewsMedia type = (NewsMedia) addEditNewsStoryView.jcbNewsStoryType.getSelectedItem();
-		
-		NewsStory news = null;
-		
-		switch(type){
-		case TV:
-			news = new TVNewsStory(date,
-					source, length,
-					topic, subject,
-					pod, newsMaker1, newsMaker2);
-			break;
-		case ONLINE:
-			news = new OnlineNewsStory(date,
-					source, length,
-					topic, subject,
-					pod, newsMaker1, newsMaker2);
-			break;
-		case NEWSPAPER:
-			news = new NewspaperStory(date,
-					source, length,
-					topic, subject,
-					newsMaker1, newsMaker2);
-			break;
-		}
-		
-		// add news story
-		newsDataBaseModel.addNewsStory(news);
+		// Get information using the AddEditNewsStoryView
+		this.addEditNewsStoryView = new AddEditNewsStoryView(this.newsDataBaseModel, null);
+		AddEditNewsStoryListener addEditNewsStoryListener =
+				new AddEditNewsStoryListener();
+		// add listener
+		this.addEditNewsStoryView.jbtAddEditNewsStory.addActionListener(addEditNewsStoryListener);
+		this.viewDialog = new JDialog(selectionView, "", true);
+		this.viewDialog.add(addEditNewsStoryView);
+		this.viewDialog.setResizable(false);
+		this.viewDialog.pack();
+		this.viewDialog.setVisible(true);
 		
 	}
 	
@@ -1335,13 +1292,72 @@ public class NewsController
 		@Override
 		public void actionPerformed(ActionEvent actionEvent) {
 			// Determine what button has been pressed
-			String clickedItemText = ((JButton)(actionEvent.getSource())).getText();
-			if("Add News Story".equals(clickedItemText)){
+			if("Add News Story".equals(actionEvent.getActionCommand())){
 				// add news story
-				addNewsStory();
-			} else if ("Edit News Story".equals(clickedItemText)){
+				
+				// code for add news story, from the addEditNewsStoryView
+				
+				// get all of the fields!
+				String newsMakerName1 = (String) addEditNewsStoryView.jcbNewsStoryNewsMaker1.getSelectedItem();
+				NewsMakerModel newsMaker1 = newsDataBaseModel.getNewsMakerListModel().getExactMatch(newsMakerName1);
+				
+				String newsMakerName2 = (String) addEditNewsStoryView.jcbNewsStoryNewsMaker2.getSelectedItem();
+				NewsMakerModel newsMaker2 = newsDataBaseModel.getNewsMakerListModel().getExactMatch(newsMakerName2);
+				
+				PartOfDay pod = (PartOfDay) addEditNewsStoryView.jcbNewsStoryPartOfDay.getSelectedItem();
+				
+				String source = (String) addEditNewsStoryView.jcbNewsStorySource.getSelectedItem();
+				
+				int length = Integer.parseInt(addEditNewsStoryView.jtftfNewsStoryLength.getText());
+				
+				String topic = (String) addEditNewsStoryView.jcbNewsStoryTopic.getSelectedItem();
+				
+				String subject = (String) addEditNewsStoryView.jcbNewsStorySubject.getSelectedItem();
+				
+				// Date information
+				int day = (int) addEditNewsStoryView.jcbNewsStoryDay.getSelectedItem();
+				
+				Month month = (Month) addEditNewsStoryView.jcbNewsStoryMonth.getSelectedItem();
+				
+				int year = (int) addEditNewsStoryView.jcbNewsStoryYear.getSelectedItem();
+				
+				// Construct LocalDate object
+				LocalDate date = LocalDate.of(year, month.toInt(), day);
+				
+				// determine the type of the story
+				
+				NewsMedia type = (NewsMedia) addEditNewsStoryView.jcbNewsStoryType.getSelectedItem();
+				
+				NewsStory news = null;
+				
+				switch(type){
+				case TV:
+					news = new TVNewsStory(date,
+							source, length,
+							topic, subject,
+							pod, newsMaker1, newsMaker2);
+					break;
+				case ONLINE:
+					news = new OnlineNewsStory(date,
+							source, length,
+							topic, subject,
+							pod, newsMaker1, newsMaker2);
+					break;
+				case NEWSPAPER:
+					news = new NewspaperStory(date,
+							source, length,
+							topic, subject,
+							newsMaker1, newsMaker2);
+					break;
+				}
+				
+				// add news story
+				newsDataBaseModel.addNewsStory(news);				
+				
+				
+			} else if ("Edit News Story".equals(actionEvent.getActionCommand())){
 				// edit the news story
-				editNewsStory();
+				//editNewsStory();
 			} else {
 				// close the window (JFrame)
 				addEditNewsStoryView.setVisible(false);

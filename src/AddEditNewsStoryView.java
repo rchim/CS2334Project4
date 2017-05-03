@@ -142,7 +142,7 @@ public class AddEditNewsStoryView extends JPanel
 	private JPanel jplNewsStoryWhen;
 	
 	/** <code>JButton</code> for <code>AddEditNewsStory</code> **/
-	JButton jbtAddEditNewsStory = new JButton("Edit News Story");
+	JButton jbtAddEditNewsStory;
 	
 	/** <code>JPanel</code> for <code>AddEditNewsStory</code> **/
 	private JPanel jplAddEditNewsStory;
@@ -164,6 +164,10 @@ public class AddEditNewsStoryView extends JPanel
 		integerFieldFormatter = NumberFormat.getNumberInstance();
 		integerFieldFormatter.setParseIntegerOnly(true); // only allow integers
 		// perform a check on the integer, ie. namely a positive number
+		
+		// quick check
+		System.out.println(newsDataBaseModel.getNewsSourceMap().size());
+		System.out.println(newsDataBaseModel.getNewsTopicMap().size());
 		
 		// initialize JComboBox objects with possible values from NewsDataBaseModel
 		String[] newsSources = newsDataBaseModel.getNewsSources();
@@ -195,41 +199,53 @@ public class AddEditNewsStoryView extends JPanel
 		
 		// pre-select the correct JComboBox options
 		
-		// determine the type of the newsStory
-		String instance = newsStory.getClass().getName();
-		NewsMedia type = null;
-		PartOfDay part = null;
-		switch(instance){
-		case "NewspaperStory":
-			type = NewsMedia.NEWSPAPER;
-			break;
-		case "TVNewsStory":
-			type = NewsMedia.TV;
-			// cast newsStory as TV
-			TVNewsStory tv = (TVNewsStory) newsStory;
-			part = tv.getPartOfDay();
-			break;
-		case "OnlineNewsStory":
-			type = NewsMedia.ONLINE;
-			//cast as online
-			OnlineNewsStory online  = (OnlineNewsStory) newsStory;
-			part = online.getPartOfDay();
-			break;
+		// only run this if we know we have a non-null story (ie. edit)
+		if(null != this.newsStory){
+			// determine the type of the newsStory
+			String instance = newsStory.getClass().getName();
+			NewsMedia type = null;
+			PartOfDay part = null;
+			switch (instance) {
+			case "NewspaperStory":
+				type = NewsMedia.NEWSPAPER;
+				break;
+			case "TVNewsStory":
+				type = NewsMedia.TV;
+				// cast newsStory as TV
+				TVNewsStory tv = (TVNewsStory) newsStory;
+				part = tv.getPartOfDay();
+				break;
+			case "OnlineNewsStory":
+				type = NewsMedia.ONLINE;
+				// cast as online
+				OnlineNewsStory online = (OnlineNewsStory) newsStory;
+				part = online.getPartOfDay();
+				break;
+			}
+
+			jcbNewsStoryType.setSelectedItem(type);
+			jcbNewsStorySource.setSelectedItem(newsStory.getSource());
+			jcbNewsStoryTopic.setSelectedItem(newsStory.getTopic());
+			jcbNewsStorySubject.setSelectedItem(newsStory.getSubject());
+			jcbNewsStoryNewsMaker1.setSelectedItem(newsStory.getNewsMaker1().toString());
+			jcbNewsStoryNewsMaker2.setSelectedItem(newsStory.getNewsMaker2().toString());
+
+			jtftfNewsStoryLength.setValue(Integer.toString(newsStory.getLengthInWords()));
+
+			jcbNewsStoryYear.setSelectedItem(newsStory.getDate().getYear());
+			jcbNewsStoryMonth.setSelectedItem(Month.fromInt(newsStory.getDate().getMonthValue()));
+			jcbNewsStoryDay.setSelectedItem(newsStory.getDate().getDayOfMonth());
+			jcbNewsStoryPartOfDay.setSelectedItem(part);
+			
+			jbtAddEditNewsStory = new JButton("Edit News Story");
+			jbtAddEditNewsStory.setActionCommand("Edit News Story");
 		}
 		
-		jcbNewsStoryType.setSelectedItem(type);
-		jcbNewsStorySource.setSelectedItem(newsStory.getSource());
-		jcbNewsStoryTopic.setSelectedItem(newsStory.getTopic());
-		jcbNewsStorySubject.setSelectedItem(newsStory.getSubject());
-		jcbNewsStoryNewsMaker1.setSelectedItem(newsStory.getNewsMaker1().toString());
-		jcbNewsStoryNewsMaker2.setSelectedItem(newsStory.getNewsMaker2().toString());
+		if (null == newsStory){
+			jbtAddEditNewsStory = new JButton("Add News Story");
+			jbtAddEditNewsStory.setActionCommand("Add News Story");
+		}
 		
-		jtftfNewsStoryLength.setValue(Integer.toString(newsStory.getLengthInWords()));
-		
-		jcbNewsStoryYear.setSelectedItem(newsStory.getDate().getYear());
-		jcbNewsStoryMonth.setSelectedItem(Month.fromInt(newsStory.getDate().getMonthValue()));
-		jcbNewsStoryDay.setSelectedItem(newsStory.getDate().getDayOfMonth());
-		jcbNewsStoryPartOfDay.setSelectedItem(part);
 		
 		jplAddEditNewsStory.setLayout(new GridLayout(9,1)); // 9x1 layout
 		
