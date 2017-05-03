@@ -362,7 +362,6 @@ public class NewsController
 		// Variables to be determined by the user's file chooser and dialog
 		// responses.
 		
-		// TODO:: Verify correctness
 		
 		Map<String, String> sourceMap = null;
 		Map<String, String> topicMap = null;
@@ -584,14 +583,38 @@ public class NewsController
 	 */
 	private void editNewsMakers()
 	{
-		// for the newsMaker to be edited, read the field
-		// and update the name
+		// get the selected newsmakers to edit
+		int[] selected = selectionView.getSelectedNewsMakers();
+		if(0 == selected.length){
+			// Send warning to the user that news maker(s) must be selected
+			JOptionPane.showMessageDialog(selectionView,
+					"No news makers selected.",
+					"Invalid Selection",
+					JOptionPane.WARNING_MESSAGE);
+			return;			
+		}
 		
-		// get the new name
-		String newName = editNewsMakerView.jtfName.getText();
-		
-		// set the new name
-		editNewsMakerView.newsMakerModel.setName(newName);
+		for (int index : selected){
+			// grab the current newsmakerModel
+			NewsMakerModel current = newsDataBaseModel.getNewsMakers().get(index);
+			// create the view
+			this.editNewsMakerView = new EditNewsMakerView(current, this.newsDataBaseModel);
+			EditNewsMakerNameListener editNewsMakerNameListener = new EditNewsMakerNameListener();
+			RemoveNewsMakerFromNewsStoriesListener removeNewsMakerFromStoriesListener
+				= new RemoveNewsMakerFromNewsStoriesListener();
+			
+			// add both listeners to the view to their respective buttons
+			this.editNewsMakerView.jbtRemoveFromStory.addActionListener(removeNewsMakerFromStoriesListener);
+			this.editNewsMakerView.jtfName.addActionListener(editNewsMakerNameListener);
+			
+			// make modal
+			this.viewDialog = new JDialog(selectionView, "", true);
+			this.viewDialog.add(editNewsMakerView);
+			this.viewDialog.setResizable(true);
+			this.viewDialog.setSize(1000,1000);
+			this.viewDialog.setVisible(true);
+			
+		}
 		
 	}
 	
@@ -1192,12 +1215,11 @@ public class NewsController
 		 */
 		@Override
 		public void actionPerformed(ActionEvent actionEvent) {
-			// How do we ever get here? There is no button for this!
-			String clickedItemText = ((JButton)(actionEvent.getSource())).getText();
-			if("Edit NewsMaker".equals(clickedItemText)){
-				// change the newsmaker
-				editNewsMakers(); //??? unsure
-			}
+			// check if the field has been updated
+			String newName = editNewsMakerView.jtfName.getText();
+			
+			// set the new name
+			editNewsMakerView.newsMakerModel.setName(newName);
 		}
 		
 	}
@@ -1315,6 +1337,16 @@ public class NewsController
 				// add news story
 				newsDataBaseModel.addNewsStory(news);	
 				
+				// add to relevant news makers
+				NewsMakerModel newsMakerFirst = newsDataBaseModel.getNewsMakerListModel().get(news.getNewsMaker1());
+				NewsMakerModel newsMakerSecond = newsDataBaseModel.getNewsMakerListModel().get(news.getNewsMaker2());
+				
+				newsMakerFirst.addNewsStory(news);
+				newsMakerSecond.addNewsStory(news);
+				
+				// TODO: Add in check to see that the newsmakers are not the same person
+				// unless, however, it is none
+				
 				viewDialog.dispose(); // once added, throw out
 				
 				
@@ -1395,6 +1427,12 @@ public class NewsController
 				// add back in under the proper news makers
 				newsMakerFirst = newsDataBaseModel.getNewsMakerListModel().get(news.getNewsMaker1());
 				newsMakerSecond = newsDataBaseModel.getNewsMakerListModel().get(news.getNewsMaker2());
+				
+				newsMakerFirst.addNewsStory(news);
+				newsMakerSecond.addNewsStory(news);
+				
+				// TODO: Add in check to see that the newsmakers are not the same person
+				// unless, however, it is none
 				
 				// dispose of view dialog
 				viewDialog.dispose();

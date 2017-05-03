@@ -7,6 +7,9 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import javax.swing.*;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 /**
  * Project 4, CS 2334, Section 010, May 4, 2017
@@ -74,28 +77,78 @@ public class EditNewsMakerView extends JPanel implements ActionListener
 		this.newsDataBaseModel = newsDataBaseModel;
 		newsStoryStringList = new DefaultListModel<String>();
 		
-		// associate with the JList
-		jlNewsStoryList = new JList<String>(newsStoryStringList);
-		
 		// fill the story string list
 	    populateNewsStoryJList();
+		
+		// associate with the JList
+		jlNewsStoryList = new JList<String>(newsStoryStringList);
 		
 		// don't have the needed image -- 
 		
 		// start by pre-filling in the fields with the current information
 		jtfName = new JTextField(newsMakerModel.getName());
 		
+		// Add something that will generate an action whenever this field is changed
+		jtfName.getDocument().addDocumentListener(new DocumentListener() {
+			
+			@Override
+			public void changedUpdate (DocumentEvent e){
+				if(isValidName()){
+					// change the name of the newsmaker
+					EditNewsMakerView.this.newsMakerModel.setName(jtfName.getText());
+				} else {
+					// warn user of illegal name usage!
+					// TODO:
+				}
+			}
+
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				// unsure if anything needs to be done here
+			}
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				// unsure if anything needs to be done here
+			}
+			
+			/**
+			 * Check if this is valid
+			 * 
+			 * @return valid if newsMaker is not "none"
+			 */
+			private boolean isValidName(){
+				if("None".equals(jtfName.getText())){
+					return false;
+				} else{
+					return true;
+				}
+			}
+
+		});
+		
 		// add in JLabel and field into JPanel
+		jplName = new JPanel();
 		jplName.setLayout(new GridLayout(1,2));
 		jplName.add(jlbName);
 		jplName.add(jtfName);
 		
 		// add JList into JScrollPane
-		jspNewsStoryList = new JScrollPane();
-		jspNewsStoryList.add(jlNewsStoryList);
+		jspNewsStoryList = new JScrollPane(jlNewsStoryList);
 		
 		// add into pane
+		jpNewsStoryList = new JPanel();
 		jpNewsStoryList.add(jspNewsStoryList);
+		
+		// add a listener to the jbtRemoveFromStory button
+		jbtRemoveFromStory.setActionCommand("Removing news stories from newsmaker");
+		
+		// default -- not enabled button
+		jbtRemoveFromStory.setEnabled(false);
+		
+		// check if newsmaker is not none and stories exist
+
+		enableRemovalButton();
 		
 		// add in elements to current, don't know how it will look
 		// so assume 1x3 Grid Layout
@@ -158,6 +211,7 @@ public class EditNewsMakerView extends JPanel implements ActionListener
 			NewsStory story = stories.get(i);
 			// pass story object to UserInterface
 			String current = UserInterface.convertToOutputFormat(story, newsMediaTypes);
+			current += "\n"; // newline character
 			//add the string into the JList
 			newsStoryStringList.addElement(current);
 		}
@@ -173,6 +227,7 @@ public class EditNewsMakerView extends JPanel implements ActionListener
 	 */
 	@Override
 	public void actionPerformed(ActionEvent event) {
+			
 		// what sort of changes in the model do we need to listen for?
 		// - any changes inside the newsMakerListModel
 		// - any changes inside the newsMakerModel
@@ -188,6 +243,21 @@ public class EditNewsMakerView extends JPanel implements ActionListener
 			populateNewsStoryJList();
 		}
 		
+		enableRemovalButton();
+		
 	}
-
+	
+	/**
+	 * enableRemovalButton
+	 * 
+	 * allows the button to be enabled/disable button
+	 */
+	private void enableRemovalButton(){
+		if(!newsMakerModel.getNewsStoryListModel().isEmpty() && !"None".equals(newsMakerModel.getName())){
+			jbtRemoveFromStory.setEnabled(true);
+		} else {
+			jbtRemoveFromStory.setEnabled(false);
+		}
+	
+	}
 }
