@@ -91,7 +91,7 @@ public class AddEditNewsStoryView extends JPanel
 	private NumberFormat integerFieldFormatter;
 	
 	/** <code>JFormattedTextField</code> to for entering the <code>NewsStory</code> length **/
-	JFormattedTextField jtftfNewsStoryLength;
+	JFormattedTextField jtftfNewsStoryLength = new JFormattedTextField();
 	
 	/** <code>JPanel</code> for showing the information for the <code>NewsStory</code> length **/
 	private JPanel jplNewsStoryLength;
@@ -165,10 +165,6 @@ public class AddEditNewsStoryView extends JPanel
 		integerFieldFormatter.setParseIntegerOnly(true); // only allow integers
 		// perform a check on the integer, ie. namely a positive number
 		
-		// quick check
-		System.out.println(newsDataBaseModel.getNewsSourceMap().size());
-		System.out.println(newsDataBaseModel.getNewsTopicMap().size());
-		
 		// initialize JComboBox objects with possible values from NewsDataBaseModel
 		String[] newsSources = newsDataBaseModel.getNewsSources();
 		jcbNewsStorySource = new JComboBox<String>(newsSources);
@@ -241,65 +237,83 @@ public class AddEditNewsStoryView extends JPanel
 			jbtAddEditNewsStory.setActionCommand("Edit News Story");
 		}
 		
-		if (null == newsStory){
+		if (null == this.newsStory){
 			jbtAddEditNewsStory = new JButton("Add News Story");
 			jbtAddEditNewsStory.setActionCommand("Add News Story");
 		}
 		
-		
+		jplAddEditNewsStory = new JPanel();
+
 		jplAddEditNewsStory.setLayout(new GridLayout(9,1)); // 9x1 layout
 		
 		// throw the type label and box into the panel
+		jpNewsStoryType = new JPanel();
 		jpNewsStoryType.setLayout(new GridLayout(1,2));
 		jpNewsStoryType.add(jlbNewsStoryType);
 		jpNewsStoryType.add(jcbNewsStoryType);
 		
 		// throw the source label and box into the panel
+		jpNewsStorySource = new JPanel();
 		jpNewsStorySource.setLayout(new GridLayout(1,2));
 		jpNewsStorySource.add(jlbNewsStorySource);
 		jpNewsStorySource.add(jcbNewsStorySource);
 		
 		// throw the topic label and box into the panel
+		jpNewsStoryTopic = new JPanel();
 		jpNewsStoryTopic.setLayout(new GridLayout(1,2));
 		jpNewsStoryTopic.add(jlbNewsStoryTopic);
 		jpNewsStoryTopic.add(jcbNewsStoryTopic);
 		
+		// throw the topic label and box into the panel
+		jpNewsStorySubject = new JPanel();
+		jpNewsStorySubject.setLayout(new GridLayout(1,2));
+		jpNewsStorySubject.add(jlbNewsStoryTopic);
+		jpNewsStorySubject.add(jcbNewsStoryTopic);		
+		
 		// throw the newsmaker 1 label and box into the panel
+		jpNewsStoryNewsMaker1 = new JPanel();
 		jpNewsStoryNewsMaker1.setLayout(new GridLayout(1,2));
 		jpNewsStoryNewsMaker1.add(jlbNewsStoryNewsMaker1);
 		jpNewsStoryNewsMaker1.add(jcbNewsStoryNewsMaker1);
 		
 		// throw the newsmaker 2 label and box into the panel
+		jpNewsStoryNewsMaker2 = new JPanel();
 		jpNewsStoryNewsMaker2.setLayout(new GridLayout(1,2));
 		jpNewsStoryNewsMaker2.add(jlbNewsStoryNewsMaker2);
 		jpNewsStoryNewsMaker2.add(jcbNewsStoryNewsMaker2);
 		
 		// throw the length label and box into the panel
+		jplNewsStoryLength = new JPanel();
 		jplNewsStoryLength.setLayout(new GridLayout(1,2));
 		jplNewsStoryLength.add(jlbNewsStoryLength);
 		jplNewsStoryLength.add(jtftfNewsStoryLength);
 		
 		// bundle year label and box into panel
+		jplNewsStoryYear = new JPanel();
 		jplNewsStoryYear.setLayout(new GridLayout(1,2));
 		jplNewsStoryYear.add(jlbNewsStoryYear);
 		jplNewsStoryYear.add(jcbNewsStoryYear);
 		
 		// bundle month label and box into panel
+		jplNewsStoryMonth = new JPanel();
 		jplNewsStoryMonth.setLayout(new GridLayout(1,2));
 		jplNewsStoryMonth.add(jlbNewsStoryMonth);
 		jplNewsStoryMonth.add(jcbNewsStoryMonth);
 		
 		// bundle day label and box into panel
+		jplNewsStoryDay = new JPanel();
 		jplNewsStoryDay.setLayout(new GridLayout(1,2));
 		jplNewsStoryDay.add(jlbNewsStoryDay);
 		jplNewsStoryDay.add(jcbNewsStoryDay);
 		
 		// bundle part of day label and box into panel
+		jplNewsStoryPartOfDay = new JPanel();
 		jplNewsStoryPartOfDay.setLayout(new GridLayout(1,2));
 		jplNewsStoryPartOfDay.add(jlbNewsStoryPartOfDay);
 		jplNewsStoryPartOfDay.add(jcbNewsStoryPartOfDay);
 		
 		// add in all the date information into one date JPanel
+		jplNewsStoryWhen = new JPanel();
 		jplNewsStoryWhen.setLayout(new GridLayout(1,4));
 		jplNewsStoryWhen.add(jplNewsStoryYear);
 		jplNewsStoryWhen.add(jplNewsStoryMonth);
