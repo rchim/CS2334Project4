@@ -67,6 +67,19 @@ public class PieChartView implements ActionListener
 		// construct pie chart object
 		
 		pieChart = new PieChart(title, wedges);
+		pieChart.addWindowListener(new java.awt.event.WindowAdapter() {
+			/**
+			 * Overriden method for whenever the window is closed
+			 * 
+			 * @param windowEvent
+			 *   java.awt.event.WindowEvent for this event
+			 */
+			@Override
+			public void windowClosing(java.awt.event.WindowEvent windowEvent){
+				// This is a weird construction
+				newsMakerModel.removeActionListener(PieChartView.this);
+			}
+		});
 	}
 	
 	/**

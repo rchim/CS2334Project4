@@ -18,10 +18,16 @@ import java.lang.Math;
  * </P>
  * 
  * @author Dean Hougen
+ * @author Malachi Phillips
  * @version 1.0
  */
-public class PieChart 
+public class PieChart extends JFrame
 {
+	/**
+	 * serialVersionUID for <code>JFrame</code>
+	 */
+	private static final long serialVersionUID = 2179231458361939222L;
+
 	/**
 	 * The list of wedges, each of which specifies its own label and its own
 	 * width (in percent).
@@ -68,20 +74,19 @@ public class PieChart
 		setTitle(title);
 		setWedges(wedges);
 
-		// Create a general heavy-weight container.
-		JFrame frame = new JFrame(this.title);
+		this.setTitle(title);
 
 		// Set its size.
-		frame.setSize(1000, 500);
+		this.setSize(1000, 500);
 
 		// Create a specialized light-weight container.
 		JPanel panel = new PieChartPanel();
 
 		// Add the specialized container to the general container.
-		frame.add(panel);
+		this.add(panel);
 
 		// Make the GUI visible on the screen.
-		frame.setVisible(true);
+		this.setVisible(true);
 	}
 	
 	/**
