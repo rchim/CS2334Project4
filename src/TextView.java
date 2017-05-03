@@ -87,6 +87,8 @@ public class TextView implements ActionListener
 	    jfText.add(jtaSummaryLine);
 	    
 	    jfText.add(jspNewsStoryList);
+	    jfText.pack();
+	    jfText.setVisible(true);
 	    
 	}
 	
@@ -206,7 +208,7 @@ public class TextView implements ActionListener
 	 */
 	private String constructTitle(){
 		// title consists of:
-		String title = "NewsMaker Name:";
+		String title = "NewsMaker Name: ";
 		title += newsMakerModel.getName();
 		title += "; Sorted by: ";
 		for (int i = 0 ; i < sortCriteria.size()-1; ++i){
