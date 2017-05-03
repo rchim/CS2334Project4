@@ -880,6 +880,7 @@ public class NewsController
 						selectedNewsContent,
 						selectedNewsMetric);
 				
+				
 				// Make sure the pie chart listens for model changes so that it 
 				// can update itself
 				newsMakerModel.addActionListener(pieChartView);

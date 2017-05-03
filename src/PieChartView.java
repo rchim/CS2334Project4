@@ -81,7 +81,15 @@ public class PieChartView implements ActionListener
 		// media
 		// content
 		// and measure
-		return ("NewsMaker: " + newsMakerModel.getName() + "; Media: " + media + "; Content:  " + content + "; Measure: " + measure);
+		String str = "";
+		str += "NewsMaker: " + newsMakerModel.getName() + "; Media Types: ";
+		for (NewsMedia m : media){
+			str += m.toString() + ", ";
+		}
+		str += "; Content: " + content.toString();
+		str += "; Measure: " + measure.toString();
+				
+		return (str);
 	}
 	
 	/**
@@ -94,24 +102,26 @@ public class PieChartView implements ActionListener
 		// go through the newsMakerList model associated with the story
 		
 		DefaultListModel<NewsStory> newsList = newsMakerModel.getNewsStoryListModel().getNewsStories();
+		System.out.println(newsList.size());
 		List<NewsStory> stories = new ArrayList<NewsStory>();
 		List<Wedge> wedges = new ArrayList<Wedge>();
 		
-		// cast the media into a specific instance of NewsMedia
-		
-		// TODO:: fix this method!!!
 		for(int i = 0 ; i < newsList.size(); ++i){
 			// get the current story
 			NewsStory current = newsList.getElementAt(i);
 			
 			// determine whether to keep the story based on type
-			String storyType = stories.getClass().getName();
+			String storyType = current.getClass().getName();
+			System.out.println(storyType);
 			switch(storyType){
 			case "TVNewsStory":
-				if ()
+				if (media.contains(NewsMedia.TV)) stories.add(current);
+			case "OnlineNewsStory":
+				if (media.contains(NewsMedia.ONLINE)) stories.add(current);
+			case "NewspaperStory":
+				if (media.contains(NewsMedia.NEWSPAPER)) stories.add(current);
 			}
 
-			stories.add(current);
 		} // at this point, the list of stories is all the stories we care about
 		// iterate through this list
 		
@@ -120,10 +130,10 @@ public class PieChartView implements ActionListener
 		for (NewsStory n : stories){
 			// determine the content to be taking
 			// ie. Source, Topic, Subject
-			if("Source".equals(content)){
+			if(NewsContent.SOURCE.equals(content)){
 				String contentName = n.getSource();
 				uniqueContents.add(contentName);
-				if ("Length".equals(measure)){
+				if (NewsMetric.LENGTH.equals(measure)){
 					// determine if the map value has already been initialized
 					if(!statisticMap.containsKey(contentName)) statisticMap.put(contentName, (double)n.getLengthInWords());
 					else {
@@ -135,7 +145,7 @@ public class PieChartView implements ActionListener
 					}
 				}
 				
-				if ("Count".equals(measure)){
+				if (NewsMetric.COUNT.equals(measure)){
 					// determine if the map value has already been initialized
 					if(!statisticMap.containsKey(contentName)) statisticMap.put(contentName, 1.0);
 					else {
@@ -148,10 +158,10 @@ public class PieChartView implements ActionListener
 				}
 				
 			} // now onto Topic case
-			if("Topic".equals(content)){
+			if(NewsContent.TOPIC.equals(content)){
 				String contentName = n.getTopic();
 				uniqueContents.add(contentName);
-				if ("Length".equals(measure)){
+				if (NewsMetric.LENGTH.equals(measure)){
 					// determine if the map value has already been initialized
 					if(!statisticMap.containsKey(contentName)) statisticMap.put(contentName, (double)n.getLengthInWords());
 					else {
@@ -163,7 +173,7 @@ public class PieChartView implements ActionListener
 					}
 				}
 				
-				if ("Count".equals(measure)){
+				if (NewsMetric.COUNT.equals(measure)){
 					// determine if the map value has already been initialized
 					if(!statisticMap.containsKey(contentName)) statisticMap.put(contentName, 1.0);
 					else {
@@ -176,11 +186,11 @@ public class PieChartView implements ActionListener
 				}
 				
 			} // now onto Subject case
-			if("Subject".equals(content)){
+			if(NewsContent.SUBJECT.equals(content)){
 				String contentName = n.getSubject();
 				System.out.println(contentName);
 				uniqueContents.add(contentName);
-				if ("Length".equals(measure)){
+				if (NewsMetric.LENGTH.equals(measure)){
 					// determine if the map value has already been initialized
 					if(!statisticMap.containsKey(contentName)) statisticMap.put(contentName, (double)n.getLengthInWords());
 					else {
@@ -192,7 +202,7 @@ public class PieChartView implements ActionListener
 					}
 				}
 				
-				if ("Count".equals(measure)){
+				if (NewsMetric.COUNT.equals(measure)){
 					// determine if the map value has already been initialized
 					if(!statisticMap.containsKey(contentName)) statisticMap.put(contentName, 1.0);
 					else {
@@ -227,7 +237,6 @@ public class PieChartView implements ActionListener
 		}
 		
 		// return the wedges
-		System.out.println(wedges.size());
 		return wedges;
 	}
 	
