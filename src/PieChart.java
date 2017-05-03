@@ -21,6 +21,7 @@ import java.lang.Math;
  * @author Malachi Phillips
  * @version 1.0
  */
+
 public class PieChart extends JFrame
 {
 	/**
@@ -74,7 +75,7 @@ public class PieChart extends JFrame
 		setTitle(title);
 		setWedges(wedges);
 
-		this.setTitle(title);
+		this.setTitle(this.title);
 
 		// Set its size.
 		this.setSize(1000, 500);
