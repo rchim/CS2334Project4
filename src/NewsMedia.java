@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,7 +16,10 @@ public enum NewsMedia
 {	
 	NEWSPAPER, ONLINE, TV;
 
-	// TODO Incorporate VALUES_LIST.
+	/** A static final reference to a List of all the possible values of
+	 * NewsMedia.
+	 */
+	public static final List<NewsMedia> VALUES_LIST = valuesAsList(); 
 	
 	/**
 	 * The overridden <code>toString</code> method gives the news medium in
@@ -40,14 +44,18 @@ public enum NewsMedia
 	}
 	
 	/**
-	 * TODO
+	 * Accessor method that returns a List of type NewsMedia of all of the
+	 * possible values of this enum.
 	 * 
-	 * @return TODO
+	 * @return A List of type NewsMedia of all of the possible values of this
+	 * enum.
 	 */
 	public static List<NewsMedia> valuesAsList()
 	{
-		// TODO
-		
-		return null;
+		ArrayList<NewsMedia> valuesList = new ArrayList<NewsMedia>();
+		valuesList.add(NEWSPAPER);
+		valuesList.add(ONLINE);
+		valuesList.add(TV);
+		return valuesList;
 	}
 }

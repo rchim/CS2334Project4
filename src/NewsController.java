@@ -89,7 +89,7 @@ public class NewsController
 	 * @param newsDataBaseModel
 	 *   <code>MewsDataBaseModel</code> to be associated with the controller
 	 *   
-	 *   @author Ryan Chimienti
+	 * @author Ryan Chimienti
 	 */
 	public void setNewsDataBaseModel(NewsDataBaseModel newsDataBaseModel)
 	{
@@ -120,14 +120,13 @@ public class NewsController
 	}
 	
 	/**
-	 * Asks the user to choose a binary data file (which should contain a
-	 * serialized NewsDataBaseModel object) and sets the model to reflect that
-	 * data.
-	 * 
-	 * TODO Adjust to meet Javadoc requirements.
+	 * Asks the user to choose a binary data file (which should contain
+	 * serialized data about various parts of a news database model) and sets
+	 * the model to reflect that data.
 	 * 
 	 * @author Ryan Chimienti
 	 */
+	@SuppressWarnings("unchecked")
 	private void loadNewsData()
 	{
 		JFileChooser fileChooser = new JFileChooser();
@@ -151,14 +150,25 @@ public class NewsController
 
 		if(fileChooserReturnVal == JFileChooser.APPROVE_OPTION)
 		{
-			NewsDataBaseModel loadedDataBaseModel = null;
 			try
 			{
 				FileInputStream fis 
 						= new FileInputStream(fileChooser.getSelectedFile());
 				ObjectInputStream ois = new ObjectInputStream(fis);
 				
-				loadedDataBaseModel	= (NewsDataBaseModel) (ois.readObject());
+				this.newsDataBaseModel.none	= 
+						(NewsMakerModel) (ois.readObject());
+				this.newsDataBaseModel.setNewsMakerListModel(	
+						(NewsMakerListModel) (ois.readObject()));
+				this.newsDataBaseModel.setNewsStoryListModel(	
+						(NewsStoryListModel) (ois.readObject()));
+				this.newsDataBaseModel.setNewsSourceMap(	
+						(Map<String, String>) (ois.readObject()));
+				this.newsDataBaseModel.setNewsTopicMap(	
+						(Map<String, String>) (ois.readObject()));
+				this.newsDataBaseModel.setNewsSubjectMap(	
+						(Map<String, String>) (ois.readObject()));
+				
 				ois.close();					
 			}
 			catch (Exception e) 
@@ -170,15 +180,14 @@ public class NewsController
 				return;
 			}
 			
-			this.newsDataBaseModel = loadedDataBaseModel;
-			selectionView.setNewsDataBaseModel(this.newsDataBaseModel);
+			JOptionPane.showMessageDialog(selectionView, 
+					"Data was successfully loaded.", 
+					"Success", JOptionPane.ERROR_MESSAGE);	
 		}
 	}	
 	
 	/**
 	 * Method that saves binary data to a file from the news database model.
-	 * 
-	 * TODO Adjust to meet Javadoc requirements.
 	 * 
 	 * @author Ryan Chimienti
 	 */
@@ -206,16 +215,6 @@ public class NewsController
 		// If the user selected a file for saving, we write to it.
 		if(fileChooserReturnVal == JFileChooser.APPROVE_OPTION)
 		{
-			// We will export a near-copy of the database model instead of the
-			// actual model. If we try to export the actual model, the program
-			// tries to serialize all its variables, including its action
-			// listener list. Unfortunately, among the action listeners is an
-			// unserializable SelectionView object. The "copy" does not have any
-			// registered action listeners and so escapes this issue.
-			NewsDataBaseModel dataBaseModelCopy = new NewsDataBaseModel(
-					newsDataBaseModel.getNewsMakerListModel(),
-					newsDataBaseModel.getNewsStoryListModel());
-			
 			String filePath = fileChooser.getSelectedFile().getPath();
 			
 			try
@@ -224,7 +223,17 @@ public class NewsController
 						= new FileOutputStream(filePath);
 				ObjectOutputStream objectOutputStream 
 						= new ObjectOutputStream(fileOutputStream);
-				objectOutputStream.writeObject(dataBaseModelCopy);
+				objectOutputStream.writeObject(newsDataBaseModel.none);
+				objectOutputStream.writeObject(
+						newsDataBaseModel.getNewsMakerListModel());
+				objectOutputStream.writeObject(
+						newsDataBaseModel.getNewsStoryListModel());
+				objectOutputStream.writeObject(
+						newsDataBaseModel.getNewsSourceMap());
+				objectOutputStream.writeObject(
+						newsDataBaseModel.getNewsTopicMap());
+				objectOutputStream.writeObject(
+						newsDataBaseModel.getNewsSubjectMap());
 				objectOutputStream.close();
 			}
 			catch(IOException e)
@@ -738,6 +747,11 @@ public class NewsController
 				null
 				);
 		
+		// If the JOptionPane returned null, the user cancelled the input.
+		// In that case, we stop executing.
+		if(criterion == null)
+			return;
+		
 		// get all the news stories
 		DefaultListModel<NewsStory> news = new DefaultListModel<NewsStory>();
 		news = newsDataBaseModel.getNewsStories();
@@ -773,6 +787,10 @@ public class NewsController
 		for(NewsStory n : newsStories){
 			newsDataBaseModel.addNewsStory(n);	
 		}
+		
+		JOptionPane.showMessageDialog(selectionView, 
+				"News Stories were successfully sorted by " + criterion + ".",
+				"Success", JOptionPane.ERROR_MESSAGE);	
 	}
 	
 	/**

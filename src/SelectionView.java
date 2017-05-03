@@ -224,61 +224,7 @@ public class SelectionView extends JFrame implements ActionListener
 		jmb.add(jmDisplay);
 		
 		// Add the menu bar to the frame.
-		this.setJMenuBar(jmb);		
-		
-		// Rather than letting the news story JList call the stories' toString
-		// methods to write their label text, we use a custom cell renderer
-		// that generates labels in a verbose, human-readable output format.
-		this.jlNewsStoryList.setCellRenderer(new DefaultListCellRenderer() 
-		{
-			private static final long serialVersionUID = 1L;
-			
-			public Component getListCellRendererComponent(JList<?> list,
-					Object value, int index, boolean isSelected,
-					boolean cellHasFocus)
-			{
-				JLabel label = (JLabel) super.getListCellRendererComponent(list,
-						value, index, isSelected, cellHasFocus);
-				
-				ListModel<NewsStory> newsStories 
-						= SelectionView.this.jlNewsStoryList.getModel();
-				
-				ArrayList<NewsMedia> storyTypes = new ArrayList<NewsMedia>();
-				
-				// We iterate through the stories, collecting all the
-				// distinct story types. 								
-				for(int i = 0; i < newsStories.getSize(); i++)
-				{
-					if(newsStories.getElementAt(i) 
-							instanceof NewspaperStory)
-					{
-						if(!storyTypes.contains(NewsMedia.NEWSPAPER))
-							storyTypes.add(NewsMedia.NEWSPAPER);
-					}
-					else if(newsStories.getElementAt(i) 
-							instanceof TVNewsStory)
-					{
-						if(!storyTypes.contains(NewsMedia.TV))
-							storyTypes.add(NewsMedia.TV);
-					}
-					else
-					{
-						if(!storyTypes.contains(NewsMedia.ONLINE))
-							storyTypes.add(NewsMedia.ONLINE);
-					}	
-					
-					// If we've found all the media types, there is no
-					// point in searching on for more.
-					if(storyTypes.size() == 3)
-						break;						
-				}							
-				
-				label.setText(UserInterface.convertToOutputFormat(
-						(NewsStory) value, storyTypes));
-				
-				return label;
-			}		
-		});
+		this.setJMenuBar(jmb);	
 		
 		// Assign the JLists to their scroll panes.
 		jspNewsMakerList.setViewportView(jlNewsMakerList);
