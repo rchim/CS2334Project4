@@ -804,9 +804,16 @@ public class NewsController
 		// start by determining which ones were selected in the view
 		int[] selected = selectionView.getSelectedNewsStories();
 		DefaultListModel<NewsStory> news = new DefaultListModel<NewsStory>();
+		NewsStory currentStory;
 		// for each of the selected, get the story and add to the list
 		for (int i = 0 ; i < selected.length; ++i){
-			news.addElement(newsDataBaseModel.getNewsStories().get(selected[i]));
+			currentStory = newsDataBaseModel.getNewsStories().get(selected[i]);
+			news.addElement(currentStory);
+			
+			// Since this story is going away, the news makers featured in it
+			// should no longer know about it.
+			currentStory.getNewsMaker1().removeNewsStory(currentStory);
+			currentStory.getNewsMaker2().removeNewsStory(currentStory);
 		}
 		
 		// call the removing method
@@ -920,6 +927,7 @@ public class NewsController
 				// Make sure the pie chart listens for model changes so that it 
 				// can update itself
 				newsMakerModel.addActionListener(pieChartView);
+				newsDataBaseModel.addActionListener(pieChartView);
 
 			}
 		}
