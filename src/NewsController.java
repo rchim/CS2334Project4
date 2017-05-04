@@ -1321,24 +1321,27 @@ public class NewsController
 				// regardless of position, remove the news story
 				newsDataBaseModel.getNewsMakerListModel().get(editNewsMakerView.newsMakerModel).removeNewsStory(
 						newsDataBaseModel.getNewsStoryListModel().get(index)
-						);
+						);				
 				
 				NewsMakerModel nullNewsMaker = newsDataBaseModel.getNewsMakerListModel().getExactMatch("None");
 				if (ns.getNewsMaker1().equals(news1)) {
 					// remove the story from the newsmaker position and replace
-					//ns.setNewsMaker1(nullNewsMaker);
+					ns.setNewsMaker1(nullNewsMaker);
 					newsDataBaseModel.getNewsStoryListModel().get(index).setNewsMaker1(nullNewsMaker);
 				} // know it's first story
 				if (ns.getNewsMaker2().equals(news1)) {
+					ns.setNewsMaker2(nullNewsMaker);
 					newsDataBaseModel.getNewsStoryListModel().get(index).setNewsMaker2(nullNewsMaker);
 				} // add to null
-				newsDataBaseModel.getNewsMakerListModel().getExactMatch("None").addNewsStory(ns);
 
+				if (!newsDataBaseModel.none.getNewsStoryListModel().getNewsStories().contains(ns)){
+					newsDataBaseModel.none.getNewsStoryListModel().add(ns);
+				}
+				newsDataBaseModel.addNewsStory(ns);			
 			}
 			
 			// dispose of the view
 			viewDialog.dispose();
-			editNewsMakerView = null; // wipe it
 
 		}
 		
