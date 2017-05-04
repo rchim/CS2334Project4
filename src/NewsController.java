@@ -571,6 +571,18 @@ public class NewsController
 				null
 				);
 		
+		// make a check for if the name is a null
+		if (null == newsMakerName){
+			// Send warning to the user that news maker(s) must be selected
+			JOptionPane.showMessageDialog(selectionView,
+					"Nothing entered for adding a news maker.",
+					"Invalid Selection",
+					JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+		// Construct the new NewsMakerModel object, add
+		newsDataBaseModel.addNewsMakerModel(new NewsMakerModel(newsMakerName));
+		
 		if(null == newsMakerName)
 			return;				
 		
@@ -615,7 +627,20 @@ public class NewsController
 			this.viewDialog.setSize(1000,1000);
 			this.viewDialog.setLocationRelativeTo(selectionView);
 			this.viewDialog.setVisible(true);
-			
+			current.addActionListener(editNewsMakerView);
+			this.viewDialog.addWindowListener(new java.awt.event.WindowAdapter() {
+				/**
+				 * Overriden method for whenever the window is closed
+				 * 
+				 * @param windowEvent
+				 *   java.awt.event.WindowEvent for this event
+				 */
+				@Override
+				public void windowClosing(java.awt.event.WindowEvent windowEvent){
+					// This is a weird construction
+					current.removeActionListener(NewsController.this.editNewsMakerView);
+				}
+			});
 		}
 		
 	}
@@ -1287,14 +1312,37 @@ public class NewsController
 		@Override
 		public void actionPerformed(ActionEvent actionEvent) {
 			// In relevant stories, set the News Maker to "none" instead
-			
-			// check for the proper button name
-			String clickedItemText = ((JButton)(actionEvent.getSource())).getText();
-			// determine correct type
-			if ("Remove From Story".equals(clickedItemText)){
-				// call deleteNewsMaker
-				deleteNewsMakers();
+			// edit news maker to no longer include story
+			// for changed story -- replace newsmaker with none
+			int[] selected = editNewsMakerView.getSelectedNewsStoryIndices();
+			for (int index : selected) { // iterate over the selected stories
+				// for each story, change out the newsMaker to be "None"
+				NewsMakerModel news1 = newsDataBaseModel.getNewsMakerListModel().get(editNewsMakerView.newsMakerModel);
+				// check if this is the primary or secondary newsmaker
+				NewsStory ns = newsDataBaseModel.getNewsStoryListModel().get(index);
+				
+				// regardless of position, remove the news story
+				newsDataBaseModel.getNewsMakerListModel().get(editNewsMakerView.newsMakerModel).removeNewsStory(
+						newsDataBaseModel.getNewsStoryListModel().get(index)
+						);
+				
+				NewsMakerModel nullNewsMaker = newsDataBaseModel.getNewsMakerListModel().getExactMatch("None");
+				if (ns.getNewsMaker1().equals(news1)) {
+					// remove the story from the newsmaker position and replace
+					//ns.setNewsMaker1(nullNewsMaker);
+					newsDataBaseModel.getNewsStoryListModel().get(index).setNewsMaker1(nullNewsMaker);
+				} // know it's first story
+				if (ns.getNewsMaker2().equals(news1)) {
+					newsDataBaseModel.getNewsStoryListModel().get(index).setNewsMaker2(nullNewsMaker);
+				} // add to null
+				newsDataBaseModel.getNewsMakerListModel().getExactMatch("None").addNewsStory(ns);
+
 			}
+			
+			// dispose of the view
+			viewDialog.dispose();
+			editNewsMakerView = null; // wipe it
+
 		}
 		
 	}
@@ -1332,6 +1380,10 @@ public class NewsController
 				
 				// check if these are the same (except for none)
 				if(newsMakerName1.equals(newsMakerName2) && !"None".equals(newsMakerName1)){
+					JOptionPane.showMessageDialog(selectionView,
+							"Cannot select two of the same newsmakers for a news story.",
+							"Invalid Selection",
+							JOptionPane.WARNING_MESSAGE);
 					return; // halt the process here
 				}
 				
@@ -1361,6 +1413,18 @@ public class NewsController
 				
 				NewsStory news = null;
 				
+				// check if the news makers exist, if not, add them
+				if(!newsDataBaseModel.getNewsMakerListModel().contains(newsMaker1)){
+					// create new NewsMakerModel
+					newsDataBaseModel.addNewsMakerModel(new NewsMakerModel(newsMakerName1));
+					newsMaker1 = newsDataBaseModel.getNewsMakerListModel().getExactMatch(newsMakerName1);
+				}
+				if(!newsDataBaseModel.getNewsMakerListModel().contains(newsMaker2) && !"None".equals(newsMakerName2)){
+					// create new NewsMakerModel
+					newsDataBaseModel.addNewsMakerModel(new NewsMakerModel(newsMakerName2));
+					newsMaker2 = newsDataBaseModel.getNewsMakerListModel().getExactMatch(newsMakerName2);
+				}
+				
 				switch(type){
 				case TV:
 					news = new TVNewsStory(date,
@@ -1382,26 +1446,16 @@ public class NewsController
 					break;
 				}
 				
-				// check if the news makers exist, if not, add them
-				if(!newsDataBaseModel.getNewsMakerListModel().contains(newsMaker1)){
-					// create new NewsMakerModel
-					newsDataBaseModel.addNewsMakerModel(new NewsMakerModel(newsMakerName1));
-				}
-				if(!newsDataBaseModel.getNewsMakerListModel().contains(newsMaker2) && !"None".equals(newsMakerName2)){
-					// create new NewsMakerModel
-					newsDataBaseModel.addNewsMakerModel(new NewsMakerModel(newsMakerName2));
+				// add to relevant news makers
+				newsMaker1.addNewsStory(news);
+				
+				// check for if it is none
+				if(!"None".equals(newsMakerName2)){
+					newsMaker2.addNewsStory(news);
 				}
 				
 				// add news story
 				newsDataBaseModel.addNewsStory(news);	
-				
-				// add to relevant news makers
-				newsDataBaseModel.getNewsMakerListModel().getExactMatch(newsMakerName1).addNewsStory(news);
-				
-				// check for if it is none
-				if(!"None".equals(newsMakerName2)){
-					newsDataBaseModel.getNewsMakerListModel().getExactMatch(newsMakerName2).addNewsStory(news);
-				}
 				
 				viewDialog.dispose(); // once added, throw out
 				
@@ -1430,6 +1484,15 @@ public class NewsController
 				String newsMakerName2 = (String) addEditNewsStoryView.jcbNewsStoryNewsMaker2.getSelectedItem();
 				NewsMakerModel newsMaker2 = newsDataBaseModel.getNewsMakerListModel().getExactMatch(newsMakerName2);
 				
+				// check if these are the same (except for none)
+				if(newsMakerName1.equals(newsMakerName2) && !"None".equals(newsMakerName1)){
+					JOptionPane.showMessageDialog(selectionView,
+							"Cannot select two of the same newsmaker for a news story.",
+							"Invalid Selection",
+							JOptionPane.WARNING_MESSAGE);
+					return; // halt the process here
+				}
+				
 				PartOfDay pod = (PartOfDay) addEditNewsStoryView.jcbNewsStoryPartOfDay.getSelectedItem();
 				
 				String source = (String) addEditNewsStoryView.jcbNewsStorySource.getSelectedItem();
@@ -1456,6 +1519,18 @@ public class NewsController
 				
 				NewsStory news = null;
 				
+				// check if the news makers exist, if not, add them
+				if(!newsDataBaseModel.getNewsMakerListModel().contains(newsMaker1)){
+					// create new NewsMakerModel
+					newsDataBaseModel.addNewsMakerModel(new NewsMakerModel(newsMakerName1));
+					newsMaker1 = newsDataBaseModel.getNewsMakerListModel().getExactMatch(newsMakerName1);
+				}
+				if(!newsDataBaseModel.getNewsMakerListModel().contains(newsMaker2) && !"None".equals(newsMakerName2)){
+					// create new NewsMakerModel
+					newsDataBaseModel.addNewsMakerModel(new NewsMakerModel(newsMakerName2));
+					newsMaker2 = newsDataBaseModel.getNewsMakerListModel().getExactMatch(newsMakerName2);
+				}
+				
 				switch(type){
 				case TV:
 					news = new TVNewsStory(date,
@@ -1477,22 +1552,16 @@ public class NewsController
 					break;
 				}
 				
+				newsMaker1.addNewsStory(news);
+				
+				// check for if it is none
+				if(!"None".equals(newsMakerName2)){
+					newsMaker2.addNewsStory(news);
+				}
+				
 				// add news story
 				newsDataBaseModel.addNewsStory(news);
-				
-				// add back in under the proper news makers
-				newsMakerFirst = newsDataBaseModel.getNewsMakerListModel().get(news.getNewsMaker1());
-				newsMakerSecond = newsDataBaseModel.getNewsMakerListModel().get(news.getNewsMaker2());
-				
-				//newsMakerFirst.addNewsStory(news);
-				//newsMakerSecond.addNewsStory(news);
-				newsMaker1.addNewsStory(news);
-				newsMaker2.addNewsStory(news);
-				
-				
-				// TODO: Add in check to see that the newsmakers are not the same person
-				// unless, however, it is none
-				
+			
 				// dispose of view dialog
 				viewDialog.dispose();
 			} 
