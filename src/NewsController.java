@@ -782,6 +782,7 @@ public class NewsController
 		// remove all the stories
 		deleteAllNewsStories();
 		
+		
 		switch(criterion){
 		case SOURCE:
 			Collections.sort(newsStories, SourceComparator.SOURCE_COMPARATOR);
@@ -801,9 +802,13 @@ public class NewsController
 		}
 		
 		// re-cast into DefaultListModel
-		for(NewsStory n : newsStories){
-			newsDataBaseModel.addNewsStory(n);	
+		NewsStory[] newsArray = new NewsStory[newsStories.size()];
+		for(int i = 0 ; i < newsArray.length; ++i){
+			newsArray[i] = newsStories.get(i);
 		}
+			
+		
+		newsDataBaseModel.setNewsStoryListModelFromArray(newsArray);
 		
 		JOptionPane.showMessageDialog(selectionView, 
 				"News Stories were successfully sorted by " + criterion + ".",
