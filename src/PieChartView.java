@@ -262,7 +262,7 @@ public class PieChartView implements ActionListener
 		// reconstruct if there is ever a change in the newsMakerModel
 		pieChart.setTitle(constructTitle());
 		pieChart.setWedges(constructWedges());
-		
+		pieChart.repaint();
 	}
 	
 	

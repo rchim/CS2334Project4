@@ -248,7 +248,7 @@ public class NewsController
 				catch(NotSerializableException e)
 				{
 					JOptionPane.showMessageDialog(selectionView, 
-							"Unable to save. Close all pie chart display windows"
+							"Unable to save. Close all extraneous windows"
 							+ " and try again.", 
 							"Oops!", JOptionPane.WARNING_MESSAGE);
 					objectOutputStream.close();					
@@ -804,9 +804,16 @@ public class NewsController
 		// start by determining which ones were selected in the view
 		int[] selected = selectionView.getSelectedNewsStories();
 		DefaultListModel<NewsStory> news = new DefaultListModel<NewsStory>();
+		NewsStory currentStory;
 		// for each of the selected, get the story and add to the list
 		for (int i = 0 ; i < selected.length; ++i){
-			news.addElement(newsDataBaseModel.getNewsStories().get(selected[i]));
+			currentStory = newsDataBaseModel.getNewsStories().get(selected[i]);
+			news.addElement(currentStory);
+			
+			// Since this story is going away, the news makers featured in it
+			// should no longer know about it.
+			currentStory.getNewsMaker1().removeNewsStory(currentStory);
+			currentStory.getNewsMaker2().removeNewsStory(currentStory);
 		}
 		
 		// call the removing method
@@ -820,6 +827,9 @@ public class NewsController
 	private void deleteAllNewsStories()
 	{
 		newsDataBaseModel.removeAllNewsStories();
+		
+		// TODO Make the news makers forget about the news stories. This is as
+		// simple as clearing all their news story lists.
 	}
 	
 	/**
@@ -920,7 +930,6 @@ public class NewsController
 				// Make sure the pie chart listens for model changes so that it 
 				// can update itself
 				newsMakerModel.addActionListener(pieChartView);
-
 			}
 		}
 	}
