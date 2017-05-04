@@ -64,7 +64,8 @@ class NoozFileProcessor
 			Map<String, String> sourceMap, Map<String, String> topicMap,
 			Map<String, String> subjectMap) throws IOException 
 	{
-		// Clear the news maker and news story lists.
+		// Clear the news maker and news story lists except for the news maker
+		// None.
 		newsMakers = new NewsMakerListModel();
 		newsStories = new NewsStoryListModel();		
 		
@@ -244,13 +245,28 @@ class NoozFileProcessor
 					partOfDay, newsMaker1, newsMaker2);
 		}
 		// TODO: Check for invalid source num.
-
-		// The news story is added to each news maker
-		newsMaker1.addNewsStory(newsStory);
-		newsMaker2.addNewsStory(newsStory);
 		
-		// The news story is added to the list of news stories.
-		newsStories.add(newsStory);
+		// The news story is added to the first news maker
+		try
+		{
+			newsMaker1.addNewsStory(newsStory);	
+		}
+		catch(IllegalArgumentException e)
+		{
+			System.out.print("Duplicate story encountered at data file line ");
+			System.out.println(newsStories.size());
+			// This is a result of duplicate stories in
+			// the data file. We'll skip this story.
+			return;
+		}
+		
+			// If the news makers are different (i.e. both are not None), then the
+			// story is added to the second news maker also.
+			if(!newsMaker1.equals(newsMaker2))
+				newsMaker2.addNewsStory(newsStory);
+			
+			// The news story is added to the list of news stories.
+			newsStories.add(newsStory);		
 	}
 
 	/**

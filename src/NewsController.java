@@ -28,8 +28,8 @@ import java.util.TreeSet;
  * opens new views and/or updates the model.
  * </P>
  * <P>
- * TODO: Describe in this paragraph who did what, or state it in the method
- * documentation and describe that convention here.
+ * This class was worked on by both group members. Each method specifies its
+ * author in its own documentation.
  * </P>
  *
  * @author Ryan Chimienti
@@ -570,9 +570,12 @@ public class NewsController
 				null,
 				null
 				);
-		// Construct the new NewsMakerModel object, add
-		newsDataBaseModel.addNewsMakerModel(new NewsMakerModel(newsMakerName));
 		
+		if(null == newsMakerName)
+			return;				
+		
+		// Construct the new NewsMakerModel object, add
+		newsDataBaseModel.addNewsMakerModel(new NewsMakerModel(newsMakerName));		
 	}
 	
 	/**
@@ -823,7 +826,7 @@ public class NewsController
 				String newsMakerName = newsMakerModel.getName();
 				
 				// Get media types using the MediaTypeSelectionView
-				this.selectedMediaTypes = null;
+				this.selectedMediaTypes = new ArrayList<NewsMedia>();
 				this.mediaTypeSelectionView = new MediaTypeSelectionView();
 				MediaTypeSelectionListener mediaTypeSelectionListener =
 						new MediaTypeSelectionListener();
@@ -836,9 +839,17 @@ public class NewsController
 				this.viewDialog.setLocationRelativeTo(selectionView);
 				this.viewDialog.setVisible(true);
 				
-				// If no media types were selected, go on to next news maker.
-				if (null == this.selectedMediaTypes){
-					continue;
+				// If the user has not selected any media types, then he must have
+				// cancelled or closed out of the dialog (the OK button only ends
+				// the dialog once you select some types, so it was not what ended
+				// the dialog). In that case, we stop displaying text views.
+				if(selectedMediaTypes.size() == 0)
+				{
+					JOptionPane.showMessageDialog(selectionView, 
+							"Cancelled all pending pie chart displays.",
+							"Cancelled Pie Charts",
+							JOptionPane.PLAIN_MESSAGE);
+					return;
 				}
 				
 				// Get content type using JOptionPane.
@@ -853,7 +864,11 @@ public class NewsController
 						NewsContent.values(),
 						NewsContent.TOPIC);
 				if (null == selectedNewsContent){
-					continue;
+					JOptionPane.showMessageDialog(selectionView, 
+							"Cancelled all pending pie chart displays.",
+							"Cancelled Pie Charts",
+							JOptionPane.PLAIN_MESSAGE);
+					return;
 				}
 				
 				// Get the metric type using JOptionPane
@@ -866,7 +881,11 @@ public class NewsController
 						null,
 						NewsMetric.values(), NewsMetric.LENGTH);
 				if (null == selectedNewsMetric){
-					continue;
+					JOptionPane.showMessageDialog(selectionView, 
+							"Cancelled all pending pie chart displays.",
+							"Cancelled Pie Charts",
+							JOptionPane.PLAIN_MESSAGE);
+					return;
 				}
 				
 				// Create the pie chart.

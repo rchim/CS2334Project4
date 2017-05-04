@@ -66,6 +66,8 @@ public class NewsDataBaseModel implements Serializable
 	{
 		this.newsMakerListModel = new NewsMakerListModel();
 		this.newsStoryListModel = new NewsStoryListModel();
+		
+		this.newsMakerListModel.add(this.none);
 	}
 	
 	/**
@@ -82,6 +84,11 @@ public class NewsDataBaseModel implements Serializable
 	{
 		this.newsMakerListModel = newsMakerListModel;
 		this.newsStoryListModel = newsStoryListModel;
+		
+		if(this.newsMakerListModel.contains(new NewsMakerModel("None")))
+			this.none = this.newsMakerListModel.get(new NewsMakerModel("None"));
+		else
+			this.newsMakerListModel.add(this.none);
 	}
 	
 	/**
@@ -138,7 +145,7 @@ public class NewsDataBaseModel implements Serializable
 	/**
 	 * The mutator for the map from topic codes to decoded topic Strings.
 	 * 
-	 * @param The map from topic codes to decoded topic Strings.
+	 * @param newsTopicMap The map from topic codes to decoded topic Strings.
 	 */
 	public void setNewsTopicMap(
 			Map<String, String> newsTopicMap)
@@ -169,7 +176,8 @@ public class NewsDataBaseModel implements Serializable
 	/**
 	 * The mutator for the map from subject codes to decoded subject Strings.
 	 * 
-	 * @param The map from subject codes to decoded subject Strings.
+	 * @param newsSubjectMap The map from subject codes to decoded subject
+	 * Strings.
 	 */
 	public void setNewsSubjectMap(
 			Map<String, String> newsSubjectMap)
@@ -280,27 +288,74 @@ public class NewsDataBaseModel implements Serializable
 	}
 	
 	/**
-	 * Removes every news maker in the given list from the database.
-	 * 
+	 * Mutator method for the news maker list model, to remove one or more news
+	 * makers from the list. ActionCommand is "Modified News Maker List".
+	 * <P>
+     * Note that removing a news maker means setting the news maker to "None"
+     * for all of the stories on that news maker's list, which can cause a
+     * modified story to match another existing story already on the news story
+     * list for "None". If that happens, an IllegalArgumentException will be
+     * thrown that removeNewsMakers should catch. To handle this exception, it
+     * copies the entire NewsStoryListModel to a new NewsStoryListModel using
+     * the add method (which does not allow duplicates). The new list, free of
+     * duplicates, is then set as the NewsStoryListModel using
+     * setNewsStoryListModel.
+	 * </P>
 	 * @param newsMakers A list of the news makers to be removed.
 	 */
 	public void removeNewsMakers(DefaultListModel<NewsMakerModel> newsMakers)
 	{
-		newsMakerListModel.removeListOfNewsMakers(newsMakers);
+		try
+		{
+			newsMakerListModel.removeListOfNewsMakers(newsMakers);
+		}
+		catch(IllegalArgumentException e)
+		{
+			NewsStoryListModel storiesWithoutDuplicates =
+					new NewsStoryListModel();
+			
+			for(int i = 0; i < newsStoryListModel.size(); i++)
+			{
+				try
+				{
+					storiesWithoutDuplicates.add(newsStoryListModel.get(i));
+				}
+				catch(IllegalArgumentException e2)
+				{
+					// We expect this exception because we know there is a
+					// duplicate story to attempt to add at some point.
+					// Fortunately, when this exception triggers,
+					// storiesWithoutDuplicates does not accept the duplicate
+					// addition.
+				}
+			}
+			
+			this.setNewsStoryListModel(storiesWithoutDuplicates);
+		}
 		
 		processEvent(new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
 				"Modified News Maker List"));
 	}
 	
 	/**
-	 * Removes all news makers from the database.
+	 * Mutator method for the news maker list model, to remove all the news
+	 * makers (except "None") from the list. ActionCommand is "Modified News
+	 * Maker List".
+	 * <P>
+	 * Note that removing a news maker means setting the news maker to "None"
+	 * for all of the stories on that news maker's list, which can cause a
+	 * modified story to match another existing story already on the news story
+	 * list for "None". If that happens, an IllegalArgumentException will be
+	 * thrown that removeNewsMakers should catch. To handle this exception, it
+	 * copies the entire NewsStoryListModel to a new NewsStoryListModel using
+	 * the add method (which does not allow duplicates). The new list, free of
+	 * duplicates, is then set as the NewsStoryListModel using
+	 * setNewsStoryListModel.
+	 * </P>
 	 */
 	public void removeAllNewsMakers()
 	{
-		newsMakerListModel.removeAllNewsMakers();
-		
-		processEvent(new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
-				"Modified News Maker List"));
+		this.removeNewsMakers(this.newsMakerListModel.getNewsMakers());
 	}
 	
 	/**
@@ -368,7 +423,7 @@ public class NewsDataBaseModel implements Serializable
 	 */
 	public void setNewsStoryListModel(NewsStoryListModel newsStoryListModel)
 	{
-		this.newsStoryListModel = newsStoryListModel;
+		this.newsStoryListModel.setNewsStories(newsStoryListModel);
 		
 		processEvent(new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
 				"Modified News Story List"));

@@ -367,7 +367,9 @@ public class SelectionView extends JFrame implements ActionListener
 		
 		// Determine whether news makers or news stories or both are absent from
 		// the database.
-		boolean newsMakersAbsent = jlNewsMakerList.getModel().getSize() == 0;
+		boolean newsMakersAbsent = (jlNewsMakerList.getModel().getSize() == 1 
+				&& jlNewsMakerList.getModel().getElementAt(0)
+						.equals(newsDataBaseModel.none));
 		boolean newsStoriesAbsent = jlNewsStoryList.getModel().getSize() == 0;
 		
 		// If news makers are absent from the database, disable all the menu
@@ -376,15 +378,11 @@ public class SelectionView extends JFrame implements ActionListener
 		{
 			jmiEditNewsMaker.setEnabled(false);
 			jmiDeleteNewsMaker.setEnabled(false);
-			jmiDeleteNewsMakerList.setEnabled(false);	
-			jmiPieChart.setEnabled(false);
-			jmiText.setEnabled(false);
+			jmiDeleteNewsMakerList.setEnabled(false);
 						
-			jmiEditNewsMaker.setToolTipText("No newsmakers to edit.");
-			jmiDeleteNewsMaker.setToolTipText("No newsmakers to delete.");
-			jmiDeleteNewsMakerList.setToolTipText("No newsmakers to delete.");	
-			jmiPieChart.setToolTipText("No news makers to display data for.");
-			jmiText.setToolTipText("No news makers to display data for.");
+			jmiEditNewsMaker.setToolTipText("Cannot edit the special newsmaker 'None'.");
+			jmiDeleteNewsMaker.setToolTipText("Cannot delete the special newsmaker 'None'.");
+			jmiDeleteNewsMakerList.setToolTipText("Cannot delete the special newsmaker 'None'.");	
 		}
 		
 		// If news stories are absent from the database, Disable all the menu

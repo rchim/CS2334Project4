@@ -98,28 +98,49 @@ class NewsMakerModel implements Comparable<NewsMakerModel>, Serializable
 	}
 
 	/**
-	 * The mutator that adds a news story to a news maker's list of
-	 * stories.
+	 * Mutator that adds a news story to a news maker's list of stories.
+	 * ActionEvent is "Modified News Maker".
 	 * <P>
 	 * Note that since this list should contain only stories in which the news
-	 * maker is featured, we should have this method verify that the
-	 * <code>NewsMakerModel</code> object is referenced in the
-	 * <code>NewsStory</code> object before the story is added to the list.
-	 * However, to keep the project relatively simple, this requirement was not
-	 * made in the project description and this check doesn't need to be made
-	 * yet.
+	 * maker is featured, this method verifies that the NewsMakerModel object
+	 * is referenced in the NewsStory object before the story is added to the
+	 * list. If the NewsMakerModel object is not referenced in the NewsStory
+	 * object it throws an IllegalArgumentException with the message "Story Not
+	 * Relevant".
 	 * </P>
+	 * <P>
+     * If the story to be added is a duplicate of a story already on the news
+     * maker's list, it will catch and re-throw the IllegalArgumentException
+     * from the NewsStoryListModel.add method.
+     * </P>
 	 * 
-	 * @param newsStory
-	 *            The news story to add.
+	 * @param newsStory The news story to add.
+	 * 
+	 * @throws IllegalArgumentException If the news story is not about this news
+	 * maker or is a duplicate of a story already on the news maker's list.
 	 */
 	public void addNewsStory(NewsStory newsStory) 
+			throws IllegalArgumentException
 	{
-		// TODO Verify that story is about this NewsMaker (Eventually)
-		newsStories.add(newsStory);
-		
-		processEvent(new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
-				"Modifided News Maker"));
+		if(this.equals(newsStory.getNewsMaker1()) 
+				|| this.equals(newsStory.getNewsMaker2()))
+		{
+			try
+			{
+				newsStories.add(newsStory);
+			}
+			catch(IllegalArgumentException e)
+			{
+				throw e;
+			}
+			
+			processEvent(new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
+					"Modifided News Maker"));
+		}
+		else
+		{
+			throw new IllegalArgumentException("Story Not Relevant");			
+		}			
 	}
 	
 	/**

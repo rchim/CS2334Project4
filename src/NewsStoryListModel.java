@@ -124,22 +124,29 @@ class NewsStoryListModel implements Serializable
 	}
 	
 	/**
-	 * The mutator for adding a news story to the list.
+	 * Mutator method for adding a news story to the list.
 	 * <P>
-	 * By using our own class with its own <code>add</code> method, rather than
-	 * directly using the <code>add</code> method of <code>ArrayList</code>, we
-	 * could ensure that we don't add duplicate <code>NewsStory</code> objects
-	 * to our list. However, to keep the project relatively simple, this
-	 * requirement was not made in the project description and this check
-	 * doesn't need to be made yet.
+	 * By using our own class with its own add method, rather than directly
+	 * using the add method of ArrayList, we ensure that we don't add duplicate
+	 * NewsStory objects to our list.
 	 * </P>
 	 * 
-	 * @param newsStory
-	 *            The news story to add.
+	 * @param newsStory The news story to add.
+	 * 
+	 * @throws IllegalArgumentException If the news story to add is already in
+	 * the list.
 	 */
-	public void add(NewsStory newsStory) {
-		// TODO Refine this to prevent duplicates (Eventually)
-		this.newsStories.addElement(newsStory);
+	public void add(NewsStory newsStory) throws IllegalArgumentException
+	{
+		if(!newsStories.contains(newsStory))
+		{
+			this.newsStories.addElement(newsStory);
+		}
+		else
+		{
+			throw new IllegalArgumentException("Tried to add duplicate news"
+					+ " story to news story list model.");
+		}
 	}
 
 	/**
@@ -150,10 +157,6 @@ class NewsStoryListModel implements Serializable
 	 */
 	public void remove(NewsStory newsStory)
 	{
-		// TODO figure out why the program freezes on this step when
-		// the 'Delete News Story' menu item is clicked, but only when the
-		// custom cell renderer is active.
-		
 		newsStories.removeElement(newsStory);
 	}
 

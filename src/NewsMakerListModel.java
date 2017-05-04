@@ -12,13 +12,11 @@ import javax.swing.DefaultListModel;
  * </P>
  * <P>
  * This class was written by Dr. Hougen (as NewsMakerList). It was modified by
- * Ryan Chimienti (ID 113392576). A deep copy was implemented by Malachi 
- * Phillips where indicated.
+ * Ryan Chimienti (ID 113392576).
  * </P>
  * 
  * @author Dean Hougen
  * @author Ryan Chimienti
- * @author Malachi Phillips
  */
 class NewsMakerListModel implements Serializable 
 {
@@ -92,10 +90,6 @@ class NewsMakerListModel implements Serializable
 
 	/**
 	 * An accessor method to get a news maker from the list.
-	 * 
-	 * @author Malachi Phillips
-	 *   -- added in the Deep Copy
-	 *   -- credit to: <a href="http://alvinalexander.com/java/java-deep-clone-example-source-code">Java Deep Copy</a>
 	 * 
 	 * @param newsMakerModel
 	 *            The news maker to get from the list.
@@ -236,6 +230,7 @@ class NewsMakerListModel implements Serializable
 	 *             If the news maker to add is already in the list.
 	 */
 	public void add(NewsMakerModel newsMakerModel) 
+			throws IllegalArgumentException
 	{
 		// If the news maker is already in the list, don't let it get added
 		// again.
@@ -321,57 +316,197 @@ class NewsMakerListModel implements Serializable
 	 * list.
 	 * 
 	 * @param newsMakerModel The replacement news maker.
+	 * 
+	 * @throws IllegalArgumentException If the news maker to add is already in
+	 * the list.
 	 */
-	public void replace(NewsMakerModel newsMakerModel)
+	public void replace(NewsMakerModel newsMakerModel) 
+			throws IllegalArgumentException
 	{
-		int index = newsMakerDefaultListModel.indexOf(newsMakerModel);
-		
-		// If a news maker was found with the same name as the replacement news
-		// maker, replace him. 
-		if(index != -1) 
+		if(!newsMakerModel.equals(new NewsMakerModel("None")))
 		{
-			newsMakerDefaultListModel.removeElementAt(index);
-			newsMakerDefaultListModel.add(index, newsMakerModel);
+			int index = newsMakerDefaultListModel.indexOf(newsMakerModel);
+			
+			// If a news maker was found with the same name as the replacement news
+			// maker, replace him. 
+			if(index != -1) 
+			{
+				newsMakerDefaultListModel.removeElementAt(index);
+				newsMakerDefaultListModel.add(index, newsMakerModel);
+			}
+			// Otherwise, append the replacement news maker to the end of the list. 
+			else
+			{
+				newsMakerDefaultListModel.addElement(newsMakerModel);
+			}
 		}
-		// Otherwise, append the replacement news maker to the end of the list. 
 		else
 		{
-			newsMakerDefaultListModel.addElement(newsMakerModel);
+			throw new IllegalArgumentException("Tried to replace special news"
+					+ " maker None in news maker list model");
 		}
 	}
 	
 	/**
-	 * Removes a news maker from the list.
+	 * 
+	 * <U>IMPORTANT: THIS METHOD MAY ADD A DUPLICATE NEWS STORY TO THE LIST.</U>
+	 * <P>
+	 * Mutator method to remove an existing news maker entirely, that is, from
+	 * this list of news makers as well as from all of the stories in which they
+	 * were referenced. (These stories will instead list "None" as the news
+	 * maker.) Note that "None" cannot be removed. 
+	 * </P>
+	 * <P>
+	 * Note that setting a news maker to "None" for an existing news story may
+	 * cause the modified story to match another existing story already on the
+	 * news story list for "None". If that happens, the modified story is not
+	 * added to the news story list for "None".
+	 * </P> 
 	 * 
 	 * @param newsMakerModel The news maker to remove from the list.
-	 */
-	public void remove(NewsMakerModel newsMakerModel)
-	{
-		newsMakerDefaultListModel.removeElement(newsMakerModel);
-	}
-	
-	/**
-	 * Remove several <code>NewsMakerModel</code>s, all contained
-	 * within the passed list.
 	 * 
-	 * @param newsMakers
-	 *   <code>DefaultListModel</code> containing <code>NewsMakerModel</code>s
-	 *   to be deleted from the base   
+	 * @throws IllegalArgumentException If the attempt is to remove "None" or if
+	 * the removal causes the creation of a duplicate news story.
 	 */
-	public void removeListOfNewsMakers(
-			DefaultListModel<NewsMakerModel> newsMakers)
+	public void remove(NewsMakerModel newsMakerModel) 
+			throws IllegalArgumentException
 	{
-		for(int i = 0 ; i < newsMakers.size(); ++i){ // iterate through
-			remove(newsMakers.get(i));
+		if(!newsMakerModel.getName().equals("None"))
+		{
+			// Get all the news stories that feature the passed news maker.
+			// When the news maker is deleted, we will need to remove its
+			// name from its former stories and replace it with "None".
+			DefaultListModel<NewsStory> storiesWithNewsMaker = 
+					this.get(newsMakerModel).getNewsStoryListModel()
+					.getNewsStories();
+			
+			newsMakerDefaultListModel.removeElement(newsMakerModel);
+			
+			int numberOfStories = storiesWithNewsMaker.size();			
+			NewsStory currentStory;
+			for(int i = 0; i < numberOfStories; i++)
+			{
+				currentStory = storiesWithNewsMaker.get(i);
+				
+				// In the current news story, replace the news maker being
+				// removed with the special news maker none. Since currentStory
+				// is a direct reference to a story in the
+				// NewsStoryDataBaseModel, we are altering the official data.
+				if(currentStory.getNewsMaker1().equals(newsMakerModel))
+				{
+					currentStory.setNewsMaker1(
+							this.get(new NewsMakerModel("None")));
+				}
+				else
+				{
+					currentStory.setNewsMaker2(
+							this.get(new NewsMakerModel("None")));
+				}
+				
+				try
+				{
+					this.get(new NewsMakerModel("None")).addNewsStory(
+							currentStory);
+				}
+				catch(IllegalArgumentException e)
+				{
+					// If "None" already has a story that is the same as the
+					// current story, it must be the case that we created a
+					// duplicate by modifying the current story.
+					throw new IllegalArgumentException("Created duplicate news"
+							+ " story.");
+				}
+			}			
+		}
+		else
+		{
+			throw new IllegalArgumentException("Tried to remove None from news"
+					+ " maker list model.");
 		}
 	}
 	
 	/**
-	 * Removes all the news makers from the list.
+	 * Mutator method to remove one or more news makers entirely, that is, from
+	 * this list of news makers as well as from all of the stories in which they
+	 * were referenced. (These stories will instead list "None" as the news
+	 * maker.) Note that "None" cannot be removed. However, if "None" is on the
+	 * removal list, all other news makers on the list will be removed and 
+	 * "None" will be ignored. 
+	 * <P>
+	 * Note that setting a news maker to "None" for an
+	 * existing news story may cause the modified story to match another
+	 * existing story already on the news story list for "None". If that
+	 * happens, the modified story is not added to the news story list for
+	 * "None" and, when the method completes, it throws an
+	 * IllegalArgumentException to its caller to alert it of the duplicate story
+	 * issue.
+	 * </P>
+	 * 
+	 * @param newsMakers The list of news makers to remove.
+	 *   
+	 * @throws IllegalArgumentException If the removal causes the creation of a
+	 * duplicate news story.
 	 */
-	public void removeAllNewsMakers()
+	public void removeListOfNewsMakers(DefaultListModel<NewsMakerModel>
+			newsMakers) throws IllegalArgumentException
 	{
-		newsMakerDefaultListModel.clear();
+		// Represents whether somewhere in the execution of this method we try
+		// to add a duplicate news story to the special news maker none.
+		boolean createdDuplicateStory = false;
+		
+		int numberToRemove = newsMakers.size();
+		
+		for(int i = 0 ; i < numberToRemove; i++)
+		{
+			try
+			{
+				// Remove the news maker at the beginning of the list.
+				remove(newsMakers.get(0));
+			}
+			catch(IllegalArgumentException e)
+			{
+				// If the exception is because we created a duplicate news
+				// story, we will take note of that fact. 
+				if(e.getMessage().equals("Created duplicate news story."))
+				{
+					createdDuplicateStory = true;
+				}
+				
+				// Otherwise, the exception is because we tried to delete the
+				// special news maker none. We understand that this will be
+				// attempted, and we intend it to fail. Thus, we ignore this
+				// exception.
+			}
+		}
+		
+		if(createdDuplicateStory)
+		{
+			throw new IllegalArgumentException("Created duplicate news story.");
+		}
+	}
+	
+	/**
+	 * Mutator method to remove all news makers (except for "None") entirely,
+	 * that is, from this list of news makers as well as from all of the stories
+	 * in which they were referenced. (These stories will instead list "None" as
+	 * the news maker.)
+	 * <P>
+     * Note that setting a news maker to "None" for an existing news story may
+     * cause the modified story to match another existing story already on the
+     * news story list for "None". If that happens, the modified story is not
+     * added to the news story list for "None" and, when the method completes,
+     * it throws an IllegalArgumentException to its caller to alert it of the
+     * duplicate story issue.
+     * </P>
+     * 
+     * @throws IllegalArgumentException If the removal causes the creation of a
+     * duplicate news story
+	 */
+	public void removeAllNewsMakers() throws IllegalArgumentException
+	{
+		// We don't need to catch the IllegalArgumentException for the creation
+		// of a duplicate news story. It will be thrown automatically.
+		this.removeListOfNewsMakers(this.newsMakerDefaultListModel);		
 	}
 	
 	/**
