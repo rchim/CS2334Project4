@@ -579,9 +579,7 @@ public class NewsController
 					"Invalid Selection",
 					JOptionPane.WARNING_MESSAGE);
 			return;
-		}		
-		if(null == newsMakerName)
-			return;				
+		}				
 		
 		// Construct the new NewsMakerModel object, add
 		newsDataBaseModel.addNewsMakerModel(new NewsMakerModel(newsMakerName));		
@@ -595,13 +593,30 @@ public class NewsController
 	{
 		// get the selected newsmakers to edit
 		int[] selected = selectionView.getSelectedNewsMakers();
-		if(0 == selected.length){
+		
+		// Make sure some news makers have been selected.
+		if(0 == selected.length)
+		{
 			// Send warning to the user that news maker(s) must be selected
 			JOptionPane.showMessageDialog(selectionView,
 					"No news makers selected.",
 					"Invalid Selection",
 					JOptionPane.WARNING_MESSAGE);
 			return;			
+		}
+		
+		// Make sure 'None' is not among the selected news makers.
+		for (int index : selected)
+		{
+			if(newsDataBaseModel.getNewsMakerListModel().get(index).equals(
+					new NewsMakerModel("None")))
+			{
+				JOptionPane.showMessageDialog(selectionView,
+						"The special newsmaker 'None' cannot be edited.",
+						"Invalid Selection",
+						JOptionPane.ERROR_MESSAGE);
+				return;			
+			}
 		}
 		
 		for (int index : selected){
@@ -623,7 +638,7 @@ public class NewsController
 			this.viewDialog.setResizable(true);
 			this.viewDialog.setSize(1000,1000);
 			this.viewDialog.setLocationRelativeTo(selectionView);
-			this.viewDialog.setVisible(true);
+			
 			current.addActionListener(editNewsMakerView);
 			this.viewDialog.addWindowListener(new java.awt.event.WindowAdapter() {
 				/**
@@ -638,8 +653,9 @@ public class NewsController
 					current.removeActionListener(NewsController.this.editNewsMakerView);
 				}
 			});
-		}
-		
+			
+			this.viewDialog.setVisible(true);
+		}		
 	}
 	
 	/**
@@ -1308,7 +1324,7 @@ public class NewsController
 	{
 
 		/**
-		 * Overriden method used for <code>ActionListener</code>
+		 * Overridden method used for <code>ActionListener</code>
 		 * 
 		 * Performs the action specified
 		 * 
@@ -1316,41 +1332,38 @@ public class NewsController
 		 *   <code>ActionEvent</code> needing to occur
 		 */
 		@Override
-		public void actionPerformed(ActionEvent actionEvent) {
-			// In relevant stories, set the News Maker to "none" instead
-			// edit news maker to no longer include story
-			// for changed story -- replace newsmaker with none
-			int[] selected = editNewsMakerView.getSelectedNewsStoryIndices();
-			for (int index : selected) { // iterate over the selected stories
-				// for each story, change out the newsMaker to be "None"
-				NewsMakerModel news1 = newsDataBaseModel.getNewsMakerListModel().get(editNewsMakerView.newsMakerModel);
-				// check if this is the primary or secondary newsmaker
-				NewsStory ns = newsDataBaseModel.getNewsStoryListModel().get(index);
-				
-				// regardless of position, remove the news story
-				newsDataBaseModel.getNewsMakerListModel().get(editNewsMakerView.newsMakerModel).removeNewsStory(
-						newsDataBaseModel.getNewsStoryListModel().get(index)
-						);
-				
-				NewsMakerModel nullNewsMaker = newsDataBaseModel.getNewsMakerListModel().getExactMatch("None");
-				if (ns.getNewsMaker1().equals(news1)) {
-					// remove the story from the newsmaker position and replace
-					//ns.setNewsMaker1(nullNewsMaker);
-					newsDataBaseModel.getNewsStoryListModel().get(index).setNewsMaker1(nullNewsMaker);
-				} // know it's first story
-				if (ns.getNewsMaker2().equals(news1)) {
-					newsDataBaseModel.getNewsStoryListModel().get(index).setNewsMaker2(nullNewsMaker);
-				} // add to null
-				newsDataBaseModel.getNewsMakerListModel().getExactMatch("None").addNewsStory(ns);
-
-			}
+		public void actionPerformed(ActionEvent actionEvent) 
+		{
+			// Acquire a reference to the news maker model being edited.
+			NewsMakerModel newsMakerModel = newsDataBaseModel
+					.getNewsMakerListModel().get(
+					editNewsMakerView.newsMakerModel);
 			
-			// dispose of the view
-			viewDialog.dispose();
-			editNewsMakerView = null; // wipe it
-
-		}
-		
+			// Bring the selected news stories for the news maker being edited
+			// into an array list.
+			ArrayList<NewsStory> selectedStories = new ArrayList<NewsStory>();
+			int[] selected = editNewsMakerView.getSelectedNewsStoryIndices();
+			for (int index : selected) 
+			{ 
+				selectedStories.add(newsMakerModel.getNewsStoryListModel()
+						.get(index));
+			}
+				
+			for(NewsStory story : selectedStories)
+			{
+				// Take the story out of the news maker's list.
+				newsMakerModel.removeNewsStory(story);
+				
+				// Replace the news maker with 'None' in the story.
+				if (story.getNewsMaker1().equals(newsMakerModel)) 
+					story.setNewsMaker1(newsDataBaseModel.none);
+				else if (story.getNewsMaker2().equals(newsMakerModel)) 
+					story.setNewsMaker2(newsDataBaseModel.none);						
+			}	
+			
+			// Update the selection view to reflect any changes.
+			selectionView.repaint();
+		}		
 	}
 	
 	/**

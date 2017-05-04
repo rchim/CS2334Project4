@@ -40,7 +40,7 @@ public class EditNewsMakerView extends JPanel implements ActionListener
 	/** <code>NewsDataBaseModel</code> **/
 	private NewsDataBaseModel newsDataBaseModel;
 	
-	/** <code>DefaultListMode</code> for the story list string **/
+	/** <code>DefaultListModel</code> for the story list string **/
 	private DefaultListModel<String> newsStoryStringList;
 	
 	/** <code>JList</code> for <code>NewsStoryList</code> **/
@@ -90,7 +90,7 @@ public class EditNewsMakerView extends JPanel implements ActionListener
 		// don't have the needed image -- 
 		
 		// start by pre-filling in the fields with the current information
-		jtfName = new JTextField(newsMakerModel.getName());
+		jtfName = new JTextField(newsMakerModel.getName(), 30);
 		
 		// Add something that will generate an action whenever this field is changed
 		jtfName.getDocument().addDocumentListener(new DocumentListener() {
@@ -109,12 +109,24 @@ public class EditNewsMakerView extends JPanel implements ActionListener
 
 			@Override
 			public void insertUpdate(DocumentEvent e) {
-				// unsure if anything needs to be done here
+				if(isValidName()){
+					// change the name of the newsmaker
+					EditNewsMakerView.this.newsMakerModel.setName(jtfName.getText());
+				} else {
+					// warn user of illegal name usage!
+					// TODO:
+				}
 			}
 
 			@Override
 			public void removeUpdate(DocumentEvent e) {
-				// unsure if anything needs to be done here
+				if(isValidName()){
+					// change the name of the newsmaker
+					EditNewsMakerView.this.newsMakerModel.setName(jtfName.getText());
+				} else {
+					// warn user of illegal name usage!
+					// TODO:
+				}
 			}
 			
 			/**
@@ -140,6 +152,7 @@ public class EditNewsMakerView extends JPanel implements ActionListener
 		
 		// add JList into JScrollPane
 		jspNewsStoryList = new JScrollPane(jlNewsStoryList);
+		jspNewsStoryList.setViewportView(jlNewsStoryList);
 		
 		// add into pane
 		jpNewsStoryList = new JPanel();
@@ -161,7 +174,6 @@ public class EditNewsMakerView extends JPanel implements ActionListener
 		this.add(jplName, BorderLayout.NORTH);
 		this.add(jpNewsStoryList, BorderLayout.CENTER);
 		this.add(jbtRemoveFromStory, BorderLayout.SOUTH);
-		
 	}
 	
 	/**
@@ -184,8 +196,19 @@ public class EditNewsMakerView extends JPanel implements ActionListener
 		// do this as follows: for each story in the model
 		// create the summary string for the story (UserInterface)
 		
+		// We begin by assuming there are no stories. We will add them in as
+		// necessary.
+		newsStoryStringList.clear();
+		
 		// get news stories
-		DefaultListModel<NewsStory> stories = newsMakerModel.getNewsStoryListModel().getNewsStories();
+		NewsStoryListModel storyListModel = newsMakerModel.getNewsStoryListModel();
+		
+		if(storyListModel == null)
+		{
+			storyListModel = new NewsStoryListModel();
+		}
+		
+		DefaultListModel<NewsStory> stories = storyListModel.getNewsStories();
 
 		// set for unique types of stories
 		Set<String> uniqueMediaTypes = new TreeSet<String>();
@@ -231,25 +254,20 @@ public class EditNewsMakerView extends JPanel implements ActionListener
 	 *   <code>ActionEvent</code> for this action
 	 */
 	@Override
-	public void actionPerformed(ActionEvent event) {
-			
+	public void actionPerformed(ActionEvent event) 
+	{			
 		// what sort of changes in the model do we need to listen for?
 		// - any changes inside the newsMakerListModel
 		// - any changes inside the newsMakerModel
 		
-		if(event.getActionCommand().equals("Modified News Story List")){
-			// recall populateNewsStoryJList
-			populateNewsStoryJList();
-		}
-		if(event.getActionCommand().equals("Modified News Maker List")){
+		/*if(event.getActionCommand().equals("Modified News Maker List")){
 			// re-set the newsMakerModel
-			this.newsMakerModel = newsDataBaseModel.getNewsMakerListModel().get(newsMakerModel);
-			// re-call the populateNewsStoryJList
-			populateNewsStoryJList();
-		}
+			this.newsMakerModel = newsDataBaseModel.getNewsMakerListModel().get(newsMakerModel);			
+		}*/
 		
-		enableRemovalButton();
+		populateNewsStoryJList();
 		
+		enableRemovalButton();	
 	}
 	
 	/**
@@ -258,7 +276,7 @@ public class EditNewsMakerView extends JPanel implements ActionListener
 	 * allows the button to be enabled/disable button
 	 */
 	private void enableRemovalButton(){
-		if(!newsMakerModel.getNewsStoryListModel().isEmpty() && !"None".equals(newsMakerModel.getName())){
+		if(!(newsMakerModel.getNewsStoryListModel() == null) && !newsMakerModel.getNewsStoryListModel().isEmpty() && !"None".equals(newsMakerModel.getName())){
 			jbtRemoveFromStory.setEnabled(true);
 		} else {
 			jbtRemoveFromStory.setEnabled(false);
