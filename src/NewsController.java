@@ -612,7 +612,20 @@ public class NewsController
 			this.viewDialog.setSize(1000,1000);
 			this.viewDialog.setLocationRelativeTo(selectionView);
 			this.viewDialog.setVisible(true);
-			
+			current.addActionListener(editNewsMakerView);
+			this.viewDialog.addWindowListener(new java.awt.event.WindowAdapter() {
+				/**
+				 * Overriden method for whenever the window is closed
+				 * 
+				 * @param windowEvent
+				 *   java.awt.event.WindowEvent for this event
+				 */
+				@Override
+				public void windowClosing(java.awt.event.WindowEvent windowEvent){
+					// This is a weird construction
+					current.removeActionListener(NewsController.this.editNewsMakerView);
+				}
+			});
 		}
 		
 	}
@@ -1268,14 +1281,33 @@ public class NewsController
 		@Override
 		public void actionPerformed(ActionEvent actionEvent) {
 			// In relevant stories, set the News Maker to "none" instead
-			
-			// check for the proper button name
-			String clickedItemText = ((JButton)(actionEvent.getSource())).getText();
-			// determine correct type
-			if ("Remove From Story".equals(clickedItemText)){
-				// call deleteNewsMaker
-				deleteNewsMakers();
+			// edit news maker to no longer include story
+			// for changed story -- replace newsmaker with none
+			int[] selected = editNewsMakerView.getSelectedNewsStoryIndices();
+			for (int index : selected) { // iterate over the selected stories
+				// for each story, change out the newsMaker to be "None"
+				NewsMakerModel news1 = newsDataBaseModel.getNewsMakerListModel().get(editNewsMakerView.newsMakerModel);
+				// check if this is the primary or secondary newsmaker
+				NewsStory ns = newsDataBaseModel.getNewsStoryListModel().get(index);
+				NewsMakerModel nullNewsMaker = newsDataBaseModel.getNewsMakerListModel().getExactMatch("None");
+				if (ns.getNewsMaker1().equals(news1)) {
+					// remove the story from the newsmaker position and replace
+					//ns.setNewsMaker1(nullNewsMaker);
+					newsDataBaseModel.getNewsStoryListModel().get(index).setNewsMaker1(nullNewsMaker);
+				} // know it's first story
+				if (ns.getNewsMaker2().equals(news1)) {
+					newsDataBaseModel.getNewsStoryListModel().get(index).setNewsMaker2(nullNewsMaker);
+				}
+
+				// regardless of position, remove the news story
+				newsDataBaseModel.getNewsMakerListModel().get(editNewsMakerView.newsMakerModel).removeNewsStory(
+						newsDataBaseModel.getNewsStoryListModel().get(index)
+						);
 			}
+			
+			// dispose of the view
+			viewDialog.dispose();
+
 		}
 		
 	}
