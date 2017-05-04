@@ -570,6 +570,16 @@ public class NewsController
 				null,
 				null
 				);
+		
+		// make a check for if the name is a null
+		if (null == newsMakerName){
+			// Send warning to the user that news maker(s) must be selected
+			JOptionPane.showMessageDialog(selectionView,
+					"Nothing entered for adding a news maker.",
+					"Invalid Selection",
+					JOptionPane.WARNING_MESSAGE);
+			return;
+		}
 		// Construct the new NewsMakerModel object, add
 		newsDataBaseModel.addNewsMakerModel(new NewsMakerModel(newsMakerName));
 		
@@ -1289,6 +1299,12 @@ public class NewsController
 				NewsMakerModel news1 = newsDataBaseModel.getNewsMakerListModel().get(editNewsMakerView.newsMakerModel);
 				// check if this is the primary or secondary newsmaker
 				NewsStory ns = newsDataBaseModel.getNewsStoryListModel().get(index);
+				
+				// regardless of position, remove the news story
+				newsDataBaseModel.getNewsMakerListModel().get(editNewsMakerView.newsMakerModel).removeNewsStory(
+						newsDataBaseModel.getNewsStoryListModel().get(index)
+						);
+				
 				NewsMakerModel nullNewsMaker = newsDataBaseModel.getNewsMakerListModel().getExactMatch("None");
 				if (ns.getNewsMaker1().equals(news1)) {
 					// remove the story from the newsmaker position and replace
@@ -1297,16 +1313,14 @@ public class NewsController
 				} // know it's first story
 				if (ns.getNewsMaker2().equals(news1)) {
 					newsDataBaseModel.getNewsStoryListModel().get(index).setNewsMaker2(nullNewsMaker);
-				}
+				} // add to null
+				newsDataBaseModel.getNewsMakerListModel().getExactMatch("None").addNewsStory(ns);
 
-				// regardless of position, remove the news story
-				newsDataBaseModel.getNewsMakerListModel().get(editNewsMakerView.newsMakerModel).removeNewsStory(
-						newsDataBaseModel.getNewsStoryListModel().get(index)
-						);
 			}
 			
 			// dispose of the view
 			viewDialog.dispose();
+			editNewsMakerView = null; // wipe it
 
 		}
 		
