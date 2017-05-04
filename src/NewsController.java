@@ -1289,6 +1289,10 @@ public class NewsController
 				
 				// check if these are the same (except for none)
 				if(newsMakerName1.equals(newsMakerName2) && !"None".equals(newsMakerName1)){
+					JOptionPane.showMessageDialog(selectionView,
+							"Cannot select two of the same newsmakers for a news story.",
+							"Invalid Selection",
+							JOptionPane.WARNING_MESSAGE);
 					return; // halt the process here
 				}
 				
@@ -1318,6 +1322,18 @@ public class NewsController
 				
 				NewsStory news = null;
 				
+				// check if the news makers exist, if not, add them
+				if(!newsDataBaseModel.getNewsMakerListModel().contains(newsMaker1)){
+					// create new NewsMakerModel
+					newsDataBaseModel.addNewsMakerModel(new NewsMakerModel(newsMakerName1));
+					newsMaker1 = newsDataBaseModel.getNewsMakerListModel().getExactMatch(newsMakerName1);
+				}
+				if(!newsDataBaseModel.getNewsMakerListModel().contains(newsMaker2) && !"None".equals(newsMakerName2)){
+					// create new NewsMakerModel
+					newsDataBaseModel.addNewsMakerModel(new NewsMakerModel(newsMakerName2));
+					newsMaker2 = newsDataBaseModel.getNewsMakerListModel().getExactMatch(newsMakerName2);
+				}
+				
 				switch(type){
 				case TV:
 					news = new TVNewsStory(date,
@@ -1339,26 +1355,16 @@ public class NewsController
 					break;
 				}
 				
-				// check if the news makers exist, if not, add them
-				if(!newsDataBaseModel.getNewsMakerListModel().contains(newsMaker1)){
-					// create new NewsMakerModel
-					newsDataBaseModel.addNewsMakerModel(new NewsMakerModel(newsMakerName1));
-				}
-				if(!newsDataBaseModel.getNewsMakerListModel().contains(newsMaker2) && !"None".equals(newsMakerName2)){
-					// create new NewsMakerModel
-					newsDataBaseModel.addNewsMakerModel(new NewsMakerModel(newsMakerName2));
+				// add to relevant news makers
+				newsMaker1.addNewsStory(news);
+				
+				// check for if it is none
+				if(!"None".equals(newsMakerName2)){
+					newsMaker2.addNewsStory(news);
 				}
 				
 				// add news story
 				newsDataBaseModel.addNewsStory(news);	
-				
-				// add to relevant news makers
-				newsDataBaseModel.getNewsMakerListModel().getExactMatch(newsMakerName1).addNewsStory(news);
-				
-				// check for if it is none
-				if(!"None".equals(newsMakerName2)){
-					newsDataBaseModel.getNewsMakerListModel().getExactMatch(newsMakerName2).addNewsStory(news);
-				}
 				
 				viewDialog.dispose(); // once added, throw out
 				
@@ -1387,6 +1393,15 @@ public class NewsController
 				String newsMakerName2 = (String) addEditNewsStoryView.jcbNewsStoryNewsMaker2.getSelectedItem();
 				NewsMakerModel newsMaker2 = newsDataBaseModel.getNewsMakerListModel().getExactMatch(newsMakerName2);
 				
+				// check if these are the same (except for none)
+				if(newsMakerName1.equals(newsMakerName2) && !"None".equals(newsMakerName1)){
+					JOptionPane.showMessageDialog(selectionView,
+							"Cannot select two of the same newsmaker for a news story.",
+							"Invalid Selection",
+							JOptionPane.WARNING_MESSAGE);
+					return; // halt the process here
+				}
+				
 				PartOfDay pod = (PartOfDay) addEditNewsStoryView.jcbNewsStoryPartOfDay.getSelectedItem();
 				
 				String source = (String) addEditNewsStoryView.jcbNewsStorySource.getSelectedItem();
@@ -1413,6 +1428,18 @@ public class NewsController
 				
 				NewsStory news = null;
 				
+				// check if the news makers exist, if not, add them
+				if(!newsDataBaseModel.getNewsMakerListModel().contains(newsMaker1)){
+					// create new NewsMakerModel
+					newsDataBaseModel.addNewsMakerModel(new NewsMakerModel(newsMakerName1));
+					newsMaker1 = newsDataBaseModel.getNewsMakerListModel().getExactMatch(newsMakerName1);
+				}
+				if(!newsDataBaseModel.getNewsMakerListModel().contains(newsMaker2) && !"None".equals(newsMakerName2)){
+					// create new NewsMakerModel
+					newsDataBaseModel.addNewsMakerModel(new NewsMakerModel(newsMakerName2));
+					newsMaker2 = newsDataBaseModel.getNewsMakerListModel().getExactMatch(newsMakerName2);
+				}
+				
 				switch(type){
 				case TV:
 					news = new TVNewsStory(date,
@@ -1434,22 +1461,16 @@ public class NewsController
 					break;
 				}
 				
+				newsMaker1.addNewsStory(news);
+				
+				// check for if it is none
+				if(!"None".equals(newsMakerName2)){
+					newsMaker2.addNewsStory(news);
+				}
+				
 				// add news story
 				newsDataBaseModel.addNewsStory(news);
-				
-				// add back in under the proper news makers
-				newsMakerFirst = newsDataBaseModel.getNewsMakerListModel().get(news.getNewsMaker1());
-				newsMakerSecond = newsDataBaseModel.getNewsMakerListModel().get(news.getNewsMaker2());
-				
-				//newsMakerFirst.addNewsStory(news);
-				//newsMakerSecond.addNewsStory(news);
-				newsMaker1.addNewsStory(news);
-				newsMaker2.addNewsStory(news);
-				
-				
-				// TODO: Add in check to see that the newsmakers are not the same person
-				// unless, however, it is none
-				
+			
 				// dispose of view dialog
 				viewDialog.dispose();
 			} 

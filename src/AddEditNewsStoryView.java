@@ -271,8 +271,11 @@ public class AddEditNewsStoryView extends JPanel
 			jcbNewsStorySource.setSelectedItem(newsStory.getSource());
 			jcbNewsStoryTopic.setSelectedItem(newsStory.getTopic());
 			jcbNewsStorySubject.setSelectedItem(newsStory.getSubject());
-			jcbNewsStoryNewsMaker1.setSelectedItem(newsStory.getNewsMaker1().toString());
-			jcbNewsStoryNewsMaker2.setSelectedItem(newsStory.getNewsMaker2().toString());
+
+			jcbNewsStoryNewsMaker1.setSelectedItem(
+					this.newsStory.getNewsMaker1().toString()
+					);
+			jcbNewsStoryNewsMaker2.setSelectedItem(newsDataBaseModel.getNewsMakerListModel().get(newsStory.getNewsMaker2()).toString());
 
 			jtftfNewsStoryLength.setValue(Integer.toString(newsStory.getLengthInWords()));
 
