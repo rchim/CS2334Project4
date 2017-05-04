@@ -75,7 +75,7 @@ public class NewsController
 	/**
 	 * List of <code>NewsMedia</code> that are selected.
 	 */
-	private List<NewsMedia> selectedMediaTypes;
+	private List<NewsMedia> selectedMediaTypes = new LinkedList<NewsMedia>();
 	
 	/**
 	 * Public constructor for the news controller.
@@ -360,9 +360,7 @@ public class NewsController
 		});		
 				
 		// Variables to be determined by the user's file chooser and dialog
-		// responses.
-		
-		
+		// responses.		
 		Map<String, String> sourceMap = null;
 		Map<String, String> topicMap = null;
 		Map<String, String> subjectMap = null;
@@ -564,7 +562,7 @@ public class NewsController
 	{
 		// prompt the user for a name to enter
 		String newsMakerName = (String)JOptionPane.showInputDialog(
-				viewDialog,
+				selectionView,
 				"Enter in the NewsMaker name:",
 				"NewsMaker Name Entry",
 				JOptionPane.PLAIN_MESSAGE,
@@ -612,6 +610,7 @@ public class NewsController
 			this.viewDialog.add(editNewsMakerView);
 			this.viewDialog.setResizable(true);
 			this.viewDialog.setSize(1000,1000);
+			this.viewDialog.setLocationRelativeTo(selectionView);
 			this.viewDialog.setVisible(true);
 			
 		}
@@ -662,6 +661,7 @@ public class NewsController
 		this.viewDialog.add(addEditNewsStoryView);
 		this.viewDialog.setResizable(false);
 		this.viewDialog.pack();
+		this.viewDialog.setLocationRelativeTo(selectionView);
 		this.viewDialog.setVisible(true);
 		
 	}
@@ -695,6 +695,7 @@ public class NewsController
 			this.viewDialog.add(addEditNewsStoryView);
 			this.viewDialog.setResizable(false);
 			this.viewDialog.pack();
+			this.viewDialog.setLocationRelativeTo(selectionView);
 			this.viewDialog.setVisible(true);		
 		}
 	}
@@ -706,7 +707,6 @@ public class NewsController
 	private void sortNewsStories()
 	{
 		//Prompt the user for the type of sort criteria
-		JFrame frame = new JFrame();
 		Object[] possibilities = {SortCriterion.SOURCE,
 				SortCriterion.TOPIC,
 				SortCriterion.SUBJECT,
@@ -714,7 +714,7 @@ public class NewsController
 				SortCriterion.DATE_TIME};
 		
 		SortCriterion criterion = (SortCriterion)JOptionPane.showInputDialog(
-				frame,
+				selectionView,
 				"Enter in the sort criterion:",
 				"Sort Criterion Entry",
 				JOptionPane.PLAIN_MESSAGE,
@@ -833,6 +833,7 @@ public class NewsController
 				this.viewDialog.add(mediaTypeSelectionView);
 				this.viewDialog.setResizable(false);
 				this.viewDialog.pack();
+				this.viewDialog.setLocationRelativeTo(selectionView);
 				this.viewDialog.setVisible(true);
 				
 				// If no media types were selected, go on to next news maker.
@@ -919,10 +920,10 @@ public class NewsController
 			possibleSorting.add(SortCriterion.LENGTH);
 			possibleSorting.add(SortCriterion.SOURCE);
 			possibleSorting.add(SortCriterion.TOPIC);
+			possibleSorting.add(SortCriterion.SUBJECT);
 			int choiceNumber = 1;
 			while(possibleSorting.size() > 1){
 				String choiceString = null;
-				JFrame frame = new JFrame();
 				switch(choiceNumber){
 				case 1:
 					choiceString = "primary";
@@ -931,7 +932,10 @@ public class NewsController
 					choiceString = "secondary";
 					break;
 				case 3:
-					choiceString = "tertiery";
+					choiceString = "tertiary";
+					break;
+				case 4:
+					choiceString = "quaternary";
 					break;
 				default:
 					// Should never reach here
@@ -947,14 +951,25 @@ public class NewsController
 					count++; //increment by one
 				}
 				SortCriterion sortCriterion = (SortCriterion)JOptionPane.showInputDialog(
-						frame,
-						"Choose the " + choiceString + "",
-						"TextView Media Type Options",
+						selectionView,
+						"Choose the " + choiceString + " sort criterion for news stories about "
+						+ nm.getName() + ".",
+						nm.getName() + " - Text Display",
 						JOptionPane.PLAIN_MESSAGE,
 						null,
 						options,
 						null
 						);
+				// If the user cancels or closes out of the sort criterion selection window
+				if(sortCriterion == null)
+				{
+					JOptionPane.showMessageDialog(selectionView, 
+							"Cancelled all pending text displays.",
+							"Cancelled Text Displays.",
+							JOptionPane.PLAIN_MESSAGE);
+					return;
+				}
+				
 				// tack onto list
 				chosenSorting.add(sortCriterion);
 				
@@ -964,28 +979,37 @@ public class NewsController
 			} // at end, should have the list of sorting options
 			
 			// Get media types using the MediaTypeSelectionView
-			this.selectedMediaTypes = null;
+			this.selectedMediaTypes = new LinkedList<NewsMedia>();
 			this.mediaTypeSelectionView = new MediaTypeSelectionView();
 			MediaTypeSelectionListener mediaTypeSelectionListener =
 					new MediaTypeSelectionListener();
 			this.mediaTypeSelectionView.jbOkay.addActionListener(mediaTypeSelectionListener);
 			this.mediaTypeSelectionView.jbCancel.addActionListener(mediaTypeSelectionListener);
-			this.viewDialog = new JDialog(selectionView, nm.getName(), true);
+			this.viewDialog = new JDialog(selectionView, nm.getName() + " Text Display", true);
+			this.viewDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			this.viewDialog.add(mediaTypeSelectionView);
 			this.viewDialog.setResizable(false);
 			this.viewDialog.pack();
+			this.viewDialog.setLocationRelativeTo(selectionView);
 			this.viewDialog.setVisible(true);
 			
-			// If no media types were selected, go on to next news maker.
-			if (null == this.selectedMediaTypes){
-				continue;
+			// If the user has not selected any media types, then he must have
+			// cancelled or closed out of the dialog (the OK button only ends
+			// the dialog once you select some types, so it was not what ended
+			// the dialog). In that case, we stop displaying text views.
+			if(selectedMediaTypes.size() == 0)
+			{
+				JOptionPane.showMessageDialog(selectionView, 
+						"Cancelled all pending text displays.",
+						"Cancelled Text Displays",
+						JOptionPane.PLAIN_MESSAGE);
+				return;
 			}
 			
 			// create text view(s)
 			TextView text = new TextView(nm, selectedMediaTypes, chosenSorting);		
 			nm.addActionListener(text);
-		}		
-		
+		}			
 	}
 	
 	/**
@@ -1437,8 +1461,7 @@ public class NewsController
 				// dispose of view dialog
 				viewDialog.dispose();
 			} 
-		}
-		
+		}		
 	}
 	
 	/**
@@ -1448,7 +1471,6 @@ public class NewsController
 	 */
 	public class MediaTypeSelectionListener implements ActionListener
 	{
-
 		/**
 		 * Overriden method used for <code>ActionListener</code>
 		 * 
@@ -1460,7 +1482,7 @@ public class NewsController
 		@Override
 		public void actionPerformed(ActionEvent actionEvent) {
 			selectedMediaTypes = new LinkedList<NewsMedia>();
-
+			
 			if("OK".equals(actionEvent.getActionCommand())){
 				// clear selected media types -- start fresh
 				
@@ -1473,23 +1495,34 @@ public class NewsController
 				if(mediaTypeSelectionView.jcbTVNews.isSelected()){
 					// add into the list
 					selectedMediaTypes.add(NewsMedia.TV);
-				}
-				
+				}				
 				if(mediaTypeSelectionView.jcbOnline.isSelected()){
 					// add into the list
 					selectedMediaTypes.add(NewsMedia.ONLINE);
 				}
-				if(null == selectedMediaTypes){
-					JOptionPane.showMessageDialog(selectionView,
-							"No media type selected.",
-							"Invalid Selection",
-							JOptionPane.WARNING_MESSAGE);
+				
+				// If the user hasn't selected any media types, ask him to do
+				// so.
+				if(selectedMediaTypes.size() == 0)
+				{
+					JOptionPane.showMessageDialog(viewDialog, 
+							"Please select a type of news story.",
+							"No Media Types Selected.",
+							JOptionPane.WARNING_MESSAGE);					
+				}
+				// Otherwise, we have the information we need, so we can close
+				// the dialog.
+				else
+				{				
+					viewDialog.dispose();
 				}
 			}
-		viewDialog.dispose();	
-		}
-		
-	}
-	
-	
+			// If the user cancels out of the media type selection view,
+			// close the window.
+			else if("Cancel".equals(actionEvent.getActionCommand()))
+			{
+				viewDialog.dispose();
+			}
+		}		
+	}	
 }

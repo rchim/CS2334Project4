@@ -112,6 +112,10 @@ class UserInterface {
 						+ ((OnlineNewsStory) newsStory).getPartOfDay().toString();
 			}
 		}
+		
+		storyString += "; " + newsStory.getNewsMaker1().getName() + "; ";
+		storyString += newsStory.getNewsMaker2().getName();		
+		
 		return storyString;
 	}
 
