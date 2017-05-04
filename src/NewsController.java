@@ -844,8 +844,14 @@ public class NewsController
 	{
 		newsDataBaseModel.removeAllNewsStories();
 		
-		// TODO Make the news makers forget about the news stories. This is as
-		// simple as clearing all their news story lists.
+		// We make the news makers forget about the deleted news stories. This
+		// is as simple as clearing all their news story lists.
+		NewsMakerListModel newsMakers 
+				= newsDataBaseModel.getNewsMakerListModel();
+		for(int i = 0; i < newsMakers.size(); i++)
+		{
+			newsMakers.get(i).setNewsStoryListModel(new NewsStoryListModel());
+		}
 	}
 	
 	/**
