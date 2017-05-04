@@ -346,6 +346,11 @@ public class TextView implements ActionListener
 	@Override
 	public void actionPerformed(ActionEvent actionEvent){
 		// Update the info.
-		constructNewsStoriesAndSummary();		
+		constructNewsStoriesAndSummary();
+		
+		jtaNewsStoryList.setText(listOfStories);
+		jtaSummaryLine.setText(summaryLine);
+		
+		jfText.repaint();
 	}
 }

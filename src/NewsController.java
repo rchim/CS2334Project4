@@ -248,7 +248,7 @@ public class NewsController
 				catch(NotSerializableException e)
 				{
 					JOptionPane.showMessageDialog(selectionView, 
-							"Unable to save. Close all pie chart display windows"
+							"Unable to save. Close all extraneous windows"
 							+ " and try again.", 
 							"Oops!", JOptionPane.WARNING_MESSAGE);
 					objectOutputStream.close();					
@@ -827,6 +827,9 @@ public class NewsController
 	private void deleteAllNewsStories()
 	{
 		newsDataBaseModel.removeAllNewsStories();
+		
+		// TODO Make the news makers forget about the news stories. This is as
+		// simple as clearing all their news story lists.
 	}
 	
 	/**
@@ -927,8 +930,6 @@ public class NewsController
 				// Make sure the pie chart listens for model changes so that it 
 				// can update itself
 				newsMakerModel.addActionListener(pieChartView);
-				newsDataBaseModel.addActionListener(pieChartView);
-
 			}
 		}
 	}
