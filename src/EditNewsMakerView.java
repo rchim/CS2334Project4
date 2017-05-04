@@ -1,3 +1,7 @@
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -130,7 +134,7 @@ public class EditNewsMakerView extends JPanel implements ActionListener
 		
 		// add in JLabel and field into JPanel
 		jplName = new JPanel();
-		jplName.setLayout(new GridLayout(1,2));
+		jplName.setLayout(new FlowLayout());
 		jplName.add(jlbName);
 		jplName.add(jtfName);
 		
@@ -153,10 +157,10 @@ public class EditNewsMakerView extends JPanel implements ActionListener
 		
 		// add in elements to current, don't know how it will look
 		// so assume 1x3 Grid Layout
-		this.setLayout(new GridLayout(1,3));
-		this.add(jpNewsStoryList);
-		this.add(jplName);
-		this.add(jbtRemoveFromStory);
+		this.setLayout(new BorderLayout());
+		this.add(jplName, BorderLayout.NORTH);
+		this.add(jpNewsStoryList, BorderLayout.CENTER);
+		this.add(jbtRemoveFromStory, BorderLayout.SOUTH);
 		
 	}
 	

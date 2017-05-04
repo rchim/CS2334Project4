@@ -169,54 +169,46 @@ public class AddEditNewsStoryView extends JPanel
 		// initialize JComboBox objects with possible values from NewsDataBaseModel
 		
 		// if these indices have yet to be included, some work needs to be done to ensure that 
-		String[] newsSources = new String[1];
-		try {
-			newsSources = newsDataBaseModel.getNewsSources();
-		} catch( NullPointerException e) {
-			// Do nothing about the exception -- the important thing to do here
-			// is to realize that the map simply doesn't exist, likely because
-			// it has never been initialized. In this case, just return nothing for
-			// news sources and merely tack it onto the JComboBox
-			// This is sorted out by the fact that the fields are editable
+		String[] newsSources;
+		if( null == newsDataBaseModel.getNewsSourceMap()){
+			newsSources = new String[1];
 			newsSources[0] = "";
-		} finally {
-			// Regardless of success or fail, add into the jcomboBox
-			jcbNewsStorySource = new JComboBox<String>(newsSources);
-		} //TODO: Determine if the files have already been rendered or not
-		// such that there may be a check that does not require looking for
-		// a nullpointer exception
+		} else {
+			newsSources = newsDataBaseModel.getNewsSources();
+		}
+		jcbNewsStorySource = new JComboBox<String>(newsSources);
 		
 		// repeat this same check, but for topics, subjects, and news makers
-		String[] newsTopics = new String[1];
-		try {
-			newsTopics = newsDataBaseModel.getNewsTopics();
-		} catch ( NullPointerException e ){
+		String[] newsTopics;
+		if (null == newsDataBaseModel.getNewsTopicMap()){
+			newsTopics = new String[1];
 			newsTopics[0] = "";
-		} finally {
-			jcbNewsStoryTopic = new JComboBox<String>(newsTopics);
+		} else {
+			newsTopics = newsDataBaseModel.getNewsTopics();
 		}
+		jcbNewsStoryTopic = new JComboBox<String>(newsTopics);
 		
 		// check for subjects
-		String[] newsSubjects = new String[1];
-		try {
-			newsSubjects = newsDataBaseModel.getNewsSubjects();
-		} catch ( NullPointerException e ){
+		String[] newsSubjects;
+		if (null == newsDataBaseModel.getNewsSubjectMap()){
+			newsSubjects = new String[1];
 			newsSubjects[0] = "";
-		} finally {
-			jcbNewsStorySubject = new JComboBox<String>(newsSubjects);
+		} else {
+			newsSubjects = newsDataBaseModel.getNewsSubjects();
 		}
+		jcbNewsStorySubject = new JComboBox<String>(newsSubjects);
 		
 		// check for newsmaker names
 		String[] newsMakerNames = new String[1];
-		try {
-			newsMakerNames = newsDataBaseModel.getNewsMakerNames();
-		} catch ( NullPointerException e ){
+		if (null == newsDataBaseModel.getNewsMakerNames()){
+			newsMakerNames = new String[1];
 			newsMakerNames[0] = "";
-		} finally {
-			jcbNewsStoryNewsMaker1 = new JComboBox<String>(newsMakerNames);
-			jcbNewsStoryNewsMaker2 = new JComboBox<String>(newsMakerNames);
+		} else {
+			newsMakerNames = newsDataBaseModel.getNewsMakerNames();
 		}
-		
+		jcbNewsStoryNewsMaker1 = new JComboBox<String>(newsMakerNames);
+		jcbNewsStoryNewsMaker2 = new JComboBox<String>(newsMakerNames);
+
 		// make all the boxes editable
 		jcbNewsStorySource.setEditable(true);
 		jcbNewsStoryTopic.setEditable(true);
