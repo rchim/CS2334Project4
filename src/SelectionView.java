@@ -414,6 +414,8 @@ public class SelectionView extends JFrame implements ActionListener
 			
 			jmiSave.setToolTipText("No data to save.");
 		}		
+		
+		jlNewsStoryList.repaint();
 	}
 	
 	/**

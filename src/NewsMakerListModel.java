@@ -384,6 +384,7 @@ class NewsMakerListModel implements Serializable
 			
 			int numberOfStories = storiesWithNewsMaker.size();			
 			NewsStory currentStory;
+			boolean createdDuplicateNewsStory = false;
 			for(int i = 0; i < numberOfStories; i++)
 			{
 				currentStory = storiesWithNewsMaker.get(i);
@@ -403,6 +404,7 @@ class NewsMakerListModel implements Serializable
 							this.get(new NewsMakerModel("None")));
 				}
 				
+			
 				try
 				{
 					this.get(new NewsMakerModel("None")).addNewsStory(
@@ -413,10 +415,15 @@ class NewsMakerListModel implements Serializable
 					// If "None" already has a story that is the same as the
 					// current story, it must be the case that we created a
 					// duplicate by modifying the current story.
-					throw new IllegalArgumentException("Created duplicate news"
-							+ " story.");
+					createdDuplicateNewsStory = true;
 				}
-			}			
+			}	
+			
+			if(createdDuplicateNewsStory)
+			{
+				throw new IllegalArgumentException("Created duplicate news"
+						+ " story.");
+			}
 		}
 		else
 		{
@@ -460,8 +467,7 @@ class NewsMakerListModel implements Serializable
 		{
 			try
 			{
-				// Remove the news maker at the beginning of the list.
-				remove(newsMakers.get(0));
+				this.remove(newsMakers.get(i));								
 			}
 			catch(IllegalArgumentException e)
 			{

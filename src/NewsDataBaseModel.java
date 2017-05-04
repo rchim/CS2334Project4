@@ -355,7 +355,15 @@ public class NewsDataBaseModel implements Serializable
 	 */
 	public void removeAllNewsMakers()
 	{
-		this.removeNewsMakers(this.newsMakerListModel.getNewsMakers());
+		DefaultListModel<NewsMakerModel> allNewsMakers = 
+				new DefaultListModel<NewsMakerModel>();
+		
+		for(int i = 0; i < this.newsMakerListModel.size(); i++)
+		{
+			allNewsMakers.addElement(this.newsMakerListModel.get(i));
+		}
+		
+		this.removeNewsMakers(allNewsMakers);
 	}
 	
 	/**
