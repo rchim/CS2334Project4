@@ -1326,7 +1326,7 @@ public class NewsController
 				NewsMakerModel news1 = newsDataBaseModel.getNewsMakerListModel().get(editNewsMakerView.newsMakerModel);
 				// check if this is the primary or secondary newsmaker
 				NewsStory ns = newsDataBaseModel.getNewsStoryListModel().get(index);
-				
+
 				// regardless of position, remove the news story
 				newsDataBaseModel.getNewsMakerListModel().get(editNewsMakerView.newsMakerModel).removeNewsStory(
 						newsDataBaseModel.getNewsStoryListModel().get(index)
@@ -1336,17 +1336,18 @@ public class NewsController
 				if (ns.getNewsMaker1().equals(news1)) {
 					// remove the story from the newsmaker position and replace
 					ns.setNewsMaker1(nullNewsMaker);
+					ns.getNewsMaker1().removeNewsStory(ns);
 					newsDataBaseModel.getNewsStoryListModel().get(index).setNewsMaker1(nullNewsMaker);
 				} // know it's first story
 				if (ns.getNewsMaker2().equals(news1)) {
 					ns.setNewsMaker2(nullNewsMaker);
+					ns.getNewsMaker2().removeNewsStory(ns);
 					newsDataBaseModel.getNewsStoryListModel().get(index).setNewsMaker2(nullNewsMaker);
 				} // add to null
 
 				if (!newsDataBaseModel.none.getNewsStoryListModel().getNewsStories().contains(ns)){
 					newsDataBaseModel.none.getNewsStoryListModel().add(ns);
 				}
-				newsDataBaseModel.addNewsStory(ns);			
 			}
 			
 			// dispose of the view
@@ -1400,7 +1401,8 @@ public class NewsController
 				
 				String source = (String) addEditNewsStoryView.jcbNewsStorySource.getSelectedItem();
 				
-				int length = Integer.parseInt(addEditNewsStoryView.jtftfNewsStoryLength.getText());
+				// just why?
+				int length = (int) (long) (addEditNewsStoryView.jtftfNewsStoryLength.getValue());
 				
 				String topic = (String) addEditNewsStoryView.jcbNewsStoryTopic.getSelectedItem();
 				
@@ -1506,7 +1508,7 @@ public class NewsController
 				
 				String source = (String) addEditNewsStoryView.jcbNewsStorySource.getSelectedItem();
 				
-				int length = Integer.parseInt(addEditNewsStoryView.jtftfNewsStoryLength.getText());
+				int length = (int) (long) (addEditNewsStoryView.jtftfNewsStoryLength.getValue());
 				
 				String topic = (String) addEditNewsStoryView.jcbNewsStoryTopic.getSelectedItem();
 				
