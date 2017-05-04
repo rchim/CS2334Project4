@@ -178,7 +178,7 @@ class NewsMakerListModel implements Serializable
 	 */
 	public DefaultListModel<NewsMakerModel> getNewsMakers() 
 	{
-		return newsMakerDefaultListModel;		
+		return newsMakerDefaultListModel;
 	}
 	
 	/**

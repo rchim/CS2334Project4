@@ -579,10 +579,7 @@ public class NewsController
 					"Invalid Selection",
 					JOptionPane.WARNING_MESSAGE);
 			return;
-		}
-		// Construct the new NewsMakerModel object, add
-		newsDataBaseModel.addNewsMakerModel(new NewsMakerModel(newsMakerName));
-		
+		}		
 		if(null == newsMakerName)
 			return;				
 		
