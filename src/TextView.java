@@ -1,7 +1,10 @@
-import java.awt.GridLayout;
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -15,7 +18,8 @@ import javax.swing.*;
  * as text.
  * </P>
  * <P>
- * This class was written by Malachi Phillips (ID 112933834).
+ * This class was written by Malachi Phillips (ID 112933834). It was debugged by
+ * Ryan Chimienti (ID 113392576).
  * </P>
  * 
  * @author Malachi Phillips
@@ -82,12 +86,15 @@ public class TextView implements ActionListener
 	    jtaNewsStoryList = new JTextArea(listOfStories);
 	    jspNewsStoryList = new JScrollPane(jtaNewsStoryList);
 	    
-	    jfText.setTitle(title);
-	    jfText.setLayout(new GridLayout(2,1));
-	    jfText.add(jtaSummaryLine);
+	    jtaSummaryLine.setEditable(false);
+	    jtaNewsStoryList.setEditable(false);
 	    
-	    jfText.add(jspNewsStoryList);
-	    jfText.setSize(1000, 1000);
+	    jfText.setTitle(title);
+	    jfText.setLayout(new BorderLayout());
+	    jfText.add(jtaSummaryLine, BorderLayout.SOUTH);
+	    
+	    jfText.add(jspNewsStoryList, BorderLayout.CENTER);
+	    jfText.setSize(1000, 700);
 	    jfText.setVisible(true);
 	    
 	    jfText.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -136,6 +143,7 @@ public class TextView implements ActionListener
      * </dl>
 	 * 
 	 */
+	@SuppressWarnings("unchecked")
 	private void constructNewsStoriesAndSummary(){
 		// start by extracting out all of the news stories of the correct type
 		// convert the list of news media types into their respective class names
@@ -160,6 +168,11 @@ public class TextView implements ActionListener
 		// the actual news stories that we care about
 		ArrayList<NewsStory> relevantStories = new ArrayList<NewsStory>();
 		
+		// Just because the user asked for TV news stories doesn't mean he will
+		// get them. We will repurpose the news story list to keep track of
+		// which media types are actually present among the stories.
+		newsMedia.clear();
+		
 		for (int i = 0 ; i < news.size(); ++i){
 			NewsStory current = news.getElementAt(i);
 			
@@ -168,8 +181,53 @@ public class TextView implements ActionListener
 			if (mediaTypes.contains(type)){ // type is included, so add the story!
 				relevantStories.add(current);
 			}
+			
+			// Keep track of the distinct types of news media that are present
+			// among the stories for conversion to output format.
+			if(type.equals("NewspaperStory") &&
+					!newsMedia.contains(NewsMedia.NEWSPAPER))
+			{
+				newsMedia.add(NewsMedia.NEWSPAPER);
+			}
+			else if(type.equals("TVNewsStory") &&
+					!newsMedia.contains(NewsMedia.TV))
+			{
+				newsMedia.add(NewsMedia.TV);
+			}
+			else if(type.equals("OnlineNewsStory") &&
+					!newsMedia.contains(NewsMedia.ONLINE))
+			{
+				newsMedia.add(NewsMedia.ONLINE);
+			}		
+			
 		} // once this is done, we care about each and every story left in the list
 		
+		HashMap<SortCriterion, Comparator<NewsStory>> comparators 
+				= new HashMap<SortCriterion, Comparator<NewsStory>>();
+		
+		comparators.put(SortCriterion.SOURCE, SourceComparator.SOURCE_COMPARATOR);
+		comparators.put(SortCriterion.SUBJECT, SubjectComparator.SUBJECT_COMPARATOR);
+		comparators.put(SortCriterion.LENGTH, LengthComparator.LENGTH_COMPARATOR);
+		comparators.put(SortCriterion.DATE_TIME, DateComparator.DATE_COMPARATOR);
+		comparators.put(SortCriterion.TOPIC, null);
+		
+		// First find the value that wasn't passed with the sort criteria (the
+		// fifth and least important sort criterion) and sort by it.
+		for(int i = 0; i < SortCriterion.values().length; i++)
+		{
+			if(!sortCriteria.contains(SortCriterion.values()[i]))
+			{
+				Collections.sort(relevantStories, comparators.get(SortCriterion.values()[i]));
+			}
+		}
+		
+		// Sort by the remaining sort criteria, starting with the quaternary
+		// and working our way to the primary.
+		for(int i = sortCriteria.size() - 1; i >= 0 ; i--)
+		{
+			Collections.sort(relevantStories, comparators.remove(sortCriteria.get(i)));
+		}		
+			
 		// Of course, we need some statistics for the summary line -- store in here!
 		// Set for sources
 		Set<String> sourceSet = new TreeSet<String>();
@@ -184,6 +242,10 @@ public class TextView implements ActionListener
 		int secondLength = 0;
 		int wordLength = 0;
 		
+		// No stories have been added yet in this method, so the list should be
+		// empty.
+		listOfStories = "";
+				
 		// iterate over the stories
 		for (NewsStory n : relevantStories){
 			// add in the subject, source and topic
@@ -205,10 +267,10 @@ public class TextView implements ActionListener
 		summaryLine += "; Number of Sources: " + sourceSet.size();
 		if(mediaTypes.contains("TVNewsStory") && (mediaTypes.contains("NewspaperStory") || mediaTypes.contains("OnlineNewsStory"))){
 			summaryLine += "; Number of Word Equivalents: " + wordLength;
-		} if(!mediaTypes.contains("TVNewsStory")){
+		} else if(!mediaTypes.contains("TVNewsStory")){
 			summaryLine += "; Number of Words: " + wordLength;
 		} else {
-			summaryLine += "; Number of Seconds: " + secondLength;
+			summaryLine += "; Seconds: " + secondLength;
 		}
 		
 		summaryLine += "; Number of Topics: " + topicSet.size();
@@ -225,25 +287,47 @@ public class TextView implements ActionListener
 	 */
 	private String constructTitle(){
 		// title consists of:
-		String title = "NewsMaker Name: ";
-		title += newsMakerModel.getName();
-		title += "; Sorted by: ";
-		for (int i = 0 ; i < sortCriteria.size()-1; ++i){
+		String title = newsMakerModel.getName() + " - ";
+		
+		if(newsMedia.size() == 1)
+		{
+			title += newsMedia.get(0).toString();
+			
+			if(newsMedia.get(0) == NewsMedia.TV 
+					|| newsMedia.get(0) == NewsMedia.ONLINE)
+			{
+				title += " News";
+			}
+		}
+		else if(newsMedia.size() == 2)
+		{
+			title += newsMedia.get(0).toString() + "/";
+			title += newsMedia.get(1).toString();			
+		}
+		
+		title += " Stories sorted by ";
+		
+		for (int i = 0 ; i < sortCriteria.size(); i++)
+		{
 			title += sortCriteria.get(i).toString();
 			title += ", ";
 		}
-		title += sortCriteria.get(sortCriteria.size()-1);
-		title += "; Media types: ";
-		for (int i = 0 ; i < newsMedia.size()-1; ++i){
-			title += newsMedia.get(i).toString();
-			title += ", ";
+		
+		// First find the value that wasn't passed with the sort criteria (the
+		// fifth and least important sort criterion).
+		SortCriterion fifthSortCriterion = null;
+		for(int i = 0; i < SortCriterion.values().length; i++)
+		{
+			if(!sortCriteria.contains(SortCriterion.values()[i]))
+			{
+				fifthSortCriterion = SortCriterion.values()[i];
+				break;
+			}
 		}
-		title += newsMedia.get(newsMedia.size()-1);
-		title += ".";
+		
+		title += fifthSortCriterion;
 		
 		return title;
-		//TODO: Need to wait on the docs to verify this is correct
-					
 	}
 	
 	/**
@@ -261,9 +345,7 @@ public class TextView implements ActionListener
 	 */
 	@Override
 	public void actionPerformed(ActionEvent actionEvent){
-		if(actionEvent.getActionCommand().equals("Modified News Maker List")){
-			// update the info
-			constructNewsStoriesAndSummary();
-		}
+		// Update the info.
+		constructNewsStoriesAndSummary();		
 	}
 }

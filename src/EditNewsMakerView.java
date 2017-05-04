@@ -93,6 +93,7 @@ public class EditNewsMakerView extends JPanel implements ActionListener
 			
 			@Override
 			public void changedUpdate (DocumentEvent e){
+				
 				if(isValidName()){
 					// change the name of the newsmaker
 					EditNewsMakerView.this.newsMakerModel.setName(jtfName.getText());
