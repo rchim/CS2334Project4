@@ -103,12 +103,16 @@ public class EditNewsMakerView extends JPanel implements ActionListener
 					EditNewsMakerView.this.newsMakerModel.setName(jtfName.getText());
 				} else {
 					// warn user of illegal name usage!
-					// TODO:
+					JOptionPane.showMessageDialog(EditNewsMakerView.this, 
+							"Cannot change name to None, as this is reserved..",
+							"NewsMaker Name Conflict.",
+							JOptionPane.WARNING_MESSAGE);
 				}
 			}
 
 			@Override
 			public void insertUpdate(DocumentEvent e) {
+				
 				if(isValidName()){
 					// change the name of the newsmaker
 					EditNewsMakerView.this.newsMakerModel.setName(jtfName.getText());
@@ -120,6 +124,7 @@ public class EditNewsMakerView extends JPanel implements ActionListener
 
 			@Override
 			public void removeUpdate(DocumentEvent e) {
+				
 				if(isValidName()){
 					// change the name of the newsmaker
 					EditNewsMakerView.this.newsMakerModel.setName(jtfName.getText());

@@ -1359,8 +1359,8 @@ public class NewsController
 					story.setNewsMaker1(newsDataBaseModel.none);
 				else if (story.getNewsMaker2().equals(newsMakerModel)) 
 					story.setNewsMaker2(newsDataBaseModel.none);						
-			}	
-			
+			}				
+
 			// Update the selection view to reflect any changes.
 			selectionView.repaint();
 		}		
@@ -1410,7 +1410,8 @@ public class NewsController
 				
 				String source = (String) addEditNewsStoryView.jcbNewsStorySource.getSelectedItem();
 				
-				int length = Integer.parseInt(addEditNewsStoryView.jtftfNewsStoryLength.getText());
+				// just why?
+				int length = (int) (long) (addEditNewsStoryView.jtftfNewsStoryLength.getValue());
 				
 				String topic = (String) addEditNewsStoryView.jcbNewsStoryTopic.getSelectedItem();
 				
@@ -1516,7 +1517,7 @@ public class NewsController
 				
 				String source = (String) addEditNewsStoryView.jcbNewsStorySource.getSelectedItem();
 				
-				int length = Integer.parseInt(addEditNewsStoryView.jtftfNewsStoryLength.getText());
+				int length = (int) (long) (addEditNewsStoryView.jtftfNewsStoryLength.getValue());
 				
 				String topic = (String) addEditNewsStoryView.jcbNewsStoryTopic.getSelectedItem();
 				

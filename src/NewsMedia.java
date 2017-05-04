@@ -44,6 +44,7 @@ public enum NewsMedia
 	}
 	
 	/**
+	 * @author Malachi Phillips
 	 * Accessor method that returns a List of type NewsMedia of all of the
 	 * possible values of this enum.
 	 * 

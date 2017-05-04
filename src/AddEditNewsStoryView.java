@@ -92,7 +92,7 @@ public class AddEditNewsStoryView extends JPanel
 	private NumberFormat integerFieldFormatter;
 	
 	/** <code>JFormattedTextField</code> to for entering the <code>NewsStory</code> length **/
-	JFormattedTextField jtftfNewsStoryLength = new JFormattedTextField();
+	JFormattedTextField jtftfNewsStoryLength;
 	
 	/** <code>JPanel</code> for showing the information for the <code>NewsStory</code> length **/
 	private JPanel jplNewsStoryLength;
@@ -164,6 +164,7 @@ public class AddEditNewsStoryView extends JPanel
 		
 		integerFieldFormatter = NumberFormat.getNumberInstance();
 		integerFieldFormatter.setParseIntegerOnly(true); // only allow integers
+		jtftfNewsStoryLength = new JFormattedTextField(integerFieldFormatter);
 		// perform a check on the integer, ie. namely a positive number
 		
 		// initialize JComboBox objects with possible values from NewsDataBaseModel
@@ -309,8 +310,8 @@ public class AddEditNewsStoryView extends JPanel
 		// throw the topic label and box into the panel
 		jpNewsStorySubject = new JPanel();
 		jpNewsStorySubject.setLayout(new FlowLayout());
-		jpNewsStorySubject.add(jlbNewsStoryTopic);
-		jpNewsStorySubject.add(jcbNewsStoryTopic);		
+		jpNewsStorySubject.add(jlbNewsStorySubject);
+		jpNewsStorySubject.add(jcbNewsStorySubject);		
 		
 		// throw the newsmaker 1 label and box into the panel
 		jpNewsStoryNewsMaker1 = new JPanel();
