@@ -1,3 +1,4 @@
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.text.NumberFormat;
 
@@ -166,16 +167,63 @@ public class AddEditNewsStoryView extends JPanel
 		// perform a check on the integer, ie. namely a positive number
 		
 		// initialize JComboBox objects with possible values from NewsDataBaseModel
-		String[] newsSources = newsDataBaseModel.getNewsSources();
-		jcbNewsStorySource = new JComboBox<String>(newsSources);
-		String[] newsTopics = newsDataBaseModel.getNewsTopics();
-		jcbNewsStoryTopic = new JComboBox<String>(newsTopics);
-		String[] newsSubjects = newsDataBaseModel.getNewsSubjects();
-		jcbNewsStorySubject = new JComboBox<String>(newsSubjects);
-		String[] newsMakerNames = newsDataBaseModel.getNewsMakerNames();
-		jcbNewsStoryNewsMaker1 = new JComboBox<String>(newsMakerNames);
-		jcbNewsStoryNewsMaker2 = new JComboBox<String>(newsMakerNames);
 		
+		// if these indices have yet to be included, some work needs to be done to ensure that 
+		String[] newsSources = new String[1];
+		try {
+			newsSources = newsDataBaseModel.getNewsSources();
+		} catch( NullPointerException e) {
+			// Do nothing about the exception -- the important thing to do here
+			// is to realize that the map simply doesn't exist, likely because
+			// it has never been initialized. In this case, just return nothing for
+			// news sources and merely tack it onto the JComboBox
+			// This is sorted out by the fact that the fields are editable
+			newsSources[0] = "";
+		} finally {
+			// Regardless of success or fail, add into the jcomboBox
+			jcbNewsStorySource = new JComboBox<String>(newsSources);
+		} //TODO: Determine if the files have already been rendered or not
+		// such that there may be a check that does not require looking for
+		// a nullpointer exception
+		
+		// repeat this same check, but for topics, subjects, and news makers
+		String[] newsTopics = new String[1];
+		try {
+			newsTopics = newsDataBaseModel.getNewsTopics();
+		} catch ( NullPointerException e ){
+			newsTopics[0] = "";
+		} finally {
+			jcbNewsStoryTopic = new JComboBox<String>(newsTopics);
+		}
+		
+		// check for subjects
+		String[] newsSubjects = new String[1];
+		try {
+			newsSubjects = newsDataBaseModel.getNewsSubjects();
+		} catch ( NullPointerException e ){
+			newsSubjects[0] = "";
+		} finally {
+			jcbNewsStorySubject = new JComboBox<String>(newsSubjects);
+		}
+		
+		// check for newsmaker names
+		String[] newsMakerNames = new String[1];
+		try {
+			newsMakerNames = newsDataBaseModel.getNewsMakerNames();
+		} catch ( NullPointerException e ){
+			newsMakerNames[0] = "";
+		} finally {
+			jcbNewsStoryNewsMaker1 = new JComboBox<String>(newsMakerNames);
+			jcbNewsStoryNewsMaker2 = new JComboBox<String>(newsMakerNames);
+		}
+		
+		// make all the boxes editable
+		jcbNewsStorySource.setEditable(true);
+		jcbNewsStoryTopic.setEditable(true);
+		jcbNewsStorySubject.setEditable(true);
+		jcbNewsStoryNewsMaker1.setEditable(true);
+		jcbNewsStoryNewsMaker2.setEditable(true);
+	
 		// I hate this -- why aren't we using a date selector?
 		years = new Integer[100];
 		
@@ -243,78 +291,77 @@ public class AddEditNewsStoryView extends JPanel
 		}
 		
 		jplAddEditNewsStory = new JPanel();
-
-		jplAddEditNewsStory.setLayout(new GridLayout(9,1)); // 9x1 layout
+		jplAddEditNewsStory.setLayout(new BoxLayout(jplAddEditNewsStory,BoxLayout.Y_AXIS)); // 9x1 layout
 		
 		// throw the type label and box into the panel
 		jpNewsStoryType = new JPanel();
-		jpNewsStoryType.setLayout(new GridLayout(1,2));
+		jpNewsStoryType.setLayout(new FlowLayout());
 		jpNewsStoryType.add(jlbNewsStoryType);
 		jpNewsStoryType.add(jcbNewsStoryType);
 		
 		// throw the source label and box into the panel
 		jpNewsStorySource = new JPanel();
-		jpNewsStorySource.setLayout(new GridLayout(1,2));
+		jpNewsStorySource.setLayout(new FlowLayout());
 		jpNewsStorySource.add(jlbNewsStorySource);
 		jpNewsStorySource.add(jcbNewsStorySource);
 		
 		// throw the topic label and box into the panel
 		jpNewsStoryTopic = new JPanel();
-		jpNewsStoryTopic.setLayout(new GridLayout(1,2));
+		jpNewsStoryTopic.setLayout(new FlowLayout());
 		jpNewsStoryTopic.add(jlbNewsStoryTopic);
 		jpNewsStoryTopic.add(jcbNewsStoryTopic);
 		
 		// throw the topic label and box into the panel
 		jpNewsStorySubject = new JPanel();
-		jpNewsStorySubject.setLayout(new GridLayout(1,2));
+		jpNewsStorySubject.setLayout(new FlowLayout());
 		jpNewsStorySubject.add(jlbNewsStoryTopic);
 		jpNewsStorySubject.add(jcbNewsStoryTopic);		
 		
 		// throw the newsmaker 1 label and box into the panel
 		jpNewsStoryNewsMaker1 = new JPanel();
-		jpNewsStoryNewsMaker1.setLayout(new GridLayout(1,2));
+		jpNewsStoryNewsMaker1.setLayout(new FlowLayout());
 		jpNewsStoryNewsMaker1.add(jlbNewsStoryNewsMaker1);
 		jpNewsStoryNewsMaker1.add(jcbNewsStoryNewsMaker1);
 		
 		// throw the newsmaker 2 label and box into the panel
 		jpNewsStoryNewsMaker2 = new JPanel();
-		jpNewsStoryNewsMaker2.setLayout(new GridLayout(1,2));
+		jpNewsStoryNewsMaker2.setLayout(new FlowLayout());
 		jpNewsStoryNewsMaker2.add(jlbNewsStoryNewsMaker2);
 		jpNewsStoryNewsMaker2.add(jcbNewsStoryNewsMaker2);
 		
 		// throw the length label and box into the panel
 		jplNewsStoryLength = new JPanel();
-		jplNewsStoryLength.setLayout(new GridLayout(1,2));
+		jplNewsStoryLength.setLayout(new FlowLayout());
 		jplNewsStoryLength.add(jlbNewsStoryLength);
+		jtftfNewsStoryLength.setColumns( 20 );
 		jplNewsStoryLength.add(jtftfNewsStoryLength);
-		
 		// bundle year label and box into panel
 		jplNewsStoryYear = new JPanel();
-		jplNewsStoryYear.setLayout(new GridLayout(1,2));
+		jplNewsStoryYear.setLayout(new FlowLayout());
 		jplNewsStoryYear.add(jlbNewsStoryYear);
 		jplNewsStoryYear.add(jcbNewsStoryYear);
 		
 		// bundle month label and box into panel
 		jplNewsStoryMonth = new JPanel();
-		jplNewsStoryMonth.setLayout(new GridLayout(1,2));
+		jplNewsStoryMonth.setLayout(new FlowLayout());
 		jplNewsStoryMonth.add(jlbNewsStoryMonth);
 		jplNewsStoryMonth.add(jcbNewsStoryMonth);
 		
 		// bundle day label and box into panel
 		jplNewsStoryDay = new JPanel();
-		jplNewsStoryDay.setLayout(new GridLayout(1,2));
+		jplNewsStoryDay.setLayout(new FlowLayout());
 		jplNewsStoryDay.add(jlbNewsStoryDay);
 		jplNewsStoryDay.add(jcbNewsStoryDay);
 		
 		// bundle part of day label and box into panel
 		jplNewsStoryPartOfDay = new JPanel();
-		jplNewsStoryPartOfDay.setLayout(new GridLayout(1,2));
+		jplNewsStoryPartOfDay.setLayout(new FlowLayout());
 		jplNewsStoryPartOfDay.add(jlbNewsStoryPartOfDay);
 		jplNewsStoryPartOfDay.add(jcbNewsStoryPartOfDay);
 		
 		// add in all the date information into one date JPanel
 		jplNewsStoryWhen = new JPanel();
-		jplNewsStoryWhen.setLayout(new GridLayout(1,4));
+		jplNewsStoryWhen.setLayout(new FlowLayout());
 		jplNewsStoryWhen.add(jplNewsStoryYear);
 		jplNewsStoryWhen.add(jplNewsStoryMonth);
 		jplNewsStoryWhen.add(jplNewsStoryDay);
