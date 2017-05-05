@@ -161,7 +161,10 @@ public class EditNewsMakerView extends JPanel implements ActionListener
 		
 		// add into pane
 		jpNewsStoryList = new JPanel();
+		jpNewsStoryList.setLayout(new GridLayout());
 		jpNewsStoryList.add(jspNewsStoryList);
+		
+		jbtRemoveFromStory.setLayout(new GridLayout());
 		
 		// add a listener to the jbtRemoveFromStory button
 		jbtRemoveFromStory.setActionCommand("Removing news stories from newsmaker");
@@ -177,7 +180,7 @@ public class EditNewsMakerView extends JPanel implements ActionListener
 		// so assume 1x3 Grid Layout
 		this.setLayout(new BorderLayout());
 		this.add(jplName, BorderLayout.NORTH);
-		this.add(jpNewsStoryList, BorderLayout.CENTER);
+		this.add(jpNewsStoryList, BorderLayout.WEST);
 		this.add(jbtRemoveFromStory, BorderLayout.SOUTH);
 	}
 	

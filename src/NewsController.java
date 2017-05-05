@@ -636,7 +636,7 @@ public class NewsController
 			this.viewDialog = new JDialog(selectionView, "", true);
 			this.viewDialog.add(editNewsMakerView);
 			this.viewDialog.setResizable(true);
-			this.viewDialog.setSize(1000,1000);
+			this.viewDialog.setSize(1190,1000);
 			this.viewDialog.setLocationRelativeTo(selectionView);
 			
 			current.addActionListener(editNewsMakerView);
