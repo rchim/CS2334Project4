@@ -96,9 +96,10 @@ public class PieChartView implements ActionListener
 		// and measure
 		String str = "";
 		str += "NewsMaker: " + newsMakerModel.getName() + "; Media Types: ";
-		for (NewsMedia m : media){
-			str += m.toString() + ", ";
+		for (int i = 0 ; i < media.size()-1; ++i){
+			str += media.get(i).toString() + ", ";
 		}
+		str += media.get(media.size()-1);
 		str += "; Content: " + content.toString();
 		str += "; Measure: " + measure.toString();
 				

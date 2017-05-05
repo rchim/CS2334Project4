@@ -270,7 +270,7 @@ public class AddEditNewsStoryView extends JPanel
 					);
 			jcbNewsStoryNewsMaker2.setSelectedItem(newsDataBaseModel.getNewsMakerListModel().get(newsStory.getNewsMaker2()).toString());
 
-			jtftfNewsStoryLength.setValue(Integer.toString(newsStory.getLengthInWords()));
+			jtftfNewsStoryLength.setValue(newsStory.getLengthInWords());
 
 			jcbNewsStoryYear.setSelectedItem(newsStory.getDate().getYear());
 			jcbNewsStoryMonth.setSelectedItem(Month.fromInt(newsStory.getDate().getMonthValue()));
