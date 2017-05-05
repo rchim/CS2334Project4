@@ -3,8 +3,12 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.border.Border;
+
 import java.lang.Math;
 
 /**
@@ -83,6 +87,10 @@ public class PieChart extends JFrame
 		// Create a specialized light-weight container.
 		JPanel panel = new PieChartPanel();
 
+		Border border = BorderFactory.createTitledBorder(title);
+		
+		panel.setBorder(border);
+		
 		// Add the specialized container to the general container.
 		this.add(panel);
 
